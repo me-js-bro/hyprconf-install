@@ -1,0 +1,38 @@
+{
+    "editor.mouseWheelZoom": true,
+    "workbench.startupEditor": "none",
+    "editor.fontSize": 20,
+    "editor.fontFamily": "'JetBrainsMono Nerd Font', 'Droid Sans Mono', 'monospace', monospace",
+    "editor.fontLigatures": true,
+    "window.menuBarVisibility": "toggle",
+    "editor.smoothScrolling": true,
+    "editor.scrollbar.horizontal": "hidden",
+    "editor.mouseWheelScrollSensitivity": 2,
+    "editor.wordWrap": "on",
+    "editor.cursorBlinking": "expand",
+    "terminal.integrated.fontSize": 18,
+    "workbench.iconTheme": "catppuccin-mocha",
+    "workbench.colorTheme": "Theme Darker",
+    "git.enableSmartCommit": true,
+    // You can remove these part if you don't like the colors according to your wallpaper from the "/home/jb/.config/hypr/scripts/pywal.sh" script, from 205-222 lines.
+    // or you can totally remove the vs-code themming part from the script if you want to set and use your custom settings. if you don't do that, then your settings will be replaced/over writen by the default config.
+
+    "workbench.colorCustomizations": {
+        "editor.background": "#010101",
+        "sideBar.background": "#010101",
+        "sideBar.border": "#010101",
+        "sideBar.foreground": "#d5ccc6",
+        "editorGroupHeader.tabsBackground": "#191b274b",
+        "activityBar.background": "#010101",
+        "activityBar.border": "#010101",
+        "activityBar.foreground": "#d5ccc6",
+        "tab.activeBackground": "#13151f",
+        "tab.activeForeground": "#ffffff",
+        "tab.activeBorder": "#010101",
+        "tab.border": "#010101",
+        "tab.inactiveBackground": "#010101",
+        "tab.inactiveForeground": "#d5ccc6",
+        "terminal.foreground": "#d5ccc6",
+        "terminal.background": "#010101"
+    },
+}

@@ -1,0 +1,44 @@
+name:
+  .trash: 
+  .cargo: 
+  .emacs.d: 
+  .gitconfig: gears
+  .gitignore: 
+  .vscode: 
+  .vimrc: 
+  a.out: 
+extension:
+  go: 
+  hs: 
+  rs: 🦀
+  js: 
+  py: 
+  sh: 
+  html: 
+  css: 
+  cpp: 
+  c: 
+  java: 
+  kt: 
+  swift: 
+  php: 
+  ruby: 
+  lua: 
+  toml: 
+  yaml: 
+  json: 
+  xml: 
+  gitignore: 
+filetype:
+  dir: 󰉋
+  file: 
+  # pipe: 📩
+  pipe: 󰟥
+  socket: 󰆨
+  executable: 
+  symlink-dir: 
+  symlink-file: 
+  device-char: 
+  device-block: 󰜫
+  git-dir: 
+  special: 

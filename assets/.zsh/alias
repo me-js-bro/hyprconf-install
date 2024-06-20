@@ -1,0 +1,85 @@
+# ~/.zsh/alias
+
+source ~/.zsh/functions
+
+## list ##
+# Custom LS_COLORS
+LS_COLORS='di=36:fi=33:*.sh=32:*.*=35'
+
+alias ls='lsd --color=always --group-directories-first'     # preferred listing
+alias la='lsd -a --color=always --group-directories-first'     # preferred listing
+alias lsa='lsd -all --color=always --group-directories-first'      # all files and dirs
+alias ll='ls -l --color=always --group-directories-first'      # directories
+alias l.='ls -ald --color=always --group-directories-first .*' # show only dotfiles
+
+alias cat='bat --style header --style snip --style changes --style header'  # cat
+
+alias grubup="sudo update-grub" # most other distros like Arch, Ubuntu
+alias susegrub="sudo grub2-mkconfig -o /boot/grub2/grub.cfg"    # opensuse
+alias fedbup="sudo grub2-mkconfig -o /boot/efi/EFI/fedora/grub.cfg" # fedora
+alias ..='cd ..'    # go back
+alias ...='cd ../..'    # go back 2 steps
+alias .='cd /'  # go to root dir
+
+# extract files
+alias extract='ex'
+
+# other
+alias src='source ~/.zsh/.zshrc' #source .zshrc
+alias clr='clear'   #clear
+alias cls='clear'
+
+alias dir='mkdir -p'    #make directory
+alias file='touch'    #creat file
+
+alias rmv='fn_removal' #remove both file & direvtory ( one file / directory at a time )
+
+# check updates
+alias cu='fn_check_updates'
+
+# updates
+alias dup='sudo zypper dup' # distro update for opensuse
+alias update='fn_update'        # opensuse & fedora
+alias updateO='fn_update main'  # for arch
+alias updateA='fn_update aur'   # for arch
+
+# open configs
+alias hypr='code ~/.config/hypr'
+alias bar='code ~/.config/waybar'
+alias scripts='code ~/.config/hypr/scripts'
+alias zsh='code ~/.zsh'
+
+# install software
+alias install='fn_install'
+alias installO='fn_install main' # these are for Arch Linux
+alias installA='fn_install aur'  # these are for Arch Linux
+
+# uninstall
+alias remove='fn_uninstall'
+alias removeO='fn_uninstall main'   # for arch
+alias removeA='fn_uninstall aur'    # for arch
+
+# git alias
+alias add='git add .'
+alias clone='git clone'
+alias cloned='git clone --depth=1'
+alias branch='git branch -M main'
+alias commit='git commit -m'
+alias push='git push'
+alias pushm='git push -u origin main'
+alias pusho='git push origin' # and add your branch name 
+alias pull='git pull'
+alias info='git_info'
+
+# others
+alias nc='clr && neofetch' # neofetch
+alias neofetch='clr && neofetch'
+alias nitch='clr && nitch'
+alias sys='btop'
+
+
+# make executable script
+alias exe='chmod +x'
+
+
+# change style

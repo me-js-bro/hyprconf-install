@@ -227,7 +227,7 @@ if [[ "$distro" == "arch" ]]; then
     else
         "$scripts_dir/00-repo.sh"
     fi
-elif [[ "$distro" == "fedora" ]]; then
+elif [[ "$distro" == "fedora" || "$distro" == "opensuse" ]]; then
     "$scripts_dir/00-repo.sh"
 fi
 

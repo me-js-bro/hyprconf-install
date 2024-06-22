@@ -56,6 +56,7 @@ source $scripts_dir/1-global_script.sh
 other_packages=(
     btop
     brightnessctl
+    curl
     fastfetch
     firefox
     ffmpeg
@@ -73,6 +74,7 @@ other_packages=(
     pamixer
     pavucontrol
     python-pywal
+    wget
     yad
 )
 

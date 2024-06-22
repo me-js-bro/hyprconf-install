@@ -39,7 +39,7 @@ install_package() {
   else
     # Package not installed
     printf "${action} - Installing $1 ...\n"
-    sudo pacman -S --noconfirm
+    sudo pacman -S --noconfirm "$1"
     # Making sure package is installed
     if sudo "$package_manager" -Qs "$1" &>> /dev/null ; then
       printf "${done} - $1 was installed successfully!\n\n"

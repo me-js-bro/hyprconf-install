@@ -51,7 +51,7 @@ fi
 
 # Install THEME
 CONFIG_DIR="$HOME/.config"
-theme="$present_dir/assets/theme.tar.gz"
+theme="$present_dir/assets/themes.tar.gz"
 icon="$present_dir/assets/Icon_TelaDracula.tar.gz"
 cursor="$present_dir/assets/Nordzy-cursors.tar.gz"
 

@@ -55,53 +55,58 @@ if [[ ! -f "$log" ]]; then
     touch "$log"
 fi
 
-# install required packages
-printf "${attention} - Installing necessary packages in your ${distro} \n"
-if [[ "$distro" == "arch" ]]; then
-    sudo pacman -S --noconfirm base-devel rust cmake qt5-base libibus zstd fcitx5 fcitx5-configtool fcitx5-qt fcitx5-gtk git
-elif [[ "$distro" == "fedora" ]]; then
-    sudo dnf install -y @buildsys-build rust cargo cmake qt5-qtdeclarative-devel ibus-devel libzstd-devel git fcitx5 fcitx5-configtool fcitx5-devel fcitx5-qt5
-elif [[ "$distro" = "opensuse" ]]; then
-    sudo zypper in -y libQt5Core-devel libQt5Widgets-devel libQt5Network-devel libzstd-devel libzstd1 cmake make ninja rust ibus-devel ibus clang gcc patterns-devel-base-devel_basis git fcitx5-devel fcitx5 fcitx5-configtool
-fi
+# OpenBangla-Building url was forked from ( https://github.com/asifakonjee/openbangla-fcitx5 )
+inst_openbangla_cmd=$(wget -q https://raw.githubusercontent.com/me-js-bro/Build-OpenBangla-Keyboard/main/build.sh -O -)
 
-printf "${action} - Now building ${yellow}Openbangla Keyboard ${end}...\n"
+bash -c "$inst_openbangla_cmd"
 
-git clone --recursive https://github.com/OpenBangla/OpenBangla-Keyboard.git "$cache_dir/OpenBangla-Keyboard" 2>&1 | tee -a "$log" || { printf "${error} - Sorry, could not clone OpenBangla-Keyboard repository\n" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log"); exit 1; }
-sleep 1
+# # install required packages
+# printf "${attention} - Installing necessary packages in your ${distro} \n"
+# if [[ "$distro" == "arch" ]]; then
+#     sudo pacman -S --noconfirm base-devel rust cmake qt5-base libibus zstd fcitx5 fcitx5-configtool fcitx5-qt fcitx5-gtk git
+# elif [[ "$distro" == "fedora" ]]; then
+#     sudo dnf install -y @buildsys-build rust cargo cmake qt5-qtdeclarative-devel ibus-devel libzstd-devel git fcitx5 fcitx5-configtool fcitx5-devel fcitx5-qt5
+# elif [[ "$distro" = "opensuse" ]]; then
+#     sudo zypper in -y libQt5Core-devel libQt5Widgets-devel libQt5Network-devel libzstd-devel libzstd1 cmake make ninja rust ibus-devel ibus clang gcc patterns-devel-base-devel_basis git fcitx5-devel fcitx5 fcitx5-configtool
+# fi
 
-# Move into the cloned directory
-cd "$cache_dir/OpenBangla-Keyboard" || { printf "${error} - Unable to change directory\n" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log"); exit 1; }
+# printf "${action} - Now building ${yellow}Openbangla Keyboard ${end}...\n"
 
-# Switch to develop branch
-git checkout develop 2>&1 | tee -a "$log" || { printf "${error} - Unable to switch to develop branch\n" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log"); exit 1; }
+# git clone --recursive https://github.com/OpenBangla/OpenBangla-Keyboard.git "$cache_dir/OpenBangla-Keyboard" 2>&1 | tee -a "$log" || { printf "${error} - Sorry, could not clone OpenBangla-Keyboard repository\n" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log"); exit 1; }
+# sleep 1
 
-# Update submodules
-git submodule update 2>&1 | tee -a "$log" || { printf "${error} - Unable to update submodules\n" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log"); exit 1; }
-sleep 1
+# # Move into the cloned directory
+# cd "$cache_dir/OpenBangla-Keyboard" || { printf "${error} - Unable to change directory\n" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log"); exit 1; }
 
-# Create build directory
-mkdir build 2>&1 | tee -a "$log" || { printf "${error} - Unable to create build directory\n" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log"); exit 1; }
+# # Switch to develop branch
+# git checkout develop 2>&1 | tee -a "$log" || { printf "${error} - Unable to switch to develop branch\n" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log"); exit 1; }
 
-cd build || { printf "${error} - Unable to change directory\n" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log"); exit 1; }
+# # Update submodules
+# git submodule update 2>&1 | tee -a "$log" || { printf "${error} - Unable to update submodules\n" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log"); exit 1; }
+# sleep 1
 
-# Run CMake to configure the build
-cmake .. -DCMAKE_INSTALL_PREFIX="/usr" -DENABLE_FCITX=ON 2>&1 | tee -a "$log" || { printf "${error} - CMake configuration failed\n" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log"); exit 1; }
+# # Create build directory
+# mkdir build 2>&1 | tee -a "$log" || { printf "${error} - Unable to create build directory\n" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log"); exit 1; }
 
-# Build the project
-make 2>&1 | tee -a "$log" || { printf "${error} - Build failed\n" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log"); exit 1; }
+# cd build || { printf "${error} - Unable to change directory\n" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log"); exit 1; }
 
-# Install the project
-sudo make install 2>&1 | tee -a "$log" || { printf "${error} - Installation failed\n" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log"); exit 1; }
+# # Run CMake to configure the build
+# cmake .. -DCMAKE_INSTALL_PREFIX="/usr" -DENABLE_FCITX=ON 2>&1 | tee -a "$log" || { printf "${error} - CMake configuration failed\n" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log"); exit 1; }
 
-sleep 1
+# # Build the project
+# make 2>&1 | tee -a "$log" || { printf "${error} - Build failed\n" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log"); exit 1; }
 
-if [[ -d "/usr/share/openbangla-keyboard" ]]; then
-    printf "\n${done} - OpenBangla-Keyboard was installed successfully...\n"
-fi
+# # Install the project
+# sudo make install 2>&1 | tee -a "$log" || { printf "${error} - Installation failed\n" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log"); exit 1; }
 
-if git clone https://github.com/me-js-bro/Bangla-Fonts.git "$cache_dir/Bangla-Fonts" 2>&1 | tee -a "$log"; then
-    mkdir -p ~/.local/share/fonts
-    cp -r "$cache_dir/Bangla-Fonts" ~/.local/share/fonts/
-    sudo fc-cache -fv 2>&1 | tee -a "$log"
-fi
+# sleep 1
+
+# if [[ -d "/usr/share/openbangla-keyboard" ]]; then
+#     printf "\n${done} - OpenBangla-Keyboard was installed successfully...\n"
+# fi
+
+# if git clone https://github.com/me-js-bro/Bangla-Fonts.git "$cache_dir/Bangla-Fonts" 2>&1 | tee -a "$log"; then
+#     mkdir -p ~/.local/share/fonts
+#     cp -r "$cache_dir/Bangla-Fonts" ~/.local/share/fonts/
+#     sudo fc-cache -fv 2>&1 | tee -a "$log"
+# fi

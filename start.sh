@@ -53,9 +53,13 @@ printf "${cyan}Starting the Installation Script${end}....\n" && sleep 1 && clear
 sleep 1
 
 printf "${cyan}Hyprland${end} Installation Script by\n" && sleep 0.5
-printf "${orange} ┳┏┓  ┳┓     ${end}\n"
-printf "${orange} ┃┗┓  ┣┫┏┓┏┓ ${end}\n"
-printf "${orange}┗┛┗┛  ┻┛┛ ┗┛ ${end}\n"
+# printf "${orange} ┳┏┓  ┳┓     ${end}\n"
+# printf "${orange} ┃┗┓  ┣┫┏┓┏┓ ${end}\n"
+# printf "${orange}┗┛┗┛  ┻┛┛ ┗┛ ${end}\n"
+
+printf "${orange}   .     .__        ${end}\n"
+printf "${orange}   | __  [__)._  _  ${end}\n"
+printf "${orange}\__|_)   [__)[  (_) ${end}\n"
 
 # asking user if he/she wants to continue with the script....
 printf "Would you like to continue with the script? ${cyan}[ y/n ]${end} \n"
@@ -96,8 +100,6 @@ if [[ ! -f "$log" ]]; then
     touch "$log"
 fi
 
-# OpenBangla-Building url from ( https://github.com/asifakonjee/openbangla-fcitx5 )
-inst_openbangla_cmd=$(wget -q https://raw.githubusercontent.com/me-js-bro/Build-OpenBangla-Keyboard/main/build.sh -O -)
 
 # clear
 
@@ -227,7 +229,7 @@ if [[ "$distro" == "arch" ]]; then
     else
         "$scripts_dir/00-repo.sh"
     fi
-elif [[ "$distro" == "fedora" ]]; then
+elif [[ "$distro" == "fedora" || "$distro" == "opensuse" ]]; then
     "$scripts_dir/00-repo.sh"
 fi
 
@@ -245,7 +247,7 @@ fi
 "$scripts_dir/6-fonts.sh"
 
 if [[ "$write_bangla" =~ ^[Yy]$ ]]; then
-    bash -c "$inst_openbangla_cmd"
+    "$common_scripts/write_bangla.sh"
 fi
 
 "$scripts_dir/7-browser.sh"
@@ -317,6 +319,5 @@ else
     printf "${orange}Ok, but it's good to reboot the system. So exiting the script...${end}\n" && sleep 2
     exit 1
 fi
-
 
 #_________________ the script end here _________________#

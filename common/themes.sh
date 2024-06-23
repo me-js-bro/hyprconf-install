@@ -76,7 +76,7 @@ if [ ! -d "$HOME/.icons/TokyoNight-SE" ]; then
 
     # extracting the icon
     tar -xf TokyoNight-SE.tar.bz2 -C ~/.icons/ 2>&1 | tee -a "$log"
-    tar -xf "$ICON" -C ~/.icons/ 2>&1 | tee -a "$log"
+    tar -xf "$icon" -C ~/.icons/ 2>&1 | tee -a "$log"
 
     sleep 2
 

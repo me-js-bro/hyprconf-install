@@ -287,6 +287,25 @@ read -r -p "$(echo -e '\e[1;32mSelect: \e[0m')" reboot
 
 sleep 2
 
+# setting wallpaper for distro
+if [[ -d "$HOME/.config/hypr/Wallpaper" ]]; then
+  mode_file="$HOME/.mode"
+  touch "$mode_file" &>> /dev/null
+  echo "dark" >> "$mode_file" &>> /dev/null
+
+  wall="$HOME/.config/hypr/Wallpaper/${distro}.png"
+
+      # Transition config
+    FPS=60
+    TYPE="any"
+    DURATION=2
+    BEZIER=".43,1.19,1,.4"
+    SWWW_PARAMS="--transition-fps $FPS --transition-type $TYPE --transition-duration $DURATION --transition-bezier $BEZIER"
+
+    swww query || swww init && swww img ${wall} $SWWW_PARAMS &> /dev/null
+    "$HOME/.config/hypr/scripts/pywal.sh" &> /dev/null
+fi
+
 # setting default themes, icon and cursor
 gsettings set org.gnome.desktop.interface gtk-theme "theme"
 gsettings set org.gnome.desktop.interface icon-theme "TokyoNight-SE"

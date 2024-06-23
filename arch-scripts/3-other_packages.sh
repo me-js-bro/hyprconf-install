@@ -78,6 +78,11 @@ other_packages=(
     yad
 )
 
+uninstall_pkg=(
+  kitty
+  wofi
+)
+
 printf "${action} - Now installing some necessary packages...\n" && sleep 1
 printf " \n"
 
@@ -88,4 +93,11 @@ for other_pkgs in "${other_packages[@]}"; do
     else
         echo "[ ERROR ] - Sorry, could not install $other_pkgs!\n" 2>&1 | tee -a "$log" &>> /dev/null
     fi
+done
+
+for pkgs in "${uninstall_pkg[@]}"; do
+  if sudo pacman -Qs "$pkgs" &> /dev/null; then
+    printf "${note} - Removing $pkgs\n"
+    sudo pacman -Rns --noconfirm "$pkgs"
+  fi
 done

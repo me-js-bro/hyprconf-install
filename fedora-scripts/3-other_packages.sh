@@ -121,6 +121,11 @@ thunar=(
   thunar-archive-plugin
 )
 
+uninstall_pkg=(
+  kitty
+  wofi
+)
+
 # url to install grimblast
 grimblast_url=https://github.com/hyprwm/contrib.git
 
@@ -152,5 +157,12 @@ fi
 if [ -f '/usr/local/bin/grimblast' ]; then
   printf "${done} - Grimblast was installed successfully...\n" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
 fi
+
+for pkgs in "${uninstall_pkg[@]}"; do
+  if sudo dnf list installed "$pkgs" &> /dev/null; then
+    printf "${note} - Removing $pkgs\n"
+    sudo dnf remove "$pkgs" -y
+  fi
+done
 
 clear

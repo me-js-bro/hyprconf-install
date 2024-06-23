@@ -167,6 +167,7 @@ If you choose to install and setup the OpenBangla-Keyboard, then you need to fol
 |                                 | `SUPER` + `mouse_up`        | Scroll to previous workspace                 |
 | Move/Resize Window              | `SUPER` + `LMB/RMB`         | Drag to move or resize window                |
 
+### You can also check Keybinds after you installed the script. Just press `Mod ( windows ) + Shift + H`. It will launch a pop up with all the keybindings.
 
 ## Contribute.
 <h4>

@@ -136,6 +136,11 @@ tumbler
 thunar-plugin-archive
 )
 
+uninstall_pkg=(
+  kitty
+  wofi
+)
+
 grimblast_url=https://github.com/hyprwm/contrib.git
 
 
@@ -206,3 +211,10 @@ go install go.senan.xyz/cliphist@latest 2>&1 | tee -a "$log" &>> /dev/null
 sudo cp -r "$HOME/go/bin/cliphist" "/usr/local/bin/" 2>&1 | tee -a "$log" &>> /dev/null
 
 clear
+
+for pkgs in "${uninstall_pkg[@]}"; do
+  sudo zypper se -i "$pkgs" &> /dev/null; then
+    printf "${note} - Removing $pkgs\n"
+    sudo dnf remove "$pkgs" -y
+  fi
+done

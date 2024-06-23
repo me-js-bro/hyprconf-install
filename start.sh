@@ -21,6 +21,25 @@ done="[${cyan} DONE ${end}]"
 ask="[${orange} QUESTION ${end}]"
 error="[${red} ERROR ${end}]"
 
+# finding the presend directory
+present_dir=`pwd`
+# creating a cache directory..
+cache_dir="$present_dir/.cache"
+cache_file="$cache_dir/user-cache"
+distro_cache="$cache_dir/distro"
+
+if [[ ! -d "$cache_dir" ]]; then
+    mkdir -p "$cache_dir"
+fi
+
+# log directory
+log_dir="$present_dir/Logs"
+log="$log_dir"/1-install.log
+mkdir -p "$log_dir"
+if [[ ! -f "$log" ]]; then
+    touch "$log"
+fi
+
 display_text() {
     cat << "EOF"
     _______ __   __      __   _ _______ _______ _______      _____ _______
@@ -42,66 +61,6 @@ EOF
 
 
 ###------ Startup ------###
-
-clear
-
-printf "${cyan}Starting the Installation Script${end}.\n" && sleep 1 && clear
-printf "${cyan}Starting the Installation Script${end}..\n" && sleep 1 && clear
-printf "${cyan}Starting the Installation Script${end}...\n" && sleep 1 && clear
-printf "${cyan}Starting the Installation Script${end}....\n" && sleep 1 && clear
-
-sleep 1
-
-printf "${cyan}Hyprland${end} Installation Script by\n" && sleep 0.5
-# printf "${orange} ┳┏┓  ┳┓     ${end}\n"
-# printf "${orange} ┃┗┓  ┣┫┏┓┏┓ ${end}\n"
-# printf "${orange}┗┛┗┛  ┻┛┛ ┗┛ ${end}\n"
-
-printf "${orange}   .     .__        ${end}\n"
-printf "${orange}   | __  [__)._  _  ${end}\n"
-printf "${orange}\__|_)   [__)[  (_) ${end}\n"
-
-# asking user if he/she wants to continue with the script....
-printf "Would you like to continue with the script? ${cyan}[ y/n ]${end} \n"
-read -r -p "$(echo -e '\e[1;32mSelect: \e[0m')" continue
-
-# if "y", then continue with the script, else exit the script here.
-case $continue in
-    y|Y) printf "Proceeding to the next step...\n"
-        clear && sleep 0.5
-        ;;
-    n|N) printf "Exiting the script here..\n"
-        exit 1
-        ;;
-    *) echo "Please select between [ y/n ]"
-        exit 1
-        ;;
-esac
-
-display_text && sleep 1
-printf " \n"
-
-# finding the presend directory
-present_dir=`pwd`
-# creating a cache directory..
-cache_dir="$present_dir/.cache"
-cache_file="$cache_dir/user-cache"
-distro_cache="$cache_dir/distro"
-
-if [[ ! -d "$cache_dir" ]]; then
-    mkdir -p "$cache_dir"
-fi
-
-# log directory
-log_dir="$present_dir/Logs"
-log="$log_dir"/1-install.log
-mkdir -p "$log_dir"
-if [[ ! -f "$log" ]]; then
-    touch "$log"
-fi
-
-
-# clear
 
 # checking the distro...
 check_distro() {
@@ -133,7 +92,49 @@ check_distro() {
         exit 1
     fi
 }
-check_distro && sleep 1
+
+clear && sleep 1
+
+printf "${cyan}Starting the Installation Script${end}.\n" && sleep 1 && clear
+printf "${cyan}Starting the Installation Script${end}..\n" && sleep 1 && clear
+printf "${cyan}Starting the Installation Script${end}...\n" && sleep 1
+
+
+check_distro && sleep 1 && clear
+
+printf "${cyan}Hyprland${end} Installation Script by\n" && sleep 0.5
+
+if [[ "$distro" == "arch" ]]; then
+    printf "${orange}          _        ${end}\n"
+    printf "${orange}  |  _    |_) __ _  ${end}\n"
+    printf "${orange}\_| _)    |_) | (_) ${end}\n"
+else
+    printf "${orange} ┳   ┳┓     ${end}\n"
+    printf "${orange} ┃┏  ┣┫┏┓┏┓ ${end}\n"
+    printf "${orange}┗┛┛  ┻┛┛ ┗┛ ${end}\n"
+fi
+
+
+# asking user if he/she wants to continue with the script....
+printf "Would you like to continue with the script? ${cyan}[ y/n ]${end} \n"
+read -r -p "$(echo -e '\e[1;32mSelect: \e[0m')" continue
+
+# if "y", then continue with the script, else exit the script here.
+case $continue in
+    y|Y) printf "Proceeding to the next step...\n"
+        clear && sleep 0.5
+        ;;
+    n|N) printf "Exiting the script here..\n"
+        exit 1
+        ;;
+    *) echo "Please select between [ y/n ]"
+        exit 1
+        ;;
+esac
+
+display_text && sleep 1
+printf " \n"
+
 
 # Function to ask user prompts and cache the answers
 ask_prompts() {

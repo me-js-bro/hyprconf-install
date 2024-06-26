@@ -71,3 +71,14 @@ printf "${action} - Installing Hyprlock...\n"
     fi
 
 clear
+
+# Hyprpaper
+printf "${action} - Installing Hyprlock...\n"
+  install_package_opi hyprpaper
+    if sudo zypper se -i hyprpaper &>> /dev/null ; then
+        echo "[ DONE ] - Hyprland was installed successfully!" 2>&1 | tee -a "$log" &>> /dev/null
+    else
+        echo "[ ERROR ] - Could not install Hyprland..." 2>&1 | tee -a "$log" &>> /dev/null
+    fi
+
+clear

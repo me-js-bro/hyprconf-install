@@ -67,6 +67,7 @@
 - <h4>Opening some web pages as single tab</h4>
 - <h4>Locking with Hyprlock</h4>
 - <h4>Set your user image in Hyprlock ( a script to set your user image )</h4>
+- <h4>Switch wallpaper engine between swww and Hyprpaper</h4>
 <br>
 
 
@@ -118,6 +119,7 @@ If you choose to install and setup the OpenBangla-Keyboard, then you need to fol
 | Change Wallpaper                | `SUPER` + `W`               | Change desktop wallpaper                     |
 |                                 | `SUPER` + `SHIFT` + `W`     | Select wallpaper, style 1                    |
 |                                 | `SUPER` + `ALT` + `SHIFT` + `W` | Select wallpaper, style 2                |
+| Change Wallpaper Engine         | `SUPER` + `ALT` + `E`       | Switch engine between swww and hyprpaper     |
 | Screenshot                      | `PRINT`                     | Take a screenshot                            |
 | Key Binds Help                  | `SUPER` + `SHIFT` + `h`     | Display keybinds help                        |
 | Open Terminal                   | `SUPER` + `Return`          | Open terminal (Alacritty)                    |

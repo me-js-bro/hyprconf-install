@@ -61,6 +61,7 @@ cliphist
 eog
 hyprland
 hyprlock
+hyprpaper
 polkit-gnome
 qt5ct
 qt6ct

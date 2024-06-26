@@ -55,6 +55,7 @@ source $scripts_dir/1-global_script.sh
 hypr=(
 hyprland
 hyprlock
+hyprpaper
 )
 
 # Installation of Hyprland and Hyprlock

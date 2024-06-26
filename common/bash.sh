@@ -55,7 +55,7 @@ if [ -d ~/.bash ]; then
     printf "${done} - Backup done..\n \n"
 fi
 
-# now copy the .bash directory into the "$HOME" directory.
+# now install bash
 
 git clone --depth=1 https://github.com/me-js-bro/Bash.git "$present_dir/.cache/Bash" && sleep 1
 cd "$present_dir/.cache/Bash"

@@ -62,7 +62,9 @@ EOF
 
 ###------ Startup ------###
 
-# checking the distro...
+
+# =========  checking the distro  ========= #
+
 check_distro() {
     if [ -f /etc/os-release ]; then
         . /etc/os-release
@@ -102,6 +104,8 @@ printf "${cyan}Starting the Installation Script${end}...\n" && sleep 1
 
 check_distro && sleep 1 && clear
 
+
+
 printf "${cyan}Hyprland${end} Installation Script by\n" && sleep 0.5
 
 if [[ "$distro" == "arch" ]]; then
@@ -115,11 +119,14 @@ else
 fi
 
 
-# asking user if he/she wants to continue with the script....
+
+#=========  asking for confirmation  ========= #
+
 printf "Would you like to continue with the script? ${cyan}[ y/n ]${end} \n"
 read -r -p "$(echo -e '\e[1;32mSelect: \e[0m')" continue
 
-# if "y", then continue with the script, else exit the script here.
+
+# =========  startinf if yes, exiting if no  ========= #
 case $continue in
     y|Y) printf "Proceeding to the next step...\n"
         clear && sleep 0.5
@@ -136,7 +143,9 @@ display_text && sleep 1
 printf " \n"
 
 
-# Function to ask user prompts and cache the answers
+
+# =========  functions to ask user prompts  ========= #
+
 ask_prompts() {
     local question="$1"
     local var_name="$2"
@@ -172,7 +181,10 @@ ask_prompts() {
     done
 }
 
-# Check if the cache file contains variables and proceed accordingly
+
+
+# =========  caching  ========= #
+
 if [[ -f "$cache_file" ]]; then
     source "$cache_file"
 
@@ -212,12 +224,15 @@ else
     fi
 fi
 
-# defining the installation scripts directory for different distros
+
+
+# =========  script execution  ========= #
+
 scripts_dir="$present_dir/${distro}-scripts"
 common_scripts="$present_dir"/common
 
 
-# running scripts
+# =========  run scripts  ========= #
 
 chmod +x "$scripts_dir"/*
 chmod +x "$common_scripts"/*
@@ -281,13 +296,12 @@ fi
 "$common_scripts/dotfiles.sh"
 
 clear
+sleep 1
 
-printf "${done} - Congratulations! The script completes here. Now you can enjoy the newly installed Hyprland configuration in your system. The system needs to be rebooted first. would you like to reboot the system? ${cyan}[ y/n ]${end}\n" && sleep 1
-read -r -p "$(echo -e '\e[1;32mSelect: \e[0m')" reboot
 
-sleep 2
 
-# setting wallpaper for distro
+# =========  wallpaper section  ========= #
+
 if [[ -d "$HOME/.config/hypr/Wallpaper" ]]; then
   mode_file="$HOME/.mode"
   engine="$HOME/.config/hypr/.cache/.engine"
@@ -312,10 +326,59 @@ if [[ -d "$HOME/.config/hypr/Wallpaper" ]]; then
     "$HOME/.config/hypr/scripts/pywal.sh" &> /dev/null
 fi
 
-# setting default themes, icon and cursor
+
+
+# =========  set default gtk theme  ========= #
+
 gsettings set org.gnome.desktop.interface gtk-theme "theme"
 gsettings set org.gnome.desktop.interface icon-theme "TokyoNight-SE"
 gsettings set org.gnome.desktop.interface cursor-theme 'Nordzy-cursors'
+
+
+
+# =========  removing package  ========= #
+
+uninstall_pkg=(
+    kitty
+    wofi
+)
+
+if [[ "$distro" = "arch" ]]; then
+
+    pkg_man=$(command -v pacman || command -v yay || command -v paru)
+
+    for pkg in "${uninstall_pkg[@]}"; do
+        if sudo "$pkg_man" -Qs "$pkg" &> /dev/null; then
+            printf "${note} - Removing $pkg\n"
+            sudo pacman -Rns --noconfirm "$pkg" &> /dev/null
+        fi
+    done
+
+elif [[ "$distro" = "fedora" ]]; then
+
+    for pkg in "${uninstall_pkg[@]}"; do
+        if sudo dnf list installed "$pkg" &> /dev/null; then
+            printf "${note} - Removing $pkg\n"
+            sudo dnf remove -y "$pkg"  &> /dev/null
+        fi
+    done
+
+elif [[ "$distro" = "opensuser" ]]; then
+
+    for pkg in "$uninstall_pkg[@]"; do
+        if sudo zypper se -i "$pkg" &> /dev/null; then
+            printf "${note} - Removing $pkg\n"
+            sudo zypper remove -y "$pkg" &> /dev/null
+        fi
+    done
+fi
+
+
+# =========  system reboot  ========= #
+
+printf "${done} - Congratulations! The script completes here. Now you can enjoy the newly installed Hyprland configuration in your system. The system needs to be rebooted first. would you like to reboot the system? ${cyan}[ y/n ]${end}\n" && sleep 1
+read -r -p "$(echo -e '\e[1;32mSelect: \e[0m')" reboot
+
 
 display_text_reboot() {
     cat << "EOF"
@@ -346,4 +409,5 @@ else
     exit 1
 fi
 
-#_________________ the script end here _________________#
+
+# =========______  Script ends here  ______========= #

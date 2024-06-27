@@ -290,8 +290,13 @@ sleep 2
 # setting wallpaper for distro
 if [[ -d "$HOME/.config/hypr/Wallpaper" ]]; then
   mode_file="$HOME/.mode"
+  engine="$HOME/.config/hypr/.cache/.engine"
+
   touch "$mode_file" &>> /dev/null
+  touch "$engine"
+  
   echo "dark" >> "$mode_file" &>> /dev/null
+  echo "swww" >> "$engine" &>> /dev/null
 
   wall="$HOME/.config/hypr/Wallpaper/${distro}.png"
 
@@ -302,7 +307,8 @@ if [[ -d "$HOME/.config/hypr/Wallpaper" ]]; then
     BEZIER=".43,1.19,1,.4"
     SWWW_PARAMS="--transition-fps $FPS --transition-type $TYPE --transition-duration $DURATION --transition-bezier $BEZIER"
 
-    swww query || swww init && swww img ${wall} $SWWW_PARAMS &> /dev/null
+    swww query || swww init
+    swww img ${wall} $SWWW_PARAMS &> /dev/null
     "$HOME/.config/hypr/scripts/pywal.sh" &> /dev/null
 fi
 

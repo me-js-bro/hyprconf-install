@@ -34,31 +34,27 @@ if [[ ! -f "$log" ]]; then
     touch "$log"
 fi
 
-# install script dir
-scripts_dir=`dirname "$(realpath "$0")"`
-source $scripts_dir/1-global_script.sh
-
-vs_code_dir=~/.config/Code
-vs_code_plugins_dir=~/.vscode
+vs_code_dir="$HOME/.config/Code"
+vs_code_plugins_dir="$HOME/.vscode"
 
     # backing up vs code directory "Code"
     if [ -d "$vs_code_dir" ]; then
         printf "${action} - Backing up .config/Code directory...\n"
-        mv "$vs_code_dir" "$vs_code_dir"-${USER}
+        mv "$vs_code_dir" "$vs_code_dir"-${USER} 2>&1 | tee -a "$log"
     fi
 
     # backing up vs code directory "Plugins"
     if [ -d "$vs_code_plugins_dir" ]; then
         printf "${action} - Backing up directory...\n"
-        mv "$vs_code_plugins_dir" "$vs_code_plugins_dir"-${USER}
+        mv "$vs_code_plugins_dir" "$vs_code_plugins_dir"-${USER} 2>&1 | tee -a "$log"
     fi
     
 # copying vs code themes and plugins dir
 printf "${action} - Copying Code directory..."
-assets_dir="$present_dir"/assets
+assets_dir="$present_dir/assets"
 
-cp -r "$assets_dir"/Code ~/.config/
-cp -r "$assets_dir"/.vscode ~/
+cp -r "$assets_dir/Code" "$HOME/.config/" 2>&1 | tee -a "$log"
+cp -r "$assets_dir/.vscode" "$HOME/" 2>&1 | tee -a "$log"
 
 sleep 1
 

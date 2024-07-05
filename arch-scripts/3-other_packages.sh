@@ -38,24 +38,20 @@ printf " \n \n"
 
 ###------ Startup ------###
 
-# finding the presend directory and log file
-present_dir=`pwd`
-# log directory
-log_dir="$present_dir/Logs"
-log="$log_dir"/other-packages.log
-mkdir -p "$log_dir"
-if [[ ! -f "$log" ]]; then
-    touch "$log"
-fi
-
 # install script dir
-scripts_dir=`dirname "$(realpath "$0")"`
-source $scripts_dir/1-global_script.sh
+dir="$(dirname "$(realpath "$0")")"
+source "$dir/1-global_script.sh"
+
+# log directory
+parent_dir="$(dirname "$dir")"
+log_dir="$parent_dir/Logs"
+log="$log_dir/others-$(date +%d-%m-%y).log"
+mkdir -p "$log_dir"
+touch "$log"
 
 # any other packages will be installed from here
 other_packages=(
     btop
-    brightnessctl
     curl
     fastfetch
     firefox
@@ -84,8 +80,8 @@ printf " \n"
 for other_pkgs in "${other_packages[@]}"; do
     install_package "$other_pkgs"
     if sudo pacman -Qs "$other_pkgs" &>> /dev/null; then
-        echo "[ DONE ] - $other_pkgs was installed successfully!\n" 2>&1 | tee -a "$log" &>> /dev/null
+        echo "[ DONE ] - $other_pkgs was installed successfully!\n" 2>&1 | tee -a "$log" &> /dev/null
     else
-        echo "[ ERROR ] - Sorry, could not install $other_pkgs!\n" 2>&1 | tee -a "$log" &>> /dev/null
+        echo "[ ERROR ] - Sorry, could not install $other_pkgs!\n" 2>&1 | tee -a "$log" &> /dev/null
     fi
 done

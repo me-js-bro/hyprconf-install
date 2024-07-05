@@ -38,19 +38,16 @@ printf " \n \n"
 
 ###------ Startup ------###
 
-# finding the presend directory and log file
-present_dir=`pwd`
-# log directory
-log_dir="$present_dir/Logs"
-log="$log_dir"/packages.log
-mkdir -p "$log_dir"
-if [[ ! -f "$log" ]]; then
-    touch "$log"
-fi
-
 # install script dir
-scripts_dir=`dirname "$(realpath "$0")"`
-source $scripts_dir/1-global_script.sh
+dir="$(dirname "$(realpath "$0")")"
+source "$dir/1-global_script.sh"
+
+# log directory
+parent_dir="$(dirname "$dir")"
+log_dir="$parent_dir/Logs"
+log="$log_dir/others-$(date +%d-%m-%y).log"
+mkdir -p "$log_dir"
+touch "$log"
 
 # packages neeeded
 hypr_package=( 
@@ -100,7 +97,6 @@ hypr_package=(
 )
 
 other_packages=(
-  brightnessctl
   btop
   cava
   mousepad
@@ -144,40 +140,40 @@ printf "${action} - Installing hyprland packages.... \n"
 
 for packages in "${hypr_package[@]}" "${other_packages[@]}"; do
   install_package "$packages"
-    if sudo zypper se -i "$packages" &>> /dev/null ; then
-        echo "[ DONE ] - $packages was installed successfully!" 2>&1 | tee -a "$log" &>> /dev/null
+    if sudo zypper se -i "$packages" &> /dev/null ; then
+        echo "[ DONE ] - $packages was installed successfully!" 2>&1 | tee -a "$log" &> /dev/null
     else
-        echo "[ ERROR ] - Could not install $packages..." 2>&1 | tee -a "$log" &>> /dev/null
+        echo "[ ERROR ] - Could not install $packages..." 2>&1 | tee -a "$log" &> /dev/null
     fi
 done
 
 # installing swaylock-effects & nwg-look
 for opi_pkg in "${opi_packages[@]}"; do
   install_package_opi "$opi_pkg"
-    if sudo zypper se -i "$opi_pkg" &>> /dev/null ; then
-        echo "[ DONE ] - $opi_pkg was installed successfully!" 2>&1 | tee -a "$log" &>> /dev/null
+    if sudo zypper se -i "$opi_pkg" &> /dev/null ; then
+        echo "[ DONE ] - $opi_pkg was installed successfully!" 2>&1 | tee -a "$log" &> /dev/null
     else
-        echo "[ ERROR ] - Could not install $opi_pkg..." 2>&1 | tee -a "$log" &>> /dev/null
+        echo "[ ERROR ] - Could not install $opi_pkg..." 2>&1 | tee -a "$log" &> /dev/null
     fi
 done
 
 # installing thunar
 for pkgs in "${no_recommands[@]}" "${thunar[@]}"; do
   install_package_no_recommands "$pkgs"
-    if sudo zypper se -i "$pkgs" &>> /dev/null ; then
-        echo "[ DONE ] - $pkgs was installed successfully!" 2>&1 | tee -a "$log" &>> /dev/null
+    if sudo zypper se -i "$pkgs" &> /dev/null ; then
+        echo "[ DONE ] - $pkgs was installed successfully!" 2>&1 | tee -a "$log" &> /dev/null
     else
-        echo "[ ERROR ] - Could not install $pkgs..." 2>&1 | tee -a "$log" &>> /dev/null
+        echo "[ ERROR ] - Could not install $pkgs..." 2>&1 | tee -a "$log" &> /dev/null
     fi
 done
 
 # installing forcefully
 for force_inst in "${cliphist[@]}"; do
   sudo zypper in -f -y "$force_inst"
-    if sudo zypper se -i "$force_inst" &>> /dev/null ; then
-        echo "[ DONE ] - $force_inst was installed successfully!" 2>&1 | tee -a "$log" &>> /dev/null
+    if sudo zypper se -i "$force_inst" &> /dev/null ; then
+        echo "[ DONE ] - $force_inst was installed successfully!" 2>&1 | tee -a "$log" &> /dev/null
     else
-        echo "[ ERROR ] - Could not install $force_inst..." 2>&1 | tee -a "$log" &>> /dev/null
+        echo "[ ERROR ] - Could not install $force_inst..." 2>&1 | tee -a "$log" &> /dev/null
     fi
 done
 
@@ -200,9 +196,9 @@ fi
 
 # Install cliphist using go
 export PATH=$PATH:/usr/local/bin
-go install go.senan.xyz/cliphist@latest 2>&1 | tee -a "$log" &>> /dev/null
+go install go.senan.xyz/cliphist@latest 2>&1 | tee -a "$log" &> /dev/null
 
 # copy cliphist into /usr/local/bin for some reason it is installing in ~/go/bin
-sudo cp -r "$HOME/go/bin/cliphist" "/usr/local/bin/" 2>&1 | tee -a "$log" &>> /dev/null
+sudo cp -r "$HOME/go/bin/cliphist" "/usr/local/bin/" 2>&1 | tee -a "$log" &> /dev/null
 
 clear

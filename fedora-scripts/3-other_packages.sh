@@ -38,19 +38,18 @@ printf " \n \n"
 
 ###------ Startup ------###
 
-# finding the presend directory and log file
-present_dir=`pwd`
-# log directory
-log_dir="$present_dir/Logs"
-log="$log_dir"/packages.log
-mkdir -p "$log_dir"
-if [[ ! -f "$log" ]]; then
-    touch "$log"
-fi
-
 # install script dir
-scripts_dir=`dirname "$(realpath "$0")"`
-source $scripts_dir/1-global_script.sh
+dir="$(dirname "$(realpath "$0")")"
+source "$dir/1-global_script.sh"
+
+
+
+# log directory
+parent_dir="$(dirname "$dir")"
+log_dir="$parent_dir/Logs"
+log="$log_dir/others-$(date +%d-%m-%y).log"
+mkdir -p "$log_dir"
+touch "$log"
 
 main_packages=(
   alacritty
@@ -98,7 +97,6 @@ main_packages=(
 
 # other necessary packages
 other_packages=(
-  brightnessctl
   btop
   cava
   cliphist
@@ -140,13 +138,13 @@ if [ -f '/usr/local/bin/grimblast' ]; then
 else
 
   printf "${action} - Installing grimblast...\n"
-  git clone --depth=1 "$grimblast_url" "$present_dir"/.cache/grimblast/ 2>&1 | tee -a "$log"
-  cd "$present_dir/.cache/grimblast/grimblast"
+  git clone --depth=1 "$grimblast_url" "$parent_dir"/.cache/grimblast/ 2>&1 | tee -a "$log"
+  cd "$parent_dir/.cache/grimblast/grimblast"
   make 2>&1 | tee -a "$log"
   sudo make install 2>&1 | tee -a "$log"
 
   sleep 1
-  rm -rf "$present_dir"/.cache/grimblast 2>&1 | tee -a "$log"
+  rm -rf "$parent_dir"/.cache/grimblast 2>&1 | tee -a "$log"
 fi
 
 if [ -f '/usr/local/bin/grimblast' ]; then

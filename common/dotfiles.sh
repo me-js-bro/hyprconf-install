@@ -37,16 +37,21 @@ printf " \n \n"
 
 ###------ Startup ------###
 
-# finding the presend directory and log file
-present_dir=`pwd`
-cache_dir="$present_dir/.cache"
+
+# install script dir
+dir="$(dirname "$(realpath "$0")")"
+source "$dir/1-global_script.sh"
+
+# present dir
+
+cache_dir="$parent_dir/.cache"
+
 # log directory
-log_dir="$present_dir/Logs"
-log="$log_dir"/dotfiles.log
+parent_dir="$(dirname "$dir")"
+log_dir="$parent_dir/Logs"
+log="$log_dir/vs_code-$(date +%d-%m-%y).log"
 mkdir -p "$log_dir"
-if [[ ! -f "$log" ]]; then
-    touch "$log"
-fi
+touch "$log"
 
 # _______ Testing _______ #
 

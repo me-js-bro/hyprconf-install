@@ -36,29 +36,27 @@ printf " \n \n"
 
 ###------ Startup ------###
 
-# finding the presend directory and log file
-present_dir=`pwd`
-# log directory
-log_dir="$present_dir/Logs"
-log="$log_dir"/vs-code.log
-mkdir -p "$log_dir"
-if [[ ! -f "$log" ]]; then
-    touch "$log"
-fi
-
 # install script dir
-scripts_dir=`dirname "$(realpath "$0")"`
-source $scripts_dir/1-global_script.sh
+dir="$(dirname "$(realpath "$0")")"
+source "$dir/1-global_script.sh"
+
+
+# log directory
+parent_dir="$(dirname "$dir")"
+log_dir="$parent_dir/Logs"
+log="$log_dir/vs_code-$(date +%d-%m-%y).log"
+mkdir -p "$log_dir"
+touch "$log"
 
 printf "${attention} - Processing to install Visual Studio Code... \n"
 sleep 1
 
-sudo rpm --import https://packages.microsoft.com/keys/microsoft.asc
-sudo zypper addrepo https://packages.microsoft.com/yumrepos/vscode vscode
-sudo zypper refresh
-sudo zypper in -y code
+sudo rpm --import https://packages.microsoft.com/keys/microsoft.asc 2>&1 | tee -a "$log"
+sudo zypper addrepo https://packages.microsoft.com/yumrepos/vscode vscode 2>&1 | tee -a "$log"
+sudo zypper refresh 2>&1 | tee -a "$log"
+sudo zypper in -y code 2>&1 | tee -a "$log"
 
-common_scripts="$present_dir/common"
+common_scripts="$parent_dir/common"
 "$common_scripts/vs_code_theme.sh"
 
 clear

@@ -36,20 +36,19 @@ printf " \n \n"
 
 ###------ Startup ------###
 
-# finding the presend directory and log file
-present_dir=`pwd`
-# log directory
-log_dir="$present_dir/Logs"
-log="$log_dir"/sddm.log
-mkdir -p "$log_dir"
-mkdir -p "$present_dir/.cache"
-if [[ ! -f "$log" ]]; then
-    touch "$log"
-fi
-
 # install script dir
-scripts_dir=`dirname "$(realpath "$0")"`
-source $scripts_dir/1-global_script.sh
+dir="$(dirname "$(realpath "$0")")"
+source "$dir/1-global_script.sh"
+
+# present dir
+
+
+# log directory
+parent_dir="$(dirname "$dir")"
+log_dir="$parent_dir/Logs"
+log="$log_dir/sddm-$(date +%d-%m-%y).log"
+mkdir -p "$log_dir"
+touch "$log"
 
 # packages for sddm
 sddm_pkgs=(
@@ -67,9 +66,9 @@ printf "${action} - Installing sddm and dependencies.... \n"
 for sddm in "${sddm_pkgs[@]}" ; do
   install_package_no_recommands "$sddm"
     if sudo zypper se -i "$sddm" &>> /dev/null ; then
-        echo "[ DONE ] - $sddm was installed successfully!" 2>&1 | tee -a "$log" &>> /dev/null
+        echo "[ DONE ] - $sddm was installed successfully!" 2>&1 | tee -a "$log" &> /dev/null
     else
-        echo "[ ERROR ] - Could not install $sddm..." 2>&1 | tee -a "$log" &>> /dev/null
+        echo "[ ERROR ] - Could not install $sddm..." 2>&1 | tee -a "$log" &> /dev/null
     fi
 done
 
@@ -99,8 +98,8 @@ valid_input=false
 while [ "$valid_input" != true ]; do
     printf "${attention} - Installing SDDM Theme\n"
 
-    git clone --depth=1 https://github.com/me-js-bro/sddm.git "$present_dir/.cache/sddm"
-    if [[ -d "$present_dir/.cache/sddm" ]]; then
+    git clone --depth=1 https://github.com/me-js-bro/sddm.git "$parent_dir/.cache/sddm"
+    if [[ -d "$parent_dir/.cache/sddm" ]]; then
         if [[ -d "/usr/share/sddm/themes/opensuse-sddm" ]]; then
         sudo rm -rf "/usr/share/sddm/themes/opensuse-sddm"
         printf -e "${done} - Removed existing 'opensuse-sddm' directory."
@@ -111,7 +110,7 @@ while [ "$valid_input" != true ]; do
             sudo mkdir -p /usr/share/sddm/themes
             printf "${done} - Directory '/usr/share/sddm/themes' created."
       fi
-      sudo cp -r "$present_dir/.cache/sddm/opensuse-sddm" /usr/share/sddm/themes/
+      sudo cp -r "$parent_dir/.cache/sddm/opensuse-sddm" /usr/share/sddm/themes/
       printf "[Theme]\nCurrent=opensuse-sddm\n" | sudo tee "$sddm_conf_dir/theme.conf.user"
     fi
     valid_input=true
@@ -119,5 +118,5 @@ done
 
 if [[ -d "/usr/share/sddm/themes/opensuse-sddm" ]]; then
     printf "${done} - Sddm theme was installed successfully." 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
-    rm -rf "$present_dir/.cache/sddm"
+    rm -rf "$parent_dir/.cache/sddm"
 fi

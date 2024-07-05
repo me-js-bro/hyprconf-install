@@ -40,20 +40,21 @@ printf " \n"
 ###------ Startup ------###
 
 # finding the presend directory and log file
-present_dir=`pwd`
+# install script dir
+dir="$(dirname "$(realpath "$0")")"
+
 # log directory
-log_dir="$present_dir/Logs"
-log="$log_dir"/themes.log
+parent_dir="$(dirname "$dir")"
+log_dir="$parent_dir/Logs"
+log="$log_dir/themes-$(date +%d-%m-%y).log"
 mkdir -p "$log_dir"
-if [[ ! -f "$log" ]]; then
-    touch "$log"
-fi
+touch "$log"
 
 # Install THEME
 CONFIG_DIR="$HOME/.config"
-theme="$present_dir/assets/themes.tar.gz"
-icon="$present_dir/assets/Icon_TelaDracula.tar.gz"
-cursor="$present_dir/assets/Nordzy-cursors.tar.gz"
+theme="$parent_dir/assets/themes.tar.gz"
+icon="$parent_dir/assets/Icon_TelaDracula.tar.gz"
+cursor="$parent_dir/assets/Nordzy-cursors.tar.gz"
 
 # creating icons and theme directory
 mkdir -p ~/.themes
@@ -107,7 +108,7 @@ sleep 1
 # setting default themes, icon and cursor
 gsettings set org.gnome.desktop.interface gtk-theme "theme"
 gsettings set org.gnome.desktop.interface icon-theme "TokyoNight-SE"
-gsettings set org.gnome.desktop.interface cursor-theme 'Nordzy-cursors'
+gsettings set org.gnome.desktop.interface cursor-theme "Nordzy-cursors"
 
 # clear
 

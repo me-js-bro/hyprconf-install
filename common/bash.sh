@@ -37,15 +37,19 @@ printf " \n \n"
 
 ###------ Startup ------###
 
-# finding the presend directory and log file
-present_dir=`pwd`
+# install script dir
+dir="$(dirname "$(realpath "$0")")"
+source "$dir/1-global_script.sh"
+
+# present dir
+
+
 # log directory
-log_dir="$present_dir/Logs"
-log="$log_dir"/bash.log
+parent_dir="$(dirname "$dir")"
+log_dir="$parent_dir/Logs"
+log="$log_dir/bash-$(date +%d-%m-%y).log"
 mkdir -p "$log_dir"
-if [[ ! -f "$log" ]]; then
-    touch "$log"
-fi
+touch "$log"
 
 # check if there is a .bash directory available. if available, then backup it.
 if [ -d ~/.bash ]; then
@@ -57,9 +61,9 @@ fi
 
 # now install bash
 
-git clone --depth=1 https://github.com/me-js-bro/Bash.git "$present_dir/.cache/Bash" && sleep 1
-cd "$present_dir/.cache/Bash"
-chmod +x install.sh
-./install.sh
+git clone --depth=1 https://github.com/me-js-bro/Bash.git "$parent_dir/.cache/Bash" && sleep 1
+cd "$parent_dir/.cache/Bash" 2>&1 | tee -a "$log"
+chmod +x install.sh 2>&1 | tee -a "$log"
+./install.sh 2>&1 | tee -a "$log"
 
 clear

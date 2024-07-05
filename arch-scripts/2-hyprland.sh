@@ -38,19 +38,16 @@ printf " \n \n"
 
 ###------ Startup ------###
 
-# finding the presend directory and log file
-present_dir=`pwd`
-# log directory
-log_dir="$present_dir/Logs"
-log="$log_dir"/hyprland.log
-mkdir -p "$log_dir"
-if [[ ! -f "$log" ]]; then
-    touch "$log"
-fi
-
 # install script dir
-scripts_dir=`dirname "$(realpath "$0")"`
-source $scripts_dir/1-global_script.sh
+dir="$(dirname "$(realpath "$0")")"
+source "$dir/1-global_script.sh"
+
+# log directory
+parent_dir="$(dirname "$dir")"
+log_dir="$parent_dir/Logs"
+log="$log_dir/hyprland-$(date +%d-%m-%y).log"
+mkdir -p "$log_dir"
+touch "$log"
 
 aur_helper=$(command -v yay || command -v paru) # find the aur helper
 
@@ -102,9 +99,9 @@ printf "${note} - Installing main packages, this may take a while...\n" && sleep
 for hypr_pkgs in "${hypr_packages[@]}"; do
     install_package "$hypr_pkgs"
     if sudo pacman -Qs "$hypr_pkgs" &>> /dev/null; then
-        echo "[ DONE ] - $hypr_pkgs was installed successfully!\n" 2>&1 | tee -a "$log" &>> /dev/null
+        echo "[ DONE ] - $hypr_pkgs was installed successfully!\n" 2>&1 | tee -a "$log" &> /dev/null
     else
-        echo "[ ERROR ] - Sorry, could not install $hypr_pkgs!\n" 2>&1 | tee -a "$log" &>> /dev/null
+        echo "[ ERROR ] - Sorry, could not install $hypr_pkgs!\n" 2>&1 | tee -a "$log" &> /dev/null
     fi
 done
 
@@ -115,9 +112,9 @@ printf "${action} - Now installing some packages from the aur helper...\n" && sl
 for aur_pkgs in "${aur_packages[@]}"; do
     install_from_aur "$aur_pkgs"
     if sudo "$aur_helper" -Qs "$aur_pkgs" &>> /dev/null; then
-        echo "[ DONE ] - $aur_pkgs was installed successfully!\n" 2>&1 | tee -a "$log" &>> /dev/null
+        echo "[ DONE ] - $aur_pkgs was installed successfully!\n" 2>&1 | tee -a "$log" &> /dev/null
     else
-        echo "[ ERROR ] - Sorry, could not install $aur_pkgs!\n" 2>&1 | tee -a "$log" &>> /dev/null
+        echo "[ ERROR ] - Sorry, could not install $aur_pkgs!\n" 2>&1 | tee -a "$log" &> /dev/null
     fi
 done
 
@@ -126,9 +123,9 @@ printf "${note} - Installing Thunar file manager. \n"
 for file_man in "${thunar[@]}"; do
     install_package "$file_man"
     if sudo pacman -Qs "$file_man" &>> /dev/null; then
-        echo "[ DONE ] - $file_man was installed successfully!\n" 2>&1 | tee -a "$log" &>> /dev/null
+        echo "[ DONE ] - $file_man was installed successfully!\n" 2>&1 | tee -a "$log" &> /dev/null
     else
-        echo "[ ERROR ] - Sorry, could not install $file_man!\n" 2>&1 | tee -a "$log" &>> /dev/null
+        echo "[ ERROR ] - Sorry, could not install $file_man!\n" 2>&1 | tee -a "$log" &> /dev/null
     fi
 done
 

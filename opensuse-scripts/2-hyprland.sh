@@ -38,36 +38,33 @@ printf " \n \n"
 
 ###------ Startup ------###
 
-# finding the presend directory and log file
-present_dir=`pwd`
-# log directory
-log_dir="$present_dir/Logs"
-log="$log_dir"/hyprland.log
-mkdir -p "$log_dir"
-if [[ ! -f "$log" ]]; then
-    touch "$log"
-fi
-
 # install script dir
-scripts_dir=`dirname "$(realpath "$0")"`
-source $scripts_dir/1-global_script.sh
+dir="$(dirname "$(realpath "$0")")"
+source "$dir/1-global_script.sh"
+
+# log directory
+parent_dir="$(dirname "$dir")"
+log_dir="$parent_dir/Logs"
+log="$log_dir/hyprland-$(date +%d-%m-%y).log"
+mkdir -p "$log_dir"
+touch "$log"
 
 # Hyprland
 printf "${action} - Installing Hyprland...\n"
   install_package hyprland
-    if sudo zypper se -i hyprland &>> /dev/null ; then
-        echo "[ DONE ] - Hyprland was installed successfully!" 2>&1 | tee -a "$log" &>> /dev/null
+    if sudo zypper se -i hyprland &> /dev/null ; then
+        echo "[ DONE ] - Hyprland was installed successfully!" 2>&1 | tee -a "$log" &> /dev/null
     else
-        echo "[ ERROR ] - Could not install Hyprland..." 2>&1 | tee -a "$log" &>> /dev/null
+        echo "[ ERROR ] - Could not install Hyprland..." 2>&1 | tee -a "$log" &> /dev/null
     fi
     
 # Hyprlock
 printf "${action} - Installing Hyprlock...\n"
   install_package_opi hyprlock
-    if sudo zypper se -i hyprlock &>> /dev/null ; then
-        echo "[ DONE ] - Hyprland was installed successfully!" 2>&1 | tee -a "$log" &>> /dev/null
+    if sudo zypper se -i hyprlock &> /dev/null ; then
+        echo "[ DONE ] - Hyprland was installed successfully!" 2>&1 | tee -a "$log" &> /dev/null
     else
-        echo "[ ERROR ] - Could not install Hyprland..." 2>&1 | tee -a "$log" &>> /dev/null
+        echo "[ ERROR ] - Could not install Hyprland..." 2>&1 | tee -a "$log" &> /dev/null
     fi
 
 clear
@@ -75,10 +72,10 @@ clear
 # Hyprpaper
 printf "${action} - Installing Hyprlock...\n"
   install_package_opi hyprpaper
-    if sudo zypper se -i hyprpaper &>> /dev/null ; then
-        echo "[ DONE ] - Hyprland was installed successfully!" 2>&1 | tee -a "$log" &>> /dev/null
+    if sudo zypper se -i hyprpaper &> /dev/null ; then
+        echo "[ DONE ] - Hyprland was installed successfully!" 2>&1 | tee -a "$log" &> /dev/null
     else
-        echo "[ ERROR ] - Could not install Hyprland..." 2>&1 | tee -a "$log" &>> /dev/null
+        echo "[ ERROR ] - Could not install Hyprland..." 2>&1 | tee -a "$log" &> /dev/null
     fi
 
 clear

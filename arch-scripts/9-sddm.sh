@@ -36,19 +36,16 @@ printf " \n \n"
 
 ###------ Startup ------###
 
-# finding the presend directory and log file
-present_dir=`pwd`
-# log directory
-log_dir="$present_dir/Logs"
-log="$log_dir"/sddm.log
-mkdir -p "$log_dir"
-if [[ ! -f "$log" ]]; then
-    touch "$log"
-fi
-
 # install script dir
-scripts_dir=`dirname "$(realpath "$0")"`
-source $scripts_dir/1-global_script.sh
+dir="$(dirname "$(realpath "$0")")"
+source "$dir/1-global_script.sh"
+
+# log directory
+parent_dir="$(dirname "$dir")"
+log_dir="$parent_dir/Logs"
+log="$log_dir/sddm-$(date +%d-%m-%y).log"
+mkdir -p "$log_dir"
+touch "$log"
 
 # packages for sddm
 sddm=(
@@ -92,8 +89,8 @@ valid_input=false
 while [ "$valid_input" != true ]; do
     printf "${attention} - Installing SDDM Theme\n"
 
-    git clone --depth=1 https://github.com/me-js-bro/sddm.git "$present_dir/.cache/sddm"
-    if [[ -d "$present_dir/.cache/sddm" ]]; then
+    git clone --depth=1 https://github.com/me-js-bro/sddm.git "$parent_dir/.cache/sddm"
+    if [[ -d "$parent_dir/.cache/sddm" ]]; then
         # Check if /usr/share/sddm/themes/simple-sddm exists and remove if it does
         if [ -d "/usr/share/sddm/themes/arch-sddm" ]; then
         sudo rm -rf "/usr/share/sddm/themes/arch-sddm"
@@ -105,7 +102,7 @@ while [ "$valid_input" != true ]; do
             sudo mkdir -p /usr/share/sddm/themes
             printf "${done} - Directory '/usr/share/sddm/themes' created.\n"
         fi
-      sudo cp -r "$present_dir/.cache/sddm/arch-sddm" /usr/share/sddm/themes/
+      sudo cp -r "$parent_dir/.cache/sddm/arch-sddm" /usr/share/sddm/themes/
       printf "[Theme]\nCurrent=arch-sddm\n" | sudo tee "$sddm_conf_dir/theme.conf.user"
     fi
     valid_input=true
@@ -113,7 +110,7 @@ done
 
 if [[ -d "/usr/share/sddm/themes/arch-sddm" ]]; then
     printf "${done} - Sddm theme was installed successfully."
-    rm -rf "$present_dir/.cache/sddm"
+    rm -rf "$parent_dir/.cache/sddm"
 fi
 
 clear

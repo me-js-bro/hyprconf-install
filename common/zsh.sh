@@ -37,15 +37,16 @@ printf " \n \n"
 
 ###------ Startup ------###
 
-# finding the presend directory and log file
-present_dir=`pwd`
+# install script dir
+dir="$(dirname "$(realpath "$0")")"
+source "$dir/1-global_script.sh"
+
 # log directory
-log_dir="$present_dir/Logs"
-log="$log_dir"/zsh.log
+parent_dir="$(dirname "$dir")"
+log_dir="$parent_dir/Logs"
+log="$log_dir/zsh-$(date +%d-%m-%y).log"
 mkdir -p "$log_dir"
-if [[ ! -f "$log" ]]; then
-    touch "$log"
-fi
+touch "$log"
 
 # check if there is a .bash directory available. if available, then backup it.
 if [ -d ~/.zsh ]; then
@@ -57,9 +58,9 @@ fi
 
 # now install zsh
 
-git clone --depth=1 https://github.com/me-js-bro/Zsh.git "$present_dir/.cache/Zsh"
-cd "$present_dir/.cache/Zsh"
-chmod +x install.sh
-./install.sh
+git clone --depth=1 https://github.com/me-js-bro/Zsh.git "$parent_dir/.cache/Zsh"
+cd "$parent_dir/.cache/Zsh" 2>&1 | tee -a "$log"
+chmod +x install.sh 2>&1 | tee -a "$log"
+./install.sh 2>&1 | tee -a "$log"
 
 clear

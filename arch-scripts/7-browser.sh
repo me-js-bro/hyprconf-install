@@ -37,19 +37,16 @@ printf " \n \n"
 
 ###------ Startup ------###
 
-# finding the presend directory and log file
-present_dir=`pwd`
-# log directory
-log_dir="$present_dir/Logs"
-log="$log_dir"/browser.log
-mkdir -p "$log_dir"
-if [[ ! -f "$log" ]]; then
-    touch "$log"
-fi
-
 # install script dir
-scripts_dir=`dirname "$(realpath "$0")"`
-source $scripts_dir/1-global_script.sh
+dir="$(dirname "$(realpath "$0")")"
+source "$dir/1-global_script.sh"
+
+# log directory
+parent_dir="$(dirname "$dir")"
+log_dir="$parent_dir/Logs"
+log="$log_dir/browser-$(date +%d-%m-%y).log"
+mkdir -p "$log_dir"
+touch "$log"
 
 # finding the aur helper
 aur_helper=$(command -v yay || command -v paru)
@@ -60,9 +57,9 @@ read -r -p "$(echo -e '\e[1;32mSelect: \e[0m')" browser
 printf " \n"
 
 if [[ "$browser" == "1" ]]; then
-    "$aur_helper" -S --noconfirm brave-bin
+    "$aur_helper" -S --noconfirm brave-bin 2>&1 | tee -a "$log"
 elif [[ "$browser" == "2" ]]; then
-    "$aur_helper" -S --noconfirm ungoogled-chromium-bin
+    "$aur_helper" -S --noconfirm ungoogled-chromium-bin 2>&1 | tee -a "$log"
 else
     printf "${attention} - A browser installation is important to open some web-applications\n"
     exit 1

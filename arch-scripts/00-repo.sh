@@ -39,18 +39,20 @@ printf " \n \n"
 ###------ Startup ------###
 
 # Finding the present directory and log file
-present_dir=`pwd`
-cache_file="$present_dir/.cache/user-cache"
-log_dir="$present_dir/Logs"
-log="$log_dir/aur-helper.log"
-mkdir -p "$log_dir"
-if [[ ! -f "$log" ]]; then
-    touch "$log"
-fi
+
 
 # install script dir
-scripts_dir=`dirname "$(realpath "$0")"`
-source $scripts_dir/1-global_script.sh
+dir="$(dirname "$(realpath "$0")")"
+source "$dir/1-global_script.sh"
+
+# log directory
+parent_dir="$(dirname "$dir")"
+cache_file="$parent_dir/.cache/user-cache"
+
+log_dir="$parent_dir/Logs"
+log="$log_dir/aur_helper-$(date +%d-%m-%y).log"
+mkdir -p "$log_dir"
+touch "$log"
 
 # Check for existing AUR helpers
 aur_helper=$(command -v yay || command -v paru)
@@ -71,7 +73,7 @@ if [[ -z "$aur_helper" ]]; then
         cd paru
         makepkg -si --noconfirm
         sleep 1
-        cd "$present_dir"
+        cd "$parent_dir"
         sudo rm -rf paru
         
     elif [[ "$aur" == "2" ]]; then
@@ -80,7 +82,7 @@ if [[ -z "$aur_helper" ]]; then
         cd yay
         makepkg -si --noconfirm
         sleep 1
-        cd "$present_dir"
+        cd "$parent_dir"
         sudo rm -rf yay
     else
         printf "${note} - Invalid selection. Please re-execute the script and choose between [1/2]. Exiting the script.\n"

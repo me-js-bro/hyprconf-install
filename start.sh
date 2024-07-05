@@ -21,23 +21,20 @@ done="[${cyan} DONE ${end}]"
 ask="[${orange} QUESTION ${end}]"
 error="[${red} ERROR ${end}]"
 
-# finding the presend directory
-present_dir=`pwd`
+# log directory
+dir="$(dirname "$(realpath "$0")")"
+log_dir="$dir/Logs"
+log="$log_dir"/1-install-$(date +%d-%m-%y).log
+mkdir -p "$log_dir"
+touch "$log"
+
 # creating a cache directory..
-cache_dir="$present_dir/.cache"
+cache_dir="$dir/.cache"
 cache_file="$cache_dir/user-cache"
 distro_cache="$cache_dir/distro"
 
 if [[ ! -d "$cache_dir" ]]; then
     mkdir -p "$cache_dir"
-fi
-
-# log directory
-log_dir="$present_dir/Logs"
-log="$log_dir"/1-install.log
-mkdir -p "$log_dir"
-if [[ ! -f "$log" ]]; then
-    touch "$log"
 fi
 
 display_text() {
@@ -101,9 +98,7 @@ printf "${cyan}Starting the Installation Script${end}.\n" && sleep 1 && clear
 printf "${cyan}Starting the Installation Script${end}..\n" && sleep 1 && clear
 printf "${cyan}Starting the Installation Script${end}...\n" && sleep 1
 
-
 check_distro && sleep 1 && clear
-
 
 
 printf "${cyan}Hyprland${end} Installation Script by\n" && sleep 0.5
@@ -195,8 +190,8 @@ if [[ -f "$cache_file" ]]; then
         read -r -p "$(echo -e '\e[1;32mSelect: \e[0m')" run_again
 
         if [[ "$run_again" =~ ^[Yy]$ ]]; then
-            rm -rf "$present_dir/.cache"
-            "$present_dir/start.sh"
+            rm -rf "$dir/.cache"
+            "$dir/start.sh"
         else
             exit 1
         fi
@@ -228,8 +223,8 @@ fi
 
 # =========  script execution  ========= #
 
-scripts_dir="$present_dir/${distro}-scripts"
-common_scripts="$present_dir"/common
+scripts_dir="$dir/${distro}-scripts"
+common_scripts="$dir"/common
 
 
 # =========  run scripts  ========= #
@@ -295,17 +290,26 @@ fi
 "$common_scripts/themes.sh"
 "$common_scripts/dotfiles.sh"
 
+# Function to check for the presence of a battery
+is_laptop() {
+    if [[ -d "/sys/class/power_supply/BAT0" ]]; then
+        echo "Laptop"
+    else
+        echo "Desktop"
+    fi
+}
+
+# Determine if the system is a laptop or desktop
+system_type=$(is_laptop)
+if [ "$system_type" = "Desktop" ]; then
+    printf "${attention} - This system is a Desktop. Some configuration will be skipped\n"
+    exit 0
+else
+    "$common_scripts/laptop.sh"
+fi
+
 clear
 sleep 1
-
-
-
-# =========  set default gtk theme  ========= #
-
-gsettings set org.gnome.desktop.interface gtk-theme "theme"
-gsettings set org.gnome.desktop.interface icon-theme "TokyoNight-SE"
-gsettings set org.gnome.desktop.interface cursor-theme 'Nordzy-cursors'
-
 
 
 # =========  removing package  ========= #
@@ -367,11 +371,10 @@ EOF
 # rebooting the system in 5 seconds
 if [[ "$reboot" =~ ^[Yy]$ ]]; then
     sleep 0.5 && clear
-    printf "${attention} - The system will Reboot in ${cyan}5s ${end}\n" && sleep 1 && clear
-    printf "${attention} - The system will Reboot in ${cyan}4s ${end}\n" && sleep 1 && clear
-    printf "${attention} - The system will Reboot in ${cyan}3s ${end}\n" && sleep 1 && clear
-    printf "${attention} - The system will Reboot in ${cyan}2s ${end}\n" && sleep 1 && clear
-    printf "${attention} - The system will Reboot in ${cyan}1s ${end}\n" && sleep 1 && clear
+    for time in 5 4 3 2 1; do
+        printf "${attention} - The system will Reboot in ${cyan}${time}s ${end}\n"
+        sleep 1 && clear
+    done
 
     clear && display_text_reboot && sleep 2
 

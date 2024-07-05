@@ -24,9 +24,6 @@ error="[${red} ERROR ${end}]"
 
 ###------ Startup ------###
 
-# finding the presend directory
-present_dir=`pwd`
-
 package_manager=$(command -v pacman || command -v yay || command -v paru)
 aur_helper=$(command -v yay || command -v paru) # find the aur helper
 

@@ -69,17 +69,17 @@ check_distro() {
             arch)
                 printf "${action} - Starting the script for ${cyan}$ID${end} Linux\n\n"
                 distro="arch"
-                echo "distro=$distro" >> "$distro_cache"
+                echo "distro=$distro" >> "$distro_cache" 2>&1 | tee -a "$log"
                 ;;
             fedora)
                 printf "${action} - Starting the script for ${cyan}$ID${end}\n\n"
                 distro="fedora"
-                echo "distro=$distro" >> "$distro_cache"
+                echo "distro=$distro" >> "$distro_cache" 2>&1 | tee -a "$log"
                 ;;
             opensuse*)
                 printf "${action} - Starting the script for ${cyan}$ID${end}\n\n"
                 distro="opensuse"
-                echo "distro=$distro" >> "$distro_cache"
+                echo "distro=$distro" >> "$distro_cache" 2>&1 | tee -a "$log"
                 ;;
             *)
                 printf "${error} - Sorry, the script won't work in your distro...\n"
@@ -190,8 +190,8 @@ if [[ -f "$cache_file" ]]; then
         read -r -p "$(echo -e '\e[1;32mSelect: \e[0m')" run_again
 
         if [[ "$run_again" =~ ^[Yy]$ ]]; then
-            rm -rf "$dir/.cache"
-            "$dir/start.sh"
+            rm -rf "$dir/.cache" 2>&1 | tee -a "$log"
+            "$dir/start.sh" 2>&1 | tee -a "$log"
         else
             exit 1
         fi
@@ -212,6 +212,7 @@ else
         # Ask user prompts if cache file doesn't contain variables
         ask_prompts "Would you like to install and enable ${blue}Bluetooth${end} service?" "bluetooth"
         ask_prompts "Would like to install ${yellow}Openbangla keyboard${end} and ${yellow}fcitx${end} to write in Bangla?" "write_bangla"
+        ask_prompts "Would you like to install ${orange}Brave Browser${end} or ${cyan}Chromium${end}?" "browsr"
         ask_prompts "Would you like to enable and configure ${green}sddm${end} theme?" "sddm"
         ask_prompts "Would like to install zsh & oh-my-zsh?\nIf no, then we will be customizing your bash with a custom themes created by ${cyan}Js Bro${end}..." "shell"
         ask_prompts "Would you like to install and configure ${cyan}Vs-Code${end}?" "vs_code"
@@ -229,83 +230,87 @@ common_scripts="$dir"/common
 
 # =========  run scripts  ========= #
 
-chmod +x "$scripts_dir"/*
-chmod +x "$common_scripts"/*
+chmod +x "$scripts_dir"/* 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
+chmod +x "$common_scripts"/* 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
 
+clear
 # running scripts
 if [[ "$distro" == "arch" ]]; then
     aur=$(command -v yay || command -v paru)
     if [[ -n "$aur" ]]; then
-        printf "${done} - Aur helper $aur was located... Moving on\n"
+        printf "${done} - Aur helper $aur was located... Moving on\n" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
+        sleep 1
     else
-        "$scripts_dir/00-repo.sh"
+        "$scripts_dir/00-repo.sh" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
     fi
 elif [[ "$distro" == "fedora" || "$distro" == "opensuse" ]]; then
-    "$scripts_dir/00-repo.sh"
+    "$scripts_dir/00-repo.sh" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
 fi
 
 # "$scripts_dir"/00-repo.sh
-"$scripts_dir/2-hyprland.sh"
-"$scripts_dir/3-other_packages.sh"
+"$scripts_dir/2-hyprland.sh" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
+"$scripts_dir/3-other_packages.sh" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
 
 # nwg-look and pywal installation script only for fedora
 if [[ "$distro" == "fedora" ]]; then
-    "$scripts_dir/4-nwg_look.sh"
-    "$scripts_dir/5-pywal.sh"
+    "$scripts_dir/4-nwg_look.sh" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
+    "$scripts_dir/5-pywal.sh" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
 fi
 
 
-"$scripts_dir/6-fonts.sh"
+"$scripts_dir/6-fonts.sh" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
 
 if [[ "$write_bangla" =~ ^[Yy]$ ]]; then
-    "$common_scripts/write_bangla.sh"
+    "$common_scripts/write_bangla.sh" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
 fi
 
-"$scripts_dir/7-browser.sh"
+if [[ "$browsr" =~ ^[Yy]$ ]]; then
+    "$scripts_dir/7-browser.sh" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
+fi
 
 if [[ "$vs_code" =~ ^[Yy]$ ]]; then
-    "$scripts_dir/8-vs_code.sh"
+    "$scripts_dir/8-vs_code.sh" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
 fi
 
 if [[ "$sddm" =~ ^[Yy]$ ]]; then
-    "$scripts_dir/9-sddm.sh"
+    "$scripts_dir/9-sddm.sh" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
 fi
 
-"$scripts_dir/10-xdg_dp.sh"
+"$scripts_dir/10-xdg_dp.sh" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
 
 if [[ "$nvidia" =~ ^[Yy]$ ]]; then
-    "$scripts_dir/nvidia.sh"
+    "$scripts_dir/nvidia.sh" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
 fi
 
 if [[ "$bluetooth" =~ ^[Yy]$ ]]; then
-    "$common_scripts/bluetooth.sh"
+    "$common_scripts/bluetooth.sh" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
 fi
 
 if [[ "$shell" =~ ^[Yy]$ ]]; then
-    "$common_scripts/zsh.sh"
+    "$common_scripts/zsh.sh" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
 else 
-    "$common_scripts/bash.sh"
+    "$common_scripts/bash.sh" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
 fi
 
-"$common_scripts/themes.sh"
-"$common_scripts/dotfiles.sh"
+"$common_scripts/themes.sh" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
+"$common_scripts/dotfiles.sh" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
 
 # Function to check for the presence of a battery
 is_laptop() {
     if [[ -d "/sys/class/power_supply/BAT0" ]]; then
-        echo "Laptop"
+        echo "Laptop" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
     else
-        echo "Desktop"
+        echo "Desktop" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
     fi
 }
 
 # Determine if the system is a laptop or desktop
 system_type=$(is_laptop)
 if [ "$system_type" = "Desktop" ]; then
-    printf "${attention} - This system is a Desktop. Some configuration will be skipped\n"
+    printf "${attention} - This system is a Desktop. Some configuration will be skipped\n" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
     exit 0
 else
-    "$common_scripts/laptop.sh"
+    "$common_scripts/laptop.sh" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
 fi
 
 clear
@@ -325,8 +330,8 @@ if [[ "$distro" = "arch" ]]; then
 
     for pkg in "${uninstall_pkg[@]}"; do
         if sudo "$pkg_man" -Qs "$pkg" &> /dev/null; then
-            printf "${note} - Removing $pkg\n"
-            sudo pacman -Rns --noconfirm "$pkg" &> /dev/null
+            printf "${note} - Removing $pkg\n" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
+            sudo pacman -Rns --noconfirm "$pkg" 2>&1 | tee -a "$log" &> /dev/null
         fi
     done
 
@@ -334,8 +339,8 @@ elif [[ "$distro" = "fedora" ]]; then
 
     for pkg in "${uninstall_pkg[@]}"; do
         if sudo dnf list installed "$pkg" &> /dev/null; then
-            printf "${note} - Removing $pkg\n"
-            sudo dnf remove -y "$pkg"  &> /dev/null
+            printf "${note} - Removing $pkg\n" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
+            sudo dnf remove -y "$pkg" 2>&1 | tee -a "$log"  &> /dev/null
         fi
     done
 
@@ -343,8 +348,8 @@ elif [[ "$distro" = "opensuser" ]]; then
 
     for pkg in "$uninstall_pkg[@]"; do
         if sudo zypper se -i "$pkg" &> /dev/null; then
-            printf "${note} - Removing $pkg\n"
-            sudo zypper remove -y "$pkg" &> /dev/null
+            printf "${note} - Removing $pkg\n" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
+            sudo zypper remove -y "$pkg" 2>&1 | tee -a "$log" &> /dev/null
         fi
     done
 fi
@@ -378,7 +383,7 @@ if [[ "$reboot" =~ ^[Yy]$ ]]; then
 
     clear && display_text_reboot && sleep 2
 
-    systemctl reboot --now
+    systemctl reboot --now 2>&1 | tee -a "$log"
 else
     printf "${orange}Ok, but it's good to reboot the system. So exiting the script...${end}\n" && sleep 2
     exit 1

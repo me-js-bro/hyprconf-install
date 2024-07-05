@@ -38,10 +38,10 @@ printf " \n \n"
 
 # install script dir
 dir="$(dirname "$(realpath "$0")")"
-source "$dir/1-global_script.sh"
+parent_dir="$(dirname "$dir")"
+source "$parent_dir/1-global_script.sh"
 
 # log directory
-parent_dir="$(dirname "$dir")"
 log_dir="$parent_dir/Logs"
 log="$log_dir/vs_code-$(date +%d-%m-%y).log"
 mkdir -p "$log_dir"

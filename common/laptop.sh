@@ -39,19 +39,16 @@ printf " \n \n"
 ###------ Startup ------###
 
 # install script dir
-
-# creating a cache directory..
+dir="$(dirname "$(realpath "$0")")"
+parent_dir="$(dirname "$dir")"
 cache_dir="$parent_dir/.cache"
 distro_cache="$cache_dir/distro"
 source "$distro_cache"
 
 # install script dir
-dir="$(dirname "$(realpath "$0")")"
-
-# log directory
-parent_dir="$(dirname "$dir")"
 source "$parent_dir/${distro}-scripts/1-global_script.sh"
 
+# log dir
 log_dir="$parent_dir/Logs"
 log="$log_dir/laptop-$(date +%d-%m-%y).log"
 mkdir -p "$log_dir"
@@ -66,7 +63,7 @@ packages=(
 printf "${attention} - This system is a Laptop. Proceeding with some configuration.\n" && sleep 1
 
 # Install necessary packages
-printf "${action} - Installing necessary packages"
+printf "${action} - Installing necessary packages\n"
 for pkgs in "${packages[@]}"; do
-    install_package "$pkgs"
-fi
+    install_package "$pkgs" || { printf "${error} - Could not install $pkgs, exiting..\n"; exit 1; } 2>&1 | tee -a "$log"
+done

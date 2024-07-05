@@ -37,19 +37,18 @@ printf " \n \n"
 
 ###------ Startup ------###
 
+dir="$(dirname "$(realpath "$0")")"
+parent_dir="$(dirname "$dir")"
+cache_dir="$parent_dir/.cache"
+distro_cache="$cache_dir/distro"
+source "$distro_cache"
 
 # install script dir
-dir="$(dirname "$(realpath "$0")")"
-source "$dir/1-global_script.sh"
-
-# present dir
-
-cache_dir="$parent_dir/.cache"
+source "$parent_dir/${distro}-scripts/1-global_script.sh"
 
 # log directory
-parent_dir="$(dirname "$dir")"
 log_dir="$parent_dir/Logs"
-log="$log_dir/vs_code-$(date +%d-%m-%y).log"
+log="$log_dir/dotfiles-$(date +%d-%m-%y).log"
 mkdir -p "$log_dir"
 touch "$log"
 
@@ -61,7 +60,9 @@ sleep 1
 mkdir -p "$cache_dir"
 
 # Clone the repository and log the output
-git clone --depth=1 https://github.com/me-js-bro/hyprconf.git "$cache_dir/hyprconf" 2>&1 | tee -a "$log"
+if [[ ! -d "$cache_dir/hyprconf" ]]; then
+  git clone --depth=1 https://github.com/me-js-bro/hyprconf.git "$cache_dir/hyprconf" 2>&1 | tee -a "$log"
+fi
 
 sleep 1
 
@@ -76,6 +77,7 @@ fi
 
 if [[ -f "$HOME/.config/hypr/scripts/startup.sh" ]]; then
   printf "${done} - Dotfiles setup was successful.!\n" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
+  exit 0
   clear
 else
   printf "${error} - Could not setup dotfiles. Maybe there was an error. Please check the ${green}'$log'${end} file.\n" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")

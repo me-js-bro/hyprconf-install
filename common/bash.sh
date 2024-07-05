@@ -37,15 +37,15 @@ printf " \n \n"
 
 ###------ Startup ------###
 
-# install script dir
 dir="$(dirname "$(realpath "$0")")"
-source "$dir/1-global_script.sh"
-
-# present dir
-
-
-# log directory
 parent_dir="$(dirname "$dir")"
+cache_dir="$parent_dir/.cache"
+distro_cache="$cache_dir/distro"
+source "$distro_cache"
+
+# install script dir
+source "$parent_dir/${distro}-scripts/1-global_script.sh"
+
 log_dir="$parent_dir/Logs"
 log="$log_dir/bash-$(date +%d-%m-%y).log"
 mkdir -p "$log_dir"
@@ -61,9 +61,18 @@ fi
 
 # now install bash
 
-git clone --depth=1 https://github.com/me-js-bro/Bash.git "$parent_dir/.cache/Bash" && sleep 1
-cd "$parent_dir/.cache/Bash" 2>&1 | tee -a "$log"
-chmod +x install.sh 2>&1 | tee -a "$log"
-./install.sh 2>&1 | tee -a "$log"
+if [[ ! -d "$parent_dir/.cache/Bash" ]]; then
+    git clone --depth=1 https://github.com/me-js-bro/Bash.git "$parent_dir/.cache/Bash" 2>&1 | tee -a "$log" && sleep 1
+fi
 
-clear
+if [[ -d "$parent_dir/.cache/Bash" ]]; then
+    cd "$parent_dir/.cache/Bash" || printf "${error } - Could not cd into $parent_dir/.cache/Bash" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
+    chmod +x install.sh 2>&1 | tee -a "$log"
+    ./install.sh 2>&1 | tee -a "$log"
+    exit 0
+else
+    printf "${error} - Could not fine $parent_dir/.cache/Bash. exiting \n"
+    exit 1
+fi
+
+# clear

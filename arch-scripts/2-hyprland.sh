@@ -33,6 +33,17 @@ display_text() {
 EOF
 }
 
+aur_text() {
+    cat << "EOF"
+        _                  ____               _                                     
+       / \   _   _  _ __  |  _ \  __ _   ___ | | __ __ _   __ _   ___  ___          
+      / _ \ | | | || '__| | |_) |/ _` | / __|| |/ // _` | / _` | / _ \/ __|         
+     / ___ \| |_| || |    |  __/| (_| || (__ |   <| (_| || (_| ||  __/\__ \ _  _  _ 
+    /_/   \_\\__,_||_|    |_|    \__,_| \___||_|\_\\__,_| \__, | \___||___/(_)(_)(_)
+                                                          |___/                     
+EOF
+}
+
 clear && display_text
 printf " \n \n"
 
@@ -106,6 +117,8 @@ for hypr_pkgs in "${hypr_packages[@]}"; do
 done
 
 sleep 1
+
+clear && aur_text
 
 printf "${action} - Now installing some packages from the aur helper...\n" && sleep 1
 # Installing from the AUR Helper

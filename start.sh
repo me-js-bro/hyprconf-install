@@ -320,7 +320,6 @@ sleep 1
 # =========  removing package  ========= #
 
 uninstall_pkg=(
-    kitty
     wofi
 )
 

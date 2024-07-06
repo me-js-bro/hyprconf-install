@@ -69,7 +69,9 @@ other_packages=(
     pacman-contrib
     pamixer
     pavucontrol
+    python-pillow
     python-pywal
+    ranger
     wget
     yad
 )

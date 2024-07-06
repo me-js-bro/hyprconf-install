@@ -64,12 +64,12 @@ aur_helper=$(command -v yay || command -v paru) # find the aur helper
 
 # Main Hyprland packages
 hypr_packages=(
-alacritty
 cliphist
 eog
 hyprland
 hyprlock
 hyprpaper
+kitty
 polkit-gnome
 qt5ct
 qt6ct

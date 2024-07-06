@@ -52,7 +52,6 @@ mkdir -p "$log_dir"
 touch "$log"
 
 main_packages=(
-  alacritty
   curl
   eog
   fastfetch
@@ -62,6 +61,7 @@ main_packages=(
   grim
   ImageMagick
   jq
+  kitty
   kvantum
   libX11-devel
   libXext-devel
@@ -79,10 +79,12 @@ main_packages=(
   python3-requests
   python3-devel
   python3-pip
+  python3-pillow
   python3-pyquery
   qt5ct
   qt6ct
   qt6-qtsvg
+  ranger
   rofi-wayland
   slurp
   swappy

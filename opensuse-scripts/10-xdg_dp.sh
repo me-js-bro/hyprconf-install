@@ -37,19 +37,16 @@ printf " \n \n"
 
 ###------ Startup ------###
 
-# finding the presend directory and log file
-present_dir=`pwd`
-# log directory
-log_dir="$present_dir/Logs"
-log="$log_dir"/desktop-portal.log
-mkdir -p "$log_dir"
-if [[ ! -f "$log" ]]; then
-    touch "$log"
-fi
-
 # install script dir
-scripts_dir=`dirname "$(realpath "$0")"`
-source $scripts_dir/1-global_script.sh
+dir="$(dirname "$(realpath "$0")")"
+source "$dir/1-global_script.sh"
+
+# log directory
+parent_dir="$(dirname "$dir")"
+log_dir="$parent_dir/Logs"
+log="$log_dir/xdg_dp-$(date +%d-%m-%y).log"
+mkdir -p "$log_dir"
+touch "$log"
 
 xdg=(
 xdg-desktop-portal-hyprland
@@ -80,12 +77,12 @@ while true; do
         # Clean out other portals
         printf "${note} Clearing any other xdg-desktop-portal implementations...\n"
         # Check if packages are installed and uninstall if present
-        if sudo zypper se -i xdg-desktop-portal-wlr &>> /dev/null; then
+        if sudo zypper se -i xdg-desktop-portal-wlr &> /dev/null; then
         printf "Removing xdg-desktop-portal-wlr..."
         sudo zypper rm -y xdg-desktop-portal-wlr 2>&1 | tee -a "$log"
         fi
 
-        if sudo zypper se -i xdg-desktop-portal-lxqt &>> /dev/null; then
+        if sudo zypper se -i xdg-desktop-portal-lxqt &> /dev/null; then
         printf "Removing xdg-desktop-portal-lxqt..."
         sudo zypper rm -y xdg-desktop-portal-lxqt 2>&1 | tee -a "$log"
         fi

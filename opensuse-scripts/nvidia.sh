@@ -38,19 +38,16 @@ printf " \n \n"
 
 ###------ Startup ------###
 
-# finding the presend directory and log file
-present_dir=`pwd`
-# log directory
-log_dir="$present_dir/Logs"
-log="$log_dir"/nvidia.log
-mkdir -p "$log_dir"
-if [[ ! -f "$log" ]]; then
-    touch "$log"
-fi
-
 # install script dir
-scripts_dir=`dirname "$(realpath "$0")"`
-source $scripts_dir/1-global_script.sh
+dir="$(dirname "$(realpath "$0")")"
+source "$dir/1-global_script.sh"
+
+# log directory
+parent_dir="$(dirname "$dir")"
+log_dir="$parent_dir/Logs"
+log="$log_dir/nvidia-$(date +%d-%m-%y).log"
+mkdir -p "$log_dir"
+touch "$log"
 
 nvidia_pkg=(
   dkms
@@ -84,9 +81,9 @@ printf "${action} - Installing Nvidia packages...\n"
  for NVIDIA in "${nvidia_pkg[@]}" "${nvidia_drivers[@]}"; do
    sudo zypper in --auto-agree-with-licenses -y "$NVIDIA"
     if sudo zypper se -i "$NVIDIA" &>> /dev/null ; then
-        echo "[ DONE ] - $NVIDIA was installed successfully!" 2>&1 | tee -a "$log" &>> /dev/null
+        echo "[ DONE ] - $NVIDIA was installed successfully!" 2>&1 | tee -a "$log" &> /dev/null
     else
-        echo "[ ERROR ] - Could not install $NVIDIA..." 2>&1 | tee -a "$log" &>> /dev/null
+        echo "[ ERROR ] - Could not install $NVIDIA..." 2>&1 | tee -a "$log" &> /dev/null
     fi
  done
 

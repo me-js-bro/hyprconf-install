@@ -24,16 +24,6 @@ error="[${red} ERROR ${end}]"
 
 ###------ Startup ------###
 
-# finding the presend directory
-present_dir=`pwd`
-# log directory
-log_dir="$present_dir/Logs"
-log="$log_dir"/global.log
-mkdir -p "$log_dir"
-if [[ ! -f "$log" ]]; then
-    touch "$log"
-fi
-
 # package installation function..
 install_package() {
 

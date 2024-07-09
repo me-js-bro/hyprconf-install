@@ -36,19 +36,16 @@ printf " \n \n"
 
 ###------ Startup ------###
 
-# finding the presend directory and log file
-present_dir=`pwd`
-# log directory
-log_dir="$present_dir/Logs"
-log="$log_dir"/sddm.log
-mkdir -p "$log_dir"
-if [[ ! -f "$log" ]]; then
-    touch "$log"
-fi
-
 # install script dir
-scripts_dir=`dirname "$(realpath "$0")"`
-source $scripts_dir/1-global_script.sh
+dir="$(dirname "$(realpath "$0")")"
+source "$dir/1-global_script.sh"
+
+# log directory
+parent_dir="$(dirname "$dir")"
+log_dir="$parent_dir/Logs"
+log="$log_dir/sddm-$(date +%d-%m-%y).log"
+mkdir -p "$log_dir"
+touch "$log"
 
 # packages for sddm
 sddm=(
@@ -63,22 +60,22 @@ printf "${attention} - Installing sddm and dependencies.... \n"
 for sddm_pkgs in "${sddm[@]}"; do
   install_package "$sddm_pkgs"
   if sudo pacman -Qs "$sddm_pkgs" &>> /dev/null; then
-        echo "[ DONE ] - $sddm_pkgs was installed successfully!\n" 2>&1 | tee -a "$log" &>> /dev/null
+        echo "[ DONE ] - $sddm_pkgs was installed successfully!\n" 2>&1 | tee -a "$log" &> /dev/null
   else
-        echo "[ ERROR ] - Sorry, could not install $sddm_pkgs!\n" 2>&1 | tee -a "$log" &>> /dev/null
+        echo "[ ERROR ] - Sorry, could not install $sddm_pkgs!\n" 2>&1 | tee -a "$log" &> /dev/null
   fi
 done
 
 # Check if other login managers are installed and disabling their service before enabling sddm
 for login_manager in lightdm gdm lxdm lxdm-gtk3; do
-  if sudo pacman -Qs "$login_manager" &>> /dev/null; then
+  if sudo pacman -Qs "$login_manager" 2>&1 | tee -a "$log" &> /dev/null; then
     echo "Disabling $login_manager..."
-    sudo systemctl disable "$login_manager"
+    sudo systemctl disable "$login_manager" 2>&1 | tee -a "$log"
   fi
 done
 
 printf "${action} - Activating sddm service........\n"
-sudo systemctl enable sddm.service
+sudo systemctl enable sddm.service 2>&1 | tee -a "$log"
 
 # Set up SDDM
 printf "${action} - Setting up the login screen."
@@ -92,28 +89,28 @@ valid_input=false
 while [ "$valid_input" != true ]; do
     printf "${attention} - Installing SDDM Theme\n"
 
-    git clone --depth=1 https://github.com/me-js-bro/sddm.git "$present_dir/.cache/sddm"
-    if [[ -d "$present_dir/.cache/sddm" ]]; then
+    git clone --depth=1 https://github.com/me-js-bro/sddm.git "$parent_dir/.cache/sddm"
+    if [[ -d "$parent_dir/.cache/sddm" ]]; then
         # Check if /usr/share/sddm/themes/simple-sddm exists and remove if it does
         if [ -d "/usr/share/sddm/themes/arch-sddm" ]; then
-        sudo rm -rf "/usr/share/sddm/themes/arch-sddm"
+        sudo rm -rf "/usr/share/sddm/themes/arch-sddm" 2>&1 | tee -a "$log"
         printf "${done} - Removed existing 'arch-sddm' directory.\n"
         fi
 
         # Check if simple-sddm directory exists in the current directory and remove if it does
         if [ ! -d "/usr/share/sddm/themes" ]; then
-            sudo mkdir -p /usr/share/sddm/themes
+            sudo mkdir -p /usr/share/sddm/themes 2>&1 | tee -a "$log"
             printf "${done} - Directory '/usr/share/sddm/themes' created.\n"
         fi
-      sudo cp -r "$present_dir/.cache/sddm/arch-sddm" /usr/share/sddm/themes/
-      printf "[Theme]\nCurrent=arch-sddm\n" | sudo tee "$sddm_conf_dir/theme.conf.user"
+      sudo cp -r "$parent_dir/.cache/sddm/arch-sddm" /usr/share/sddm/themes/ 2>&1 | tee -a "$log"
+      printf "[Theme]\nCurrent=arch-sddm\n" | sudo tee "$sddm_conf_dir/theme.conf.user" 2>&1 | tee -a "$log"
     fi
     valid_input=true
 done
 
 if [[ -d "/usr/share/sddm/themes/arch-sddm" ]]; then
-    printf "${done} - Sddm theme was installed successfully."
-    rm -rf "$present_dir/.cache/sddm"
+    printf "${done} - Sddm theme was installed successfully." 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
+    rm -rf "$parent_dir/.cache/sddm" 2>&1 | tee -a "$log"
 fi
 
 clear

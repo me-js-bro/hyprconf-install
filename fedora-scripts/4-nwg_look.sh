@@ -24,19 +24,18 @@ error="[${red} ERROR ${end}]"
 
 ###------ Startup ------###
 
-# finding the presend directory and log file
-present_dir=`pwd`
-# log directory
-log_dir="$present_dir/Logs"
-mkdir -p "$log_dir"
-log="$log_dir"/nwg-look.log
-if [[ ! -f "$log" ]]; then
-    touch "$log"
-fi
-
 # install script dir
-scripts_dir=`dirname "$(realpath "$0")"`
-source $scripts_dir/1-global_script.sh
+dir="$(dirname "$(realpath "$0")")"
+source "$dir/1-global_script.sh"
+
+
+
+# log directory
+parent_dir="$(dirname "$dir")"
+log_dir="$parent_dir/Logs"
+log="$log_dir/nwg_look-$(date +%d-%m-%y).log"
+mkdir -p "$log_dir"
+touch "$log"
 
 # packages to install nwg-look
 packages=(
@@ -59,8 +58,8 @@ printf "${action} Installing nwg-look\n"
         printf "${done} - nwg-look is already installed..\n" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
     else
         # Clone nwg-look repository if directory doesn't exist
-        if git clone https://github.com/nwg-piotr/nwg-look.git "$present_dir/.cache/nwg-look" 2>&1 | tee -a "$log"; then
-            cd "$present_dir/.cache/nwg-look"
+        if git clone https://github.com/nwg-piotr/nwg-look.git "$parent_dir/.cache/nwg-look" 2>&1 | tee -a "$log"; then
+            cd "$parent_dir/.cache/nwg-look"
 
             # Build nwg-look
             make build

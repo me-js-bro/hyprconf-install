@@ -38,19 +38,16 @@ printf " \n \n"
 
 ###------ Startup ------###
 
-# finding the presend directory and log file
-present_dir=`pwd`
-# log directory
-log_dir="$present_dir/Logs"
-log="$log_dir"/nvidia.log
-mkdir -p "$log_dir"
-if [[ ! -f "$log" ]]; then
-    touch "$log"
-fi
-
 # install script dir
-scripts_dir=`dirname "$(realpath "$0")"`
-source $scripts_dir/1-global_script.sh
+dir="$(dirname "$(realpath "$0")")"
+source "$dir/1-global_script.sh"
+
+# log directory
+parent_dir="$(dirname "$dir")"
+log_dir="$parent_dir/Logs"
+log="$log_dir/nvdia-$(date +%d-%m-%y).log"
+mkdir -p "$log_dir"
+touch "$log"
 
 nvidia_pkg=(
   nvidia-dkms

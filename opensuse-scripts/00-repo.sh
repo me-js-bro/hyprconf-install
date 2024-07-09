@@ -39,15 +39,16 @@ printf " \n \n"
 
 ###------ Startup ------###
 
-# finding the presend directory and log file
-present_dir=`pwd`
+# install script dir
+dir="$(dirname "$(realpath "$0")")"
+source "$dir/1-global_script.sh"
+
 # log directory
-log_dir="$present_dir/Logs"
-log="$log_dir"/repo.log
+parent_dir="$(dirname "$dir")"
+log_dir="$parent_dir/Logs"
+log="$log_dir/repo-$(date +%d-%m-%y).log"
 mkdir -p "$log_dir"
-if [[ ! -f "$log" ]]; then
-    touch "$log"
-fi
+touch "$log"
 
 # packman repository
 packman_repo="https://ftp.gwdg.de/pub/linux/misc/packman/suse/openSUSE_Tumbleweed/"
@@ -71,18 +72,18 @@ sudo zypper -n dup --from packman --allow-vendor-change 2>&1 | tee -a "$log"
 for deps in "${dependencies[@]}"; do
     install_package_base "$deps"
     if sudo zypper se -i "$deps" &>> /dev/null ; then
-      echo "[ DONE ] - '$deps' was installed successfully!" 2>&1 | tee -a "$log" &>> /dev/null
+      echo "[ DONE ] - '$deps' was installed successfully!" 2>&1 | tee -a "$log" &> /dev/null
     else
-        echo "[ ERROR ] - Sorry, could not install '$deps'" 2>&1 | tee -a "$log" &>> /dev/null
+        echo "[ ERROR ] - Sorry, could not install '$deps'" 2>&1 | tee -a "$log" &> /dev/null
     fi
 done
 
 for opis in "${opi[@]}"; do
     install_package "$opis"
     if sudo zypper se -i "$opis" &>> /dev/null ; then
-      echo "[ DONE ] - '$opis' was installed successfully!" 2>&1 | tee -a "$log" &>> /dev/null
+      echo "[ DONE ] - '$opis' was installed successfully!" 2>&1 | tee -a "$log" &> /dev/null
     else
-        echo "[ ERROR ] - Sorry, could not install '$opis'" 2>&1 | tee -a "$log" &>> /dev/null
+        echo "[ ERROR ] - Sorry, could not install '$opis'" 2>&1 | tee -a "$log" &> /dev/null
     fi
 done
 

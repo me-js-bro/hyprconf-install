@@ -24,15 +24,15 @@ error="[${red} ERROR ${end}]"
 
 ###------ Startup ------###
 
-# finding the presend directory and log file
-present_dir=`pwd`
+# install script dir
+dir="$(dirname "$(realpath "$0")")"
+
 # log directory
-log_dir="$present_dir/Logs"
-log="$log_dir"/vs-code.log
+parent_dir="$(dirname "$dir")"
+log_dir="$parent_dir/Logs"
+log="$log_dir/vs_code_theme-$(date +%d-%m-%y).log"
 mkdir -p "$log_dir"
-if [[ ! -f "$log" ]]; then
-    touch "$log"
-fi
+touch "$log"
 
 vs_code_dir="$HOME/.config/Code"
 vs_code_plugins_dir="$HOME/.vscode"
@@ -50,8 +50,8 @@ vs_code_plugins_dir="$HOME/.vscode"
     fi
     
 # copying vs code themes and plugins dir
-printf "${action} - Copying Code directory..."
-assets_dir="$present_dir/assets"
+printf "${action} - Copying Code directory.\n"
+assets_dir="$parent_dir/assets"
 
 cp -r "$assets_dir/Code" "$HOME/.config/" 2>&1 | tee -a "$log"
 cp -r "$assets_dir/.vscode" "$HOME/" 2>&1 | tee -a "$log"

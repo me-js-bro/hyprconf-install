@@ -24,32 +24,23 @@ error="[${red} ERROR ${end}]"
 
 ###------ Startup ------###
 
-# finding the presend directory
-present_dir=`pwd`
-# log directory
-log_dir="$present_dir/Logs"
-log="$log_dir"/global.log
-mkdir -p "$log_dir"
-if [[ ! -f "$log" ]]; then
-    touch "$log"
-fi
-
 # package installation function..
 install_package() {
 
   # Checking if package is already installed
-  if sudo zypper se -i "$1" &>> /dev/null ; then
+  if sudo zypper se -i "$1" &> /dev/null ; then
     printf "${done} - $1 is already installed. Skipping...\n"
   else
     # Package not installed
     printf "${action} - Installing $1 ...\n"
     sudo zypper in -y "$1"
     # Making sure package is installed
-    if sudo zypper se -i "$1" &>> /dev/null ; then
+    if sudo zypper se -i "$1" &> /dev/null ; then
       printf "${done} - $1 was installed successfully!\n\n"
     else
-      # Something is missing, exiting to review log
+      # Something is missing,
       printf "${error} - $1 failed to install :( , please check the install.log .Maybe you need to install manually.\n"
+      exit 1
     fi
   fi
 }
@@ -58,18 +49,19 @@ install_package() {
 install_package_base() {
 
   # Checking if package is already installed
-  if sudo zypper se -i "$1" &>> /dev/null ; then
+  if sudo zypper se -i "$1" &> /dev/null ; then
     printf "${done} - $1 is already installed. Skipping...\n"
   else
     # Package not installed
     printf "${action} - Installing $1 ...\n"
-    sudo zypper in -y -t pattern "$1" 2>&1 | tee -a "$log"
+    sudo zypper in -y -t pattern "$1"
     # Making sure package is installed
-    if sudo zypper se -i "$1" &>> /dev/null ; then
+    if sudo zypper se -i "$1" &> /dev/null ; then
       printf "${done} - $1 was installed successfully!\n\n"
     else
-      # Something is missing, exiting to review log
+      # Something is missing,
       printf "${error} - $1 failed to install :( , please check the install.log .Maybe you need to install manually.\n"
+      exit 1
     fi
   fi
 }
@@ -77,22 +69,20 @@ install_package_base() {
 # package installation function no recommends..
 install_package_no_recommands() {
 
-    # set the log files variable
-    log="$2"
-
   # Checking if package is already installed
-  if sudo zypper se -i "$1" &>> /dev/null ; then
+  if sudo zypper se -i "$1" &> /dev/null ; then
     printf "${done} - $1 is already installed. Skipping...\n"
   else
     # Package not installed
     printf "${action} - Installing $1 ...\n"
-    sudo zypper in -y --no-recommends "$1" 2>&1 | tee -a "$log"
+    sudo zypper in -y --no-recommends "$1"
     # Making sure package is installed
-    if sudo zypper se -i "$1" &>> /dev/null ; then
+    if sudo zypper se -i "$1" &> /dev/null ; then
       printf "${done} - $1 was installed successfully!\n\n"
     else
       # Something is missing, exiting to review log
       printf "${error} - $1 failed to install :( , please check the install.log .Maybe you need to install manually.\n"
+      exit 1
     fi
   fi
 }
@@ -100,22 +90,20 @@ install_package_no_recommands() {
 # package installation function ( opi )..
 install_package_opi() {
 
-    # set the log files variable
-    log="$2"
-
   # Checking if package is already installed
-  if sudo zypper se -i "$1" &>> /dev/null ; then
+  if sudo zypper se -i "$1" &> /dev/null ; then
     printf "${done} - $1 is already installed. Skipping...\n"
   else
     # Package not installed
     printf "${action} - Installing $1 ...\n"
-    sudo opi "$1" -n 2>&1 | tee -a "$log"
+    sudo opi "$1" -n
     # Making sure package is installed
-    if sudo zypper se -i "$1" &>> /dev/null ; then
+    if sudo zypper se -i "$1" &> /dev/null ; then
       printf "${done} - $1 was installed successfully!\n\n"
     else
       # Something is missing, exiting to review log
       printf "${error} - $1 failed to install :( , please check the install.log .Maybe you need to install manually.\n"
+      exit 1
     fi
   fi
 }

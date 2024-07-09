@@ -39,15 +39,16 @@ printf " \n \n"
 
 ###------ Startup ------###
 
-# finding the presend directory and log file
-present_dir=`pwd`
+# install script dir
+dir="$(dirname "$(realpath "$0")")"
+source "$dir/1-global_script.sh"
+
 # log directory
-log_dir="$present_dir/Logs"
-log="$log_dir"/copr-repo.log
+parent_dir="$(dirname "$dir")"
+log_dir="$parent_dir/Logs"
+log="$log_dir/copr-$(date +%d-%m-%y).log"
 mkdir -p "$log_dir"
-if [[ ! -f "$log" ]]; then
-    touch "$log"
-fi
+touch "$log"
 
 # List of COPR repositories to be added and enabled
 copr_repos=(
@@ -67,13 +68,13 @@ read -p "Select: " config
 
 if [[ "$config" =~ ^[Nn]$ ]]; then
     # Check and add configuration settings to /etc/dnf/dnf.conf
-    add_config_if_not_present "/etc/dnf/dnf.conf" "max_parallel_downloads=5"
-    add_config_if_not_present "/etc/dnf/dnf.conf" "fastestmirrors=True"
-    add_config_if_not_present "/etc/dnf/dnf.conf" "defaultyes=True"
+    add_config_if_not_present "/etc/dnf/dnf.conf" "max_parallel_downloads=5" 2>&1 | tee -a "$log"
+    add_config_if_not_present "/etc/dnf/dnf.conf" "fastestmirrors=True" 2>&1 | tee -a "$log"
+    add_config_if_not_present "/etc/dnf/dnf.conf" "defaultyes=True" 2>&1 | tee -a "$log"
 fi
 
 # enabling 3rd party repo
-sudo dnf install -y https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm &&
+install_package https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm 2>&1 | tee -a "$log" &&
 
 
 # Enable COPR Repositories 

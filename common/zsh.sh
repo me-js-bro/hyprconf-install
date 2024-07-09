@@ -37,15 +37,19 @@ printf " \n \n"
 
 ###------ Startup ------###
 
-# finding the presend directory and log file
-present_dir=`pwd`
-# log directory
-log_dir="$present_dir/Logs"
-log="$log_dir"/zsh.log
+dir="$(dirname "$(realpath "$0")")"
+parent_dir="$(dirname "$dir")"
+cache_dir="$parent_dir/.cache"
+distro_cache="$cache_dir/distro"
+source "$distro_cache"
+
+# install script dir
+source "$parent_dir/${distro}-scripts/1-global_script.sh"
+
+log_dir="$parent_dir/Logs"
+log="$log_dir/zsh-$(date +%d-%m-%y).log"
 mkdir -p "$log_dir"
-if [[ ! -f "$log" ]]; then
-    touch "$log"
-fi
+touch "$log"
 
 # check if there is a .bash directory available. if available, then backup it.
 if [ -d ~/.zsh ]; then
@@ -55,11 +59,20 @@ if [ -d ~/.zsh ]; then
     printf "${done} - Backup done..\n \n"
 fi
 
-# now install zsh
+# now install bash
 
-git clone --depth=1 https://github.com/me-js-bro/Zsh.git "$present_dir/.cache/Zsh"
-cd "$present_dir/.cache/Zsh"
-chmod +x install.sh
-./install.sh
+if [[ ! -d "$parent_dir/.cache/Zsh" ]]; then
+    git clone --depth=1 https://github.com/me-js-bro/Zsh.git "$parent_dir/.cache/Zsh" 2>&1 | tee -a "$log" && sleep 1
+fi
 
-clear
+if [[ -d "$parent_dir/.cache/Zsh" ]]; then
+    cd "$parent_dir/.cache/Zsh" || printf "${error } - Could not cd into $parent_dir/.cache/Zsh" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
+    chmod +x install.sh 2>&1 | tee -a "$log"
+    ./install.sh 2>&1 | tee -a "$log"
+    exit 0
+else
+    printf "${error} - Could not fine $parent_dir/.cache/Zsh. exiting \n"
+    exit 1
+fi
+
+# clear

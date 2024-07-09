@@ -36,26 +36,17 @@ printf " \n \n"
 
 ###------ Startup ------###
 
-# finding the presend directory and log file
-present_dir=`pwd`
-cache_dir="$present_dir/.cache"
-distro_cache="$cache_dir/distro"
-
-source "$distro_cache"
+# install script dir
+dir="$(dirname "$(realpath "$0")")"
+parent_dir="$(dirname "$dir")"
+source "$parent_dir/1-global_script.sh"
 
 # log directory
-log_dir="$present_dir/Logs"
-log="$log_dir"/bluetooth.log
+log_dir="$parent_dir/Logs"
+log="$log_dir/vs_code-$(date +%d-%m-%y).log"
 mkdir -p "$log_dir"
-if [[ ! -f "$log" ]]; then
-    touch "$log"
-fi
+touch "$log"
 
-# install script dir
-scripts_dir="$present_dir/${distro}-scripts"
-source $scripts_dir/1-global_script.sh
-
-echo "$scripts_dir"
 
 bluetooth=(
 bluez
@@ -68,7 +59,7 @@ python3-cairo
 
 printf "${action} Installing Bluetooth Packages...\n"
  for bluetooth_pkgs in "${bluetooth[@]}"; do
-   install_package "$bluetooth_pkgs" "$log"
+   install_package "$bluetooth_pkgs"
   done
 
 printf "${note} - Activating Bluetooth Services...\n"

@@ -36,19 +36,16 @@ printf " \n \n"
 
 ###------ Startup ------###
 
-# finding the presend directory and log file
-present_dir=`pwd`
-# log directory
-log_dir="$present_dir/Logs"
-log="$log_dir"/ve-code.log
-mkdir -p "$log_dir"
-if [[ ! -f "$log" ]]; then
-    touch "$log"
-fi
-
 # install script dir
-scripts_dir=`dirname "$(realpath "$0")"`
-source $scripts_dir/1-global_script.sh
+dir="$(dirname "$(realpath "$0")")"
+source "$dir/1-global_script.sh"
+
+# log directory
+parent_dir="$(dirname "$dir")"
+log_dir="$parent_dir/Logs"
+log="$log_dir/vs_code-$(date +%d-%m-%y).log"
+mkdir -p "$log_dir"
+touch "$log"
 
 aur_helper=$(command -v yay || command -v paru) # find the aur helper
 
@@ -67,7 +64,7 @@ for code in "${vs_code[@]}"; do
 done
 
 # updating vs code themes
-common_scripts="$present_dir/common"
+common_scripts="$parent_dir/common"
 "$common_scripts/vs_code_theme.sh"
 
 # clear

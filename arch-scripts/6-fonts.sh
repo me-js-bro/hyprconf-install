@@ -38,19 +38,16 @@ printf " \n \n"
 
 ###------ Startup ------###
 
-# finding the presend directory and log file
-present_dir=`pwd`
-# log directory
-log_dir="$present_dir/Logs"
-log="$log_dir"/fonts.log
-mkdir -p "$log_dir"
-if [[ ! -f "$log" ]]; then
-    touch "$log"
-fi
-
 # install script dir
-scripts_dir=`dirname "$(realpath "$0")"`
-source $scripts_dir/1-global_script.sh
+dir="$(dirname "$(realpath "$0")")"
+source "$dir/1-global_script.sh"
+
+# log directory
+parent_dir="$(dirname "$dir")"
+log_dir="$parent_dir/Logs"
+log="$log_dir/fonts-$(date +%d-%m-%y).log"
+mkdir -p "$log_dir"
+touch "$log"
 
 # necessary fonts [ new installable fonts should be added here ]
 fonts=(
@@ -66,9 +63,9 @@ printf "${action} - Now installing some necessary fonts...\n" && sleep 1
 
 for font_pkgs in "${fonts[@]}"; do
     install_package "$font_pkgs"
-    if sudo pacman -Qs "$font_pkgs" &>> /dev/null; then
-        echo "[ DONE ] - $font_pkgs was installed successfully!\n" 2>&1 | tee -a "$log" &>> /dev/null
+    if sudo pacman -Qs "$font_pkgs" &> /dev/null; then
+        echo "[ DONE ] - $font_pkgs was installed successfully!\n" 2>&1 | tee -a "$log" &> /dev/null
     else
-        echo "[ ERROR ] - Sorry, could not install $font_pkgs!\n" 2>&1 | tee -a "$log" &>> /dev/null
+        echo "[ ERROR ] - Sorry, could not install $font_pkgs!\n" 2>&1 | tee -a "$log" &> /dev/null
     fi
 done

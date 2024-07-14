@@ -70,25 +70,25 @@ hyprland
 hyprlock
 hyprpaper
 kitty
+nwg-look
 polkit-gnome
 qt5ct
+qt5-svg
 qt6ct
 qt6-svg
+qt5-graphicaleffects
+qt5-quickcontrols2
 rofi-wayland
 swappy
+swaync
+swww
 waybar
+wl-clipboard
 xdg-desktop-portal-hyprland
 )
 
 aur_packages=(
 grimblast
-nwg-look
-qt5-svg
-qt5-quickcontrols2
-qt5-graphicaleffects
-swww
-swaync
-wl-clipboard
 )
 
 # thunar file manager

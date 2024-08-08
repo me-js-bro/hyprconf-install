@@ -72,27 +72,36 @@
 
 
 ## Some Questions
-<h4>
+
 If you run the <b>start.sh</b> script, it will automaticly detect your distro ( arch / fedora / openSuse ). And it will ask you some questions. Just check the Screenshot bellow.
 <img align="center" width="99%" src="https://github.com/me-js-bro/Screen-Shots/blob/main/hyprconf/prompt.jpg?raw=true" />
-</h4> <br>
+<br>
 
 ## Configure for OpenBangla-Keyboard ( to write in bangla )
-<h4>
+
 If you choose to install and setup the OpenBangla-Keyboard, then you need to follow some steps to add the keyboard in fcitx5. Just follow the instructions bellow.
-</h4>
-<h4>1) Right click on this keyboard icon in you waybar.</h4>
 
-<img src="https://github.com/me-js-bro/Screen-Shots/blob/main/openbangla/step-1.jpg?raw=true" /> <br>
-<h4>2) Search for "openbangla" and select the keyboard</h4>
-<img src="https://github.com/me-js-bro/Screen-Shots/blob/main/openbangla/step-2.jpg?raw=true" /> <br>
-<h4>3) Now add the keyboard by clicking the 'right aero' icon and click on apply.</h4>
-<img src="https://github.com/me-js-bro/Screen-Shots/blob/main/openbangla/step-3.jpg?raw=true" /> <br>
+- Right click on this keyboard icon in you waybar.
+<img src="https://github.com/me-js-bro/Screen-Shots/blob/main/openbangla/step-1.jpg?raw=true" />
 
-<h4>Now you can switch keyboard using "CTRL + Space"</h4> <br>
+- Search for "openbangla" and select the keyboard
+<img src="https://github.com/me-js-bro/Screen-Shots/blob/main/openbangla/step-2.jpg?raw=true" />
+
+- Now add the keyboard by clicking the 'right aero' icon and click on apply.
+<img src="https://github.com/me-js-bro/Screen-Shots/blob/main/openbangla/step-3.jpg?raw=true" />
+
+- Now you can switch keyboard using `CTRL + Space`
+
+<br>
 
 ## Installation
-<h4>To install and setup this hyprland configuration automaticly, just follow these stpes...</h4>
+### Direct Installation
+You can now easily install the config directly without cloning the repository. Just copy and paste the command bellow in your terminal and run it. Before that, make sure to install `curl`. Install it using pacman, dnf or zypper.
+
+   ```
+   bash <(curl -s https://raw.githubusercontent.com/me-js-bro/hyprconf-install/main/direct_run.sh)
+   ```
+### Manusally Installation
 
 - Clone this repository:
    ```
@@ -105,14 +114,15 @@ If you choose to install and setup the OpenBangla-Keyboard, then you need to fol
    chmod +x start.sh
    ./start.sh
    ```
-- Hurrah! Now reboot your system, select Hyprland from your login manager, log into your Hyprland and enjoy it.
-<hr> <br>
+Hurrah! Now select Hyprland from your login manager, login to your Hyprland and enjoy it.
 
 <br>
 
 ## Keyboard Shortcuts
 
 ### Hyprland Keybinds
+
+The `SUPER` button is the `Windows` button in your keyboard.
 
 | Function                        | Keybind                     | Action                                       |
 |---------------------------------|-----------------------------|----------------------------------------------|
@@ -169,7 +179,7 @@ If you choose to install and setup the OpenBangla-Keyboard, then you need to fol
 |                                 | `SUPER` + `mouse_up`        | Scroll to previous workspace                 |
 | Move/Resize Window              | `SUPER` + `LMB/RMB`         | Drag to move or resize window                |
 
-### You can also check Keybinds after you installed the script. Just press `Mod ( windows ) + Shift + H`. It will launch a pop up with all the keybindings.
+### You can also check Keybinds after you installed the script. Just press `SUPER + Shift + H`. It will launch a pop up with all the keybindings.
 
 ## Contribute.
 <h4>

@@ -3,6 +3,9 @@
 #### Advanced Hyprland Installation Script by ####
 #### Js Bro ( https://github.com/me-js-bro ) ####
 
+# exit the script if there is any error
+set -e
+
 # color defination
 red="\e[1;31m"
 green="\e[1;32m"
@@ -63,7 +66,7 @@ printf "${action} - Now installing some necessary fonts...\n" && sleep 1
 
 for font_pkgs in "${fonts[@]}"; do
     install_package "$font_pkgs"
-    if sudo pacman -Qs "$font_pkgs" &> /dev/null; then
+    if sudo pacman -Qe "$font_pkgs" &> /dev/null; then
         echo "[ DONE ] - $font_pkgs was installed successfully!\n" 2>&1 | tee -a "$log" &> /dev/null
     else
         echo "[ ERROR ] - Sorry, could not install $font_pkgs!\n" 2>&1 | tee -a "$log" &> /dev/null

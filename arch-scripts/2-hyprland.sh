@@ -3,6 +3,9 @@
 #### Advanced Hyprland Installation Script by ####
 #### Js Bro ( https://github.com/me-js-bro ) ####
 
+# exit the script if there is any error
+set -e
+
 # color defination
 red="\e[1;31m"
 green="\e[1;32m"
@@ -88,7 +91,7 @@ xdg-desktop-portal-hyprland
 )
 
 aur_packages=(
-grimblast
+grimblast-git
 )
 
 # thunar file manager
@@ -109,7 +112,7 @@ printf "${note} - Installing main packages, this may take a while...\n" && sleep
 # Install from official repo
 for hypr_pkgs in "${hypr_packages[@]}"; do
     install_package "$hypr_pkgs"
-    if sudo pacman -Qs "$hypr_pkgs" &>> /dev/null; then
+    if sudo pacman -Qe "$hypr_pkgs" &> /dev/null; then
         echo "[ DONE ] - $hypr_pkgs was installed successfully!\n" 2>&1 | tee -a "$log" &> /dev/null
     else
         echo "[ ERROR ] - Sorry, could not install $hypr_pkgs!\n" 2>&1 | tee -a "$log" &> /dev/null
@@ -124,7 +127,7 @@ printf "${action} - Now installing some packages from the aur helper...\n" && sl
 # Installing from the AUR Helper
 for aur_pkgs in "${aur_packages[@]}"; do
     install_from_aur "$aur_pkgs"
-    if sudo "$aur_helper" -Qs "$aur_pkgs" &>> /dev/null; then
+    if sudo "$aur_helper" -Qe "$aur_pkgs" &> /dev/null; then
         echo "[ DONE ] - $aur_pkgs was installed successfully!\n" 2>&1 | tee -a "$log" &> /dev/null
     else
         echo "[ ERROR ] - Sorry, could not install $aur_pkgs!\n" 2>&1 | tee -a "$log" &> /dev/null
@@ -132,10 +135,10 @@ for aur_pkgs in "${aur_packages[@]}"; do
 done
 
 # installing thunar file manager
-printf "${note} - Installing Thunar file manager. \n"    
+printf "${action} - Installing Thunar file manager. \n"    
 for file_man in "${thunar[@]}"; do
     install_package "$file_man"
-    if sudo pacman -Qs "$file_man" &>> /dev/null; then
+    if sudo pacman -Qe "$file_man" &> /dev/null; then
         echo "[ DONE ] - $file_man was installed successfully!\n" 2>&1 | tee -a "$log" &> /dev/null
     else
         echo "[ ERROR ] - Sorry, could not install $file_man!\n" 2>&1 | tee -a "$log" &> /dev/null

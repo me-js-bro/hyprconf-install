@@ -3,6 +3,9 @@
 #### Advanced Hyprland Installation Script by ####
 #### Js Bro ( https://github.com/me-js-bro ) ####
 
+# exit the script if there is any error
+set -e
+
 # color defination
 red="\e[1;31m"
 green="\e[1;32m"
@@ -59,7 +62,7 @@ sddm=(
 printf "${attention} - Installing sddm and dependencies.... \n"
 for sddm_pkgs in "${sddm[@]}"; do
   install_package "$sddm_pkgs"
-  if sudo pacman -Qs "$sddm_pkgs" &>> /dev/null; then
+  if sudo pacman -Qe "$sddm_pkgs" &> /dev/null; then
         echo "[ DONE ] - $sddm_pkgs was installed successfully!\n" 2>&1 | tee -a "$log" &> /dev/null
   else
         echo "[ ERROR ] - Sorry, could not install $sddm_pkgs!\n" 2>&1 | tee -a "$log" &> /dev/null

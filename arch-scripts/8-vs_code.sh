@@ -3,6 +3,9 @@
 #### Advanced Hyprland Installation Script by ####
 #### Js Bro ( https://github.com/me-js-bro ) ####
 
+# exit the script if there is any error
+set -e
+
 # color defination
 red="\e[1;31m"
 green="\e[1;32m"
@@ -56,10 +59,10 @@ vs_code=(
 # installing vs code
 for code in "${vs_code[@]}"; do
     install_from_aur "$code"
-    if sudo "$aur_helper" -Qs "$code" &>> /dev/null; then
-        echo "[ DONE ] - $code was installed successfully!\n" 2>&1 | tee -a "$log" &>> /dev/null
+    if sudo "$aur_helper" -Qe "$code" &> /dev/null; then
+        echo "[ DONE ] - $code was installed successfully!\n" 2>&1 | tee -a "$log" &> /dev/null
     else
-        echo "[ ERROR ] - Sorry, could not install $code!\n" 2>&1 | tee -a "$log" &>> /dev/null
+        echo "[ ERROR ] - Sorry, could not install $code!\n" 2>&1 | tee -a "$log" &> /dev/null
     fi
 done
 

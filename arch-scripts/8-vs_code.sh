@@ -13,7 +13,7 @@ yellow="\e[1;33m"
 blue="\e[1;34m"
 magenta="\e[1;1;35m"
 cyan="\e[1;36m"
-orange="\x1b[38;5;214m"
+orange="\e[1;38;5;214m"
 end="\e[1;0m"
 
 # initial texts

@@ -31,14 +31,14 @@ aur_helper=$(command -v yay || command -v paru) # find the aur helper
 install_package() {
  
   # Checking if package is already installed
-  if sudo "$package_manager" -Qs "$1" &>> /dev/null ; then
+  if sudo "$package_manager" -Qe "$1" &> /dev/null ; then
     printf "${done} - $1 is already installed. Skipping...\n\n"
   else
     # Package not installed
     printf "${action} - Installing $1 ...\n"
     sudo pacman -S --noconfirm "$1"
     # Making sure package is installed
-    if sudo "$package_manager" -Qs "$1" &>> /dev/null ; then
+    if sudo "$package_manager" -Qe "$1" &> /dev/null ; then
       printf "${done} - $1 was installed successfully!\n\n"
     else
       # Something is missing, exiting to review log
@@ -51,14 +51,14 @@ install_package() {
 install_from_aur() {
 
   # Checking if package is already installed
-  if sudo "$package_manager" -Qs "$1" &>> /dev/null ; then
+  if sudo "$package_manager" -Qe "$1" &> /dev/null ; then
     printf "${done} - $1 is already installed. Skipping...\n\n"
   else
     # Package not installed
     printf "${action} - Installing $1 ...\n"
     "$aur_helper" -S --noconfirm "$1"
     # Making sure package is installed
-    if sudo "$package_manager" -Qs "$1" &>> /dev/null ; then
+    if sudo "$package_manager" -Qe "$1" &> /dev/null ; then
       printf "${done} - $1 was installed successfully!\n\n"
     else
       # Something is missing, exiting to review log

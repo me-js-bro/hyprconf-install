@@ -3,6 +3,9 @@
 #### Advanced Hyprland Installation Script by ####
 #### Js Bro ( https://github.com/me-js-bro ) ####
 
+# exit the script if there is any error
+set -e
+
 # Color definition
 red="\e[1;31m"
 green="\e[1;32m"
@@ -10,7 +13,7 @@ yellow="\e[1;33m"
 blue="\e[1;34m"
 magenta="\e[1;1;35m"
 cyan="\e[1;36m"
-orange="\x1b[38;5;214m"
+orange="\e[38;5;214m"
 end="\e[1;0m"
 
 # Initial texts
@@ -61,6 +64,13 @@ if [[ -f "$cache_file" ]]; then
     source "$cache_file"
 fi
 
+# install git before installing the aur helper.
+if ! pacman -Qe git &> /dev/null; then
+    printf "${orange}Git was not installed, installing it...${end}\n"
+    sudo pacman -S --noconfirm git 2>&1 | tee -a "$log" &> /dev/null
+    printf "${cyan}Git was installed successfully!${end}\n"
+fi
+
 if [[ -z "$aur_helper" ]]; then
     printf "${attention} - Which AUR helper would you like to install? It is necessary...\n1) paru \n2) yay \n"
     read -r -p "$(echo -e '\e[1;32mSelect: \e[0m')" aur
@@ -69,7 +79,7 @@ if [[ -z "$aur_helper" ]]; then
 
     if [[ "$aur" == "1" ]]; then
         echo "aur='1'" >> "$cache_file"
-        git clone --depth=1 "https://aur.archlinux.org/paru.git"
+        git clone "https://aur.archlinux.org/paru.git"
         cd paru
         makepkg -si --noconfirm
         sleep 1
@@ -78,7 +88,7 @@ if [[ -z "$aur_helper" ]]; then
         
     elif [[ "$aur" == "2" ]]; then
         echo "aur='2'" >> "$cache_file"
-        git clone --depth=1 "https://aur.archlinux.org/yay.git"
+        git clone "https://aur.archlinux.org/yay.git"
         cd yay
         makepkg -si --noconfirm
         sleep 1

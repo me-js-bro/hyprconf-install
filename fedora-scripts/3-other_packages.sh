@@ -102,6 +102,7 @@ other_packages=(
   btop
   cava
   cliphist
+  gnome-disk-utility 
   mpv
   mpv-mpris
   pamixer

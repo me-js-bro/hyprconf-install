@@ -59,6 +59,7 @@ other_packages=(
     fastfetch
     firefox
     ffmpeg
+    gnome-disk-utility
     ibus
     imagemagick
     jq

@@ -57,6 +57,7 @@ hypr_package=(
   firefox
   fastfetch
   git
+  gnome-disk-utility
   grim
   ImageMagick
   jq

@@ -49,6 +49,7 @@ log_dir="$parent_dir/Logs"
 log="$log_dir/sddm-$(date +%d-%m-%y).log"
 mkdir -p "$log_dir"
 touch "$log"
+common_scripts="$parent_dir/common"
 
 # packages for sddm
 sddm=(
@@ -80,9 +81,5 @@ done
 printf "${action} - Activating sddm service........\n"
 sudo systemctl enable sddm.service 2>&1 | tee -a "$log"
 
-# Set up SDDM
-printf "${action} - Setting up the login screen."
-sddm_conf_dir=/etc/sddm.conf.d
-[ ! -d "$sddm_conf_dir" ] && { printf "$sddm_conf_dir not found, creating...\n"; sudo mkdir -p "$sddm_conf_dir"; }
-
-clear
+# run sddm theme script
+"$common_scripts/sddm_theme.sh"

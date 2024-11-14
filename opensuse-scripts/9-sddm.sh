@@ -40,15 +40,13 @@ printf " \n \n"
 dir="$(dirname "$(realpath "$0")")"
 source "$dir/1-global_script.sh"
 
-# present dir
-
-
 # log directory
 parent_dir="$(dirname "$dir")"
 log_dir="$parent_dir/Logs"
 log="$log_dir/sddm-$(date +%d-%m-%y).log"
 mkdir -p "$log_dir"
 touch "$log"
+common_scripts="$parent_dir/common"
 
 # packages for sddm
 sddm_pkgs=(
@@ -86,9 +84,5 @@ sudo systemctl set-default graphical.target 2>&1 | tee -a "$log"
 sudo update-alternatives --set default-displaymanager /usr/lib/X11/displaymanagers/sddm 2>&1 | tee -a "$log"
 sudo systemctl enable sddm.service 2>&1 | tee -a "$log"
 
-# Set up SDDM
-printf "${action} - Setting up the login screen."
-sddm_conf_dir=/etc/sddm.conf.d
-[ ! -d "$sddm_conf_dir" ] && { printf "$sddm_conf_dir not found, creating...\n"; sudo mkdir -p "$sddm_conf_dir"; }
-
-clear
+# run sddm theme script
+"$common_scripts/sddm_theme.sh"

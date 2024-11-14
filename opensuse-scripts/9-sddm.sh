@@ -92,31 +92,3 @@ sddm_conf_dir=/etc/sddm.conf.d
 [ ! -d "$sddm_conf_dir" ] && { printf "$sddm_conf_dir not found, creating...\n"; sudo mkdir -p "$sddm_conf_dir"; }
 
 clear
-    
-# SDDM-themes
-valid_input=false
-while [ "$valid_input" != true ]; do
-    printf "${attention} - Installing SDDM Theme\n"
-
-    git clone --depth=1 https://github.com/me-js-bro/sddm.git "$parent_dir/.cache/sddm"
-    if [[ -d "$parent_dir/.cache/sddm" ]]; then
-        if [[ -d "/usr/share/sddm/themes/opensuse-sddm" ]]; then
-        sudo rm -rf "/usr/share/sddm/themes/opensuse-sddm"
-        printf -e "${done} - Removed existing 'opensuse-sddm' directory."
-        fi
-
-        # Check if simple-sddm directory exists in the current directory and remove if it does
-        if [ ! -d "/usr/share/sddm/themes" ]; then
-            sudo mkdir -p /usr/share/sddm/themes
-            printf "${done} - Directory '/usr/share/sddm/themes' created."
-      fi
-      sudo cp -r "$parent_dir/.cache/sddm/opensuse-sddm" /usr/share/sddm/themes/
-      printf "[Theme]\nCurrent=opensuse-sddm\n" | sudo tee "$sddm_conf_dir/theme.conf.user"
-    fi
-    valid_input=true
-done
-
-if [[ -d "/usr/share/sddm/themes/opensuse-sddm" ]]; then
-    printf "${done} - Sddm theme was installed successfully." 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
-    rm -rf "$parent_dir/.cache/sddm"
-fi

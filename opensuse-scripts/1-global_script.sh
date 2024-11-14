@@ -40,7 +40,7 @@ install_package() {
     else
       # Something is missing,
       printf "${error} - $1 failed to install :( , please check the install.log .Maybe you need to install manually.\n"
-      exit 1
+      # exit 1
     fi
   fi
 }
@@ -61,7 +61,7 @@ install_package_base() {
     else
       # Something is missing,
       printf "${error} - $1 failed to install :( , please check the install.log .Maybe you need to install manually.\n"
-      exit 1
+      # exit 1
     fi
   fi
 }
@@ -82,28 +82,7 @@ install_package_no_recommands() {
     else
       # Something is missing, exiting to review log
       printf "${error} - $1 failed to install :( , please check the install.log .Maybe you need to install manually.\n"
-      exit 1
-    fi
-  fi
-}
-
-# package installation function ( opi )..
-install_package_opi() {
-
-  # Checking if package is already installed
-  if sudo zypper se -i "$1" &> /dev/null ; then
-    printf "${done} - $1 is already installed. Skipping...\n"
-  else
-    # Package not installed
-    printf "${action} - Installing $1 ...\n"
-    sudo opi "$1" -n
-    # Making sure package is installed
-    if sudo zypper se -i "$1" &> /dev/null ; then
-      printf "${done} - $1 was installed successfully!\n\n"
-    else
-      # Something is missing, exiting to review log
-      printf "${error} - $1 failed to install :( , please check the install.log .Maybe you need to install manually.\n"
-      exit 1
+      # exit 1
     fi
   fi
 }

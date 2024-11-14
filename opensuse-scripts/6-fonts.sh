@@ -54,7 +54,6 @@ fonts=(
 fira-code-fonts
 fontawesome-fonts
 google-noto-sans-cjk-fonts
-google-noto-color-emoji-fonts
 google-noto-coloremoji-fonts
 liberation-fonts
 noto-sans-mono-fonts
@@ -94,10 +93,10 @@ tar -xJkf JetBrainsMono.tar.xz -C ~/.local/share/fonts/JetBrainsMonoNerd 2>&1 | 
 
 # Update font cache and log the output
 printf "${action} - Updating font cache"
-fc-cache -v 2>&1 | tee -a "$log" &>> /dev/null
+fc-cache -v 2>&1 | tee -a "$log" &> /dev/null
 
 # clean up 
-if [ -d "JetBrainsMono.tar.xz" ]; then
+if [ -f "JetBrainsMono.tar.xz" ]; then
 	rm -r JetBrainsMono.tar.xz
 fi
 

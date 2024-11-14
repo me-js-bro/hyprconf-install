@@ -49,33 +49,21 @@ log="$log_dir/hyprland-$(date +%d-%m-%y).log"
 mkdir -p "$log_dir"
 touch "$log"
 
+hypr_pkgs=(
+    hyprland
+    hyprlock
+    hyprpaper
+)
+
 # Hyprland
-printf "${action} - Installing Hyprland...\n"
-  install_package hyprland
-    if sudo zypper se -i hyprland &> /dev/null ; then
-        echo "[ DONE ] - Hyprland was installed successfully!" 2>&1 | tee -a "$log" &> /dev/null
+printf "${action} - Installing Hyprland packages...\n"
+for packages in "${hypr_pkgs[@]}"; do
+  install_package "$packages"
+    if sudo zypper se -i "$packages" &> /dev/null ; then
+        echo "[ DONE ] - $packages was installed successfully!" 2>&1 | tee -a "$log" &> /dev/null
     else
-        echo "[ ERROR ] - Could not install Hyprland..." 2>&1 | tee -a "$log" &> /dev/null
+        echo "[ ERROR ] - Could not install $packages..." 2>&1 | tee -a "$log" &> /dev/null
     fi
-    
-# Hyprlock
-printf "${action} - Installing Hyprlock...\n"
-  install_package_opi hyprlock
-    if sudo zypper se -i hyprlock &> /dev/null ; then
-        echo "[ DONE ] - Hyprland was installed successfully!" 2>&1 | tee -a "$log" &> /dev/null
-    else
-        echo "[ ERROR ] - Could not install Hyprland..." 2>&1 | tee -a "$log" &> /dev/null
-    fi
-
-clear
-
-# Hyprpaper
-printf "${action} - Installing Hyprlock...\n"
-  install_package_opi hyprpaper
-    if sudo zypper se -i hyprpaper &> /dev/null ; then
-        echo "[ DONE ] - Hyprland was installed successfully!" 2>&1 | tee -a "$log" &> /dev/null
-    else
-        echo "[ ERROR ] - Could not install Hyprland..." 2>&1 | tee -a "$log" &> /dev/null
-    fi
+done
 
 clear

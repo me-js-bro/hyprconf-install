@@ -51,7 +51,6 @@ touch "$log"
 
 # packages neeeded
 hypr_package=( 
-  alacritty
   curl
   ffmpeg
   firefox
@@ -61,6 +60,7 @@ hypr_package=(
   grim
   ImageMagick
   jq
+  kitty
   kvantum-qt5
   kvantum-qt6
   kvantum-themes
@@ -73,15 +73,16 @@ hypr_package=(
   pavucontrol
   pipewire-alsa
   polkit-gnome
-  python311-requests
-  python311-pip
-  python311-pywal
+  python312-requests
+  python312-pip
+  python312-pipx
   qt5ct
   qt6ct
   qt6-svg-devel
   libqt5-qtquickcontrols
   libqt5-qtquickcontrols2
   libqt5-qtgraphicaleffects
+  nwg-look
   rofi-wayland
   slurp
   SwayNotificationCenter
@@ -109,18 +110,9 @@ other_packages=(
 # no recommands
 no_recommands=(
   eog
+  go
   NetworkManager-applet
   waybar
-)
-
-# opi
-opi_packages=(
-  nwg-look
-)
-
-# forcd install
-cliphist=(
-  go
 )
 
 # thunar
@@ -148,16 +140,6 @@ for packages in "${hypr_package[@]}" "${other_packages[@]}"; do
     fi
 done
 
-# installing swaylock-effects & nwg-look
-for opi_pkg in "${opi_packages[@]}"; do
-  install_package_opi "$opi_pkg"
-    if sudo zypper se -i "$opi_pkg" &> /dev/null ; then
-        echo "[ DONE ] - $opi_pkg was installed successfully!" 2>&1 | tee -a "$log" &> /dev/null
-    else
-        echo "[ ERROR ] - Could not install $opi_pkg..." 2>&1 | tee -a "$log" &> /dev/null
-    fi
-done
-
 # installing thunar
 for pkgs in "${no_recommands[@]}" "${thunar[@]}"; do
   install_package_no_recommands "$pkgs"
@@ -165,16 +147,6 @@ for pkgs in "${no_recommands[@]}" "${thunar[@]}"; do
         echo "[ DONE ] - $pkgs was installed successfully!" 2>&1 | tee -a "$log" &> /dev/null
     else
         echo "[ ERROR ] - Could not install $pkgs..." 2>&1 | tee -a "$log" &> /dev/null
-    fi
-done
-
-# installing forcefully
-for force_inst in "${cliphist[@]}"; do
-  sudo zypper in -f -y "$force_inst"
-    if sudo zypper se -i "$force_inst" &> /dev/null ; then
-        echo "[ DONE ] - $force_inst was installed successfully!" 2>&1 | tee -a "$log" &> /dev/null
-    else
-        echo "[ ERROR ] - Could not install $force_inst..." 2>&1 | tee -a "$log" &> /dev/null
     fi
 done
 
@@ -194,12 +166,32 @@ else
   printf "${done} - Grimblast was installed successfully\n" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
 fi
 
+sleep 1 && clear
 
 # Install cliphist using go
-export PATH=$PATH:/usr/local/bin
-go install go.senan.xyz/cliphist@latest 2>&1 | tee -a "$log" &> /dev/null
+if [ -n "$command -v go" ]; then
+  printf "${action} - Installing cliphist\n"
+  export PATH=$PATH:/usr/local/bin
 
-# copy cliphist into /usr/local/bin for some reason it is installing in ~/go/bin
-sudo cp -r "$HOME/go/bin/cliphist" "/usr/local/bin/" 2>&1 | tee -a "$log" &> /dev/null
+  if go install go.senan.xyz/cliphist@latest 2>&1 | tee -a "$log" &> /dev/null; then
+    # copy cliphist into /usr/local/bin for some reason it is installing in ~/go/bin
+    sudo cp -r "$HOME/go/bin/cliphist" "/usr/local/bin/" 2>&1 | tee -a "$log" &> /dev/null
+    printf "${done} - Successfully installed cliphist!\n" 2>&1 | tee -a "$log"
+    sudo rm -rf "$HOME/go"
+  else
+    printf "${error} - Could not install cliphist.\n" 2>&1 | tee -a "$log"
+  fi
+fi
 
-clear
+sleep 1 && clear
+
+
+# installing pywal
+if [ -n "$(command -v pipx)" ]; then
+  printf "${action} - Installing pywal using ${green}'pipx'${end}\n"
+  if pipx install pywal; then
+    printf "${done} - pywal was install successfully\n" 2>&1 | tee -a "$log"
+  else
+    printf "${erorr} - Sorry, could not install pywal. You need to install it manually. :(\n" 2>&1 | tee -a "$log"
+  fi
+fi

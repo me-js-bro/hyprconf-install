@@ -23,12 +23,12 @@ error="[${red} ERROR ${end}]"
 
 display_text() {
     cat << "EOF"
-     ____                   ____                                
-    / ___|___  _ __  _ __  |  _ \ ___ _ __   ___                
-   | |   / _ \| '_ \| '__| | |_) / _ \ '_ \ / _ \               
-   | |__| (_) | |_) | |    |  _ <  __/ |_) | (_) |  _   _   _   
-    \____\___/| .__/|_|    |_| \_\___| .__/ \___/  (_) (_) (_)  
-              |_|                    |_|                        
+  ____                           _  _                _                     
+ |  _ \  ___  _ __    ___   ___ (_)| |_  ___   _ __ (_)  ___  ___          
+ | |_) |/ _ \| '_ \  / _ \ / __|| || __|/ _ \ | '__|| | / _ \/ __|         
+ |  _ <|  __/| |_) || (_) |\__ \| || |_| (_) || |   | ||  __/\__ \ _  _  _ 
+ |_| \_\\___|| .__/  \___/ |___/|_| \__|\___/ |_|   |_| \___||___/(_)(_)(_)
+             |_|                                                             
    
 EOF
 }
@@ -57,10 +57,6 @@ dependencies=(
   devel_basis
 )
 
-opi=(
-  opi
-  go
-)
 
 # Adding Packman repository and switching over to Packman
 printf "${attention} - Adding Packman repository (Globally).... \n"
@@ -71,20 +67,19 @@ sudo zypper -n dup --from packman --allow-vendor-change 2>&1 | tee -a "$log"
 
 for deps in "${dependencies[@]}"; do
     install_package_base "$deps"
-    if sudo zypper se -i "$deps" &>> /dev/null ; then
+    if sudo zypper se -i "$deps" &> /dev/null ; then
       echo "[ DONE ] - '$deps' was installed successfully!" 2>&1 | tee -a "$log" &> /dev/null
     else
-        echo "[ ERROR ] - Sorry, could not install '$deps'" 2>&1 | tee -a "$log" &> /dev/null
+      echo "[ ERROR ] - Sorry, could not install '$deps'" 2>&1 | tee -a "$log" &> /dev/null
     fi
 done
 
-for opis in "${opi[@]}"; do
-    install_package "$opis"
-    if sudo zypper se -i "$opis" &>> /dev/null ; then
-      echo "[ DONE ] - '$opis' was installed successfully!" 2>&1 | tee -a "$log" &> /dev/null
-    else
-        echo "[ ERROR ] - Sorry, could not install '$opis'" 2>&1 | tee -a "$log" &> /dev/null
-    fi
-done
+# installing opi
+install_package opi
+if sudo zypper se -i opi &> /dev/null ; then
+  echo "[ DONE ] - 'opi' was installed successfully!" 2>&1 | tee -a "$log" &> /dev/null
+else
+  echo "[ ERROR ] - Sorry, could not install 'opi'" 2>&1 | tee -a "$log" &> /dev/null
+fi
 
 clear

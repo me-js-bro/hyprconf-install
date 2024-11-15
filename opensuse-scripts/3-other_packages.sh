@@ -101,7 +101,6 @@ hypr_package=(
 other_packages=(
   btop
   cava
-  mousepad
   mpv
   mpv-mpris
   nvtop

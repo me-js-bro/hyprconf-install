@@ -50,9 +50,10 @@ mkdir -p "$log_dir"
 touch "$log"
 
 hypr=(
-hyprland
-hyprlock
-hyprpaper
+    hyprland
+    hyprlock
+    hyprpaper
+    hypridle
 )
 
 # Installation of Hyprland and Hyprlock

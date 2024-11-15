@@ -53,6 +53,7 @@ hypr_pkgs=(
     hyprland
     hyprlock
     hyprpaper
+    hypridle
 )
 
 # Hyprland

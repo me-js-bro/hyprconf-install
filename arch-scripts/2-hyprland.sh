@@ -67,43 +67,44 @@ aur_helper=$(command -v yay || command -v paru) # find the aur helper
 
 # Main Hyprland packages
 hypr_packages=(
-cliphist
-eog
-hyprland
-hyprlock
-hyprpaper
-kitty
-nwg-look
-polkit-gnome
-qt5ct
-qt5-svg
-qt6ct
-qt6-svg
-qt5-graphicaleffects
-qt5-quickcontrols2
-rofi-wayland
-swappy
-swaync
-swww
-waybar
-wl-clipboard
-xdg-desktop-portal-hyprland
+    cliphist
+    eog
+    hyprland
+    hyprlock
+    hyprpaper
+    hypridle
+    kitty
+    nwg-look
+    polkit-gnome
+    qt5ct
+    qt5-svg
+    qt6ct
+    qt6-svg
+    qt5-graphicaleffects
+    qt5-quickcontrols2
+    rofi-wayland
+    swappy
+    swaync
+    swww
+    waybar
+    wl-clipboard
+    xdg-desktop-portal-hyprland
 )
 
 aur_packages=(
-grimblast-git
+    grimblast-git
 )
 
 # thunar file manager
 thunar=(
-ffmpegthumbnailer
-file-roller
-gvfs
-gvfs-mtp 
-thunar 
-thunar-volman 
-tumbler 
-thunar-archive-plugin
+    ffmpegthumbnailer
+    file-roller
+    gvfs
+    gvfs-mtp 
+    thunar 
+    thunar-volman 
+    tumbler 
+    thunar-archive-plugin
 )
 
 

@@ -54,7 +54,7 @@ touch "$log"
 CONFIG_DIR="$HOME/.config"
 theme="$parent_dir/assets/themes.tar.gz"
 icon="$parent_dir/assets/Icon_TelaDracula.tar.gz"
-cursor="$parent_dir/assets/Nordzy-cursors.tar.gz"
+cursor="$parent_dir/assets/catppuccin-mocha-light-cursors.zip"
 
 # creating icons and theme directory
 mkdir -p ~/.themes
@@ -76,8 +76,8 @@ if [ ! -d "$HOME/.icons/TokyoNight-SE" ]; then
     fi
 
     # extracting the icon
-    tar -xf TokyoNight-SE.tar.bz2 -C ~/.icons/ 2>&1 | tee -a "$log"
-    tar -xf "$icon" -C ~/.icons/ 2>&1 | tee -a "$log"
+    tar -xf TokyoNight-SE.tar.bz2 -C ~/.icons/ &> /dev/null 2>&1 | tee -a "$log"
+    tar -xf "$icon" -C ~/.icons/ &> /dev/null 2>&1 | tee -a "$log"
 
     sleep 2
 
@@ -89,7 +89,7 @@ if [ ! -d "$HOME/.icons/TokyoNight-SE" ]; then
 fi
 
 # installing the cursor
-tar -xf "$cursor" -C ~/.icons/
+unzip "$cursor" -d ~/.icons/ &> /devlnull 2>&1 | tee -a "$log"
 
 # clear
 
@@ -99,7 +99,7 @@ sudo sh -c "echo \"QT_QPA_PLATFORMTHEME='qt5ct'\" >> $env_file" 2>&1 | tee -a "$
 
 # extracting themes to ~/.themes/
 printf "${action} - Copying themes\n" && sleep 1
-tar -xf "$theme" -C ~/.themes/
+tar -xf "$theme" -C ~/.themes/ &> /dev/null 2>&1 | tee -a "$log"
 
 printf "${done} - Themes copied successfully...\n" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
 
@@ -108,6 +108,6 @@ sleep 1
 # setting default themes, icon and cursor
 gsettings set org.gnome.desktop.interface gtk-theme "theme"
 gsettings set org.gnome.desktop.interface icon-theme "TokyoNight-SE"
-gsettings set org.gnome.desktop.interface cursor-theme "Nordzy-cursors"
+gsettings set org.gnome.desktop.interface cursor-theme "catppuccin-mocha-light-cursors"
 
 clear

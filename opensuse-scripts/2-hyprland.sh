@@ -54,6 +54,8 @@ hypr_pkgs=(
     hyprlock
     hyprpaper
     hypridle
+    hyprcursor
+    hyprland-protocols-devel
     wayland-protocols-devel
     hyprutils-devel
     hyprwayland-scanner

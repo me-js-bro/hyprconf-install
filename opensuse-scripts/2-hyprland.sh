@@ -54,6 +54,11 @@ hypr_pkgs=(
     hyprlock
     hyprpaper
     hypridle
+    hyprcursor
+    hyprland-protocols-devel
+    wayland-protocols-devel
+    hyprutils-devel
+    hyprwayland-scanner
 )
 
 # Hyprland
@@ -66,5 +71,33 @@ for packages in "${hypr_pkgs[@]}"; do
         echo "[ ERROR ] - Could not install $packages..." 2>&1 | tee -a "$log" &> /dev/null
     fi
 done
+
+sleep 1
+
+printf "${action} - Installing Hyprsunset...\n"
+
+if ! sudo zypper se -i git &> /dev/null; then
+    install_package git
+fi
+
+if ! sudo zypper se -i cmake &> /dev/null; then
+    install_package cmake
+fi
+
+
+if git clone --depth=1 https://github.com/hyprwm/hyprsunset "$parent_dir/.cache/hyprsunset"; then
+    cd "$parent_dir/.cache/hyprsunset"
+    mkdir build && cd build
+    cmake ..
+    sudo make install
+
+    sleep 1
+
+    if command -v hyprsunset &> /dev/null; then
+        printf "${done} - Hyprsunset was installed successfully!\n" 2>&1 | tee -a "$log"
+    else
+        printf "${error} - Sorry, could not install Hyprsunset. :(\n" 2>&1 | tee -a "$log"
+    fi
+fi
 
 clear

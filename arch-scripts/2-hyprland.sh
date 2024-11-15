@@ -73,6 +73,7 @@ hypr_packages=(
     hyprlock
     hyprpaper
     hypridle
+    hyprcursor
     kitty
     nwg-look
     polkit-gnome
@@ -93,6 +94,7 @@ hypr_packages=(
 
 aur_packages=(
     grimblast-git
+    hyprsunset
 )
 
 # thunar file manager

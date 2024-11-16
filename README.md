@@ -151,7 +151,7 @@ The `SUPER` button is the `Windows` button in your keyboard.
 | Switch Window                   | `SUPER` + `Tab`             | Open rofi to switch between windows          |
 | Hide/Unhide Waybar              | `CONTROL` + `ESCAPE`        | Hide and unhide status bar (waybar)          |
 | Lock Screen                     | `SUPER` + `SHIFT` + `l`     | Lock the screen   (Hyprlock)                 |
-| Toggle Dark/Light Theme         | `SUPER` + `CTRL` + `l`      | Toggle between dark and light themes         |
+| Toggle Dark/Light Theme         | `SUPER` + `ALT` + `l`      | Toggle between dark and light themes         |
 | Adjust Waybar Layout            | `SUPER` + `CTRL` + `w`      | Adjust waybar layout                         |
 | Edit Dotfiles                   | `SUPER` + `CTRL` + `e`      | Edit dotfiles                                |
 | Open Shell Script               | `SUPER` + `ALT` + `b`       | Open theme selector for  shell script   (bash/zsh)  |
@@ -165,13 +165,13 @@ The `SUPER` button is the `Windows` button in your keyboard.
 |                                 | `F10`                       | Decrease volume                              |
 |                                 | `F11`                       | Increase volume                              |
 | Move Focus (Arrow Keys)         | `SUPER` + `l`               | Move focus right                             |
-|                                 | `SUPER` + `j`               | Move focus left                              |
-|                                 | `SUPER` + `u`               | Move focus up                                |
-|                                 | `SUPER` + `M`               | Move focus down                              |
-| Move Window (Arrow Keys)        | `SUPER` + `CONTROL` + `j`   | Move window left                             |
+|                                 | `SUPER` + `h`               | Move focus left                              |
+|                                 | `SUPER` + `k`               | Move focus up                                |
+|                                 | `SUPER` + `j`               | Move focus down                              |
+| Move Window (Arrow Keys)        | `SUPER` + `CONTROL` + `h`   | Move window left                             |
 |                                 | `SUPER` + `CONTROL` + `l`   | Move window right                            |
-|                                 | `SUPER` + `CONTROL` + `u`   | Move window up                               |
-|                                 | `SUPER` + `CONTROL` + `m`   | Move window down                             |
+|                                 | `SUPER` + `CONTROL` + `k`   | Move window up                               |
+|                                 | `SUPER` + `CONTROL` + `j`   | Move window down                             |
 | Switch Workspaces               | `SUPER` + `[0-9]`           | Switch to workspace `[0-9]`                  |
 | Move Window to Workspace        | `SUPER` + `SHIFT` + `[0-9]` | Move active window to workspace `[0-9]`      |
 | Move Window Silently to Workspace | `SUPER` + `ALT` + `[0-9]` | Move window silently to workspace `[0-9]`    |

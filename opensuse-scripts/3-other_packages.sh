@@ -57,6 +57,7 @@ hypr_package=(
   fastfetch
   git
   gnome-disk-utility
+  go1.23
   grim
   ImageMagick
   jq
@@ -109,7 +110,6 @@ other_packages=(
 # no recommands
 no_recommands=(
   eog
-  go
   NetworkManager-applet
   waybar
 )
@@ -165,10 +165,10 @@ else
   printf "${done} - Grimblast was installed successfully\n" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
 fi
 
-sleep 1 && clear
+sleep 2 && clear
 
 # Install cliphist using go
-if [ -n "$command -v go" ]; then
+if command -v go; then
   printf "${action} - Installing cliphist\n"
   export PATH=$PATH:/usr/local/bin
 
@@ -182,11 +182,10 @@ if [ -n "$command -v go" ]; then
   fi
 fi
 
-sleep 1 && clear
-
+sleep 2 && clear
 
 # installing pywal
-if [ -n "$(command -v pipx)" ]; then
+if command -v pipx; then
   printf "${action} - Installing pywal using ${green}'pipx'${end}\n"
   if pipx install pywal; then
     printf "${done} - pywal was install successfully\n" 2>&1 | tee -a "$log"
@@ -194,3 +193,5 @@ if [ -n "$(command -v pipx)" ]; then
     printf "${erorr} - Sorry, could not install pywal. You need to install it manually. :(\n" 2>&1 | tee -a "$log"
   fi
 fi
+
+sleep 2 && clear

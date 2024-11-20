@@ -49,8 +49,8 @@ mkdir -p "$log_dir"
 touch "$log"
 
 # asking which browser wants to install
-printf "Which browser would you like to install?\n1) ${orange}Brave-Browser.${end} \n2) ${cyan}Chromium.${end}\n${cyan}Chromium${end} is recommanded for Fedora\n"
-read -p "Select: " browser
+printf "${ask} - Which browser would you like to install?\n1) ${orange}Brave-Browser.${end} \n2) ${cyan}Chromium.${end}\n${cyan}Chromium${end} is recommanded for Fedora\n"
+read -r -p "$(echo -e '\e[1;32mSelect: \e[0m')" browser
 printf " \n"
 
 if [[ "$browser" == "1" ]]; then

@@ -110,4 +110,4 @@ gsettings set org.gnome.desktop.interface gtk-theme "theme"
 gsettings set org.gnome.desktop.interface icon-theme "TokyoNight-SE"
 gsettings set org.gnome.desktop.interface cursor-theme "catppuccin-mocha-light-cursors"
 
-clear
+sleep 1 && clear

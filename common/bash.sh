@@ -60,19 +60,7 @@ if [ -d ~/.bash ]; then
 fi
 
 # now install bash
+printf "${action} - Now starting the direct installation script for my customized Bash...\n"
+printf " \n" && sleep 1
 
-if [[ ! -d "$parent_dir/.cache/Bash" ]]; then
-    git clone --depth=1 https://github.com/me-js-bro/Bash.git "$parent_dir/.cache/Bash" 2>&1 | tee -a "$log" && sleep 1
-fi
-
-if [[ -d "$parent_dir/.cache/Bash" ]]; then
-    cd "$parent_dir/.cache/Bash" || printf "${error } - Could not cd into $parent_dir/.cache/Bash" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
-    chmod +x install.sh 2>&1 | tee -a "$log"
-    ./install.sh 2>&1 | tee -a "$log"
-    exit 0
-else
-    printf "${error} - Could not fine $parent_dir/.cache/Bash. exiting \n"
-    exit 1
-fi
-
-# clear
+"bash <(curl https://raw.githubusercontent.com/me-js-bro/Bash/main/direct_install.sh)" 2>&1 | tee -a "$log"

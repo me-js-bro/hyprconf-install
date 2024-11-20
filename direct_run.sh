@@ -26,7 +26,7 @@ done="[${cyan} DONE ${end}]"
 ask="[${orange} QUESTION ${end}]"
 error="[${red} ERROR ${end}]"
 
-printf "${orange}[ * ] Starting the script.. Please have patience..${end} (•‿•)\n"
+printf "${orange}[ * ] Starting the script.. Please have patience..${end} (•‿•)\n" && sleep 2
 
 install_git() {
 

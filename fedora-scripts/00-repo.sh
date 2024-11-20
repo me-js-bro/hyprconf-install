@@ -63,7 +63,7 @@ add_config_if_not_present() {
   grep -qF "$config" "$file" || echo "$config" | sudo tee -a "$file" &>> /dev/null
 }
 
-printf "${attention} - Have you added 'fastestmirrors=True' & 'max_paralled_downloads=10' in your dnf.conf file? [ y/n ] \n"
+printf "${attention} - Have you added 'fastestmirrors=True' & 'max_paralled_downloads=10' in your dnf.conf file? ${cyan}[ ${green}y${end}/${red}n ${cyan}]${end} \n"
 read -p "Select: " config
 
 if [[ "$config" =~ ^[Nn]$ ]]; then

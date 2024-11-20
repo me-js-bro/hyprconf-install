@@ -39,21 +39,37 @@ printf " \n \n"
 # install script dir
 dir="$(dirname "$(realpath "$0")")"
 parent_dir="$(dirname "$dir")"
-source "$parent_dir/1-global_script.sh"
+cache_dir="$parent_dir/.cache"
+distro_cache="$cache_dir/distro"
+source "$distro_cache"
 
-# log directory
+# install script dir
+source "$parent_dir/${distro}-scripts/1-global_script.sh"
+
+# log dir
 log_dir="$parent_dir/Logs"
-log="$log_dir/vs_code-$(date +%d-%m-%y).log"
+log="$log_dir/bluetooth-$(date +%d-%m-%y).log"
 mkdir -p "$log_dir"
 touch "$log"
 
-
-bluetooth=(
-bluez
-bluez-tools
-blueman
-python3-cairo
-)
+if [[ "$distro" == "arch" ]]; then
+  bluetooth=(
+    bluez
+    bluez-utils
+    blueman
+  )
+elif [[ "$distro" == "fedora" ]]; then
+  bluetooth=(
+    bluez
+    bluez-tools
+    blueman
+    python3-cairo
+  )
+elif [[ "$distro" == "opensuse" ]]; then
+  bluetooth=(
+    bluez
+    blueman
+  )
 
 # Bluetooth
 

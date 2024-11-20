@@ -168,7 +168,7 @@ fi
 sleep 2 && clear
 
 # Install cliphist using go
-if command -v go; then
+if command -v go &> /dev/null; then
   printf "${action} - Installing cliphist\n"
   export PATH=$PATH:/usr/local/bin
 
@@ -185,9 +185,11 @@ fi
 sleep 2 && clear
 
 # installing pywal
-if command -v pipx; then
+if command -v pipx &> /dev/null; then
   printf "${action} - Installing pywal using ${green}'pipx'${end}\n"
-  if pipx install pywal; then
+  pipx install pywal
+  sleep 1
+  if command -v wal &> /dev/null; then
     printf "${done} - pywal was install successfully\n" 2>&1 | tee -a "$log"
   else
     printf "${erorr} - Sorry, could not install pywal. You need to install it manually. :(\n" 2>&1 | tee -a "$log"

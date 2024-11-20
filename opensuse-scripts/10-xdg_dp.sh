@@ -68,8 +68,8 @@ sleep 1
 printf "\n"
 printf "${note} XDG-desktop-portal-KDE & GNOME (if installed) should be manually disabled or removed!\n"
 while true; do
-    read -rp "${note} Would you like to try to remove other XDG-Desktop-Portal-Implementations? [ y/n ] " XDPH1
-    echo
+    printf "${note} Would you like to remove other XDG-Desktop-Portal-Implementations? ${cyan}[ ${green}y${end}/${red}n ${cyan}]${end}\n"
+    read -r -p "$(echo -e '\e[1;32mSelect: \e[0m')" XDPH1
     sleep 1
 
     case $XDPH1 in
@@ -78,24 +78,24 @@ while true; do
         printf "${note} Clearing any other xdg-desktop-portal implementations...\n"
         # Check if packages are installed and uninstall if present
         if sudo zypper se -i xdg-desktop-portal-wlr &> /dev/null; then
-        printf "Removing xdg-desktop-portal-wlr..."
+        printf "Removing xdg-desktop-portal-wlr...\n"
         sudo zypper rm -y xdg-desktop-portal-wlr 2>&1 | tee -a "$log"
         fi
 
         if sudo zypper se -i xdg-desktop-portal-lxqt &> /dev/null; then
-        printf "Removing xdg-desktop-portal-lxqt..."
+        printf "Removing xdg-desktop-portal-lxqt...\n"
         sudo zypper rm -y xdg-desktop-portal-lxqt 2>&1 | tee -a "$log"
         fi
 
         break
         ;;
       [Nn])
-        printf "no other XDG-implementations will be removed." 2>&1 | tee -a "$log"
+        printf "no other XDG-implementations will be removed.\n" 2>&1 | tee -a "$log"
         break
         ;;
         
       *)
-        printf "Invalid input. Please enter 'y' for yes or 'n' for no."
+        printf "Invalid input. Please enter 'y' for yes or 'n' for no.\n"
         ;;
     esac
 done

@@ -55,7 +55,7 @@ touch "$log"
 aur_helper=$(command -v yay || command -v paru)
 
 # asking which browser wants to install
-printf "Which browser would you like to install?\n1) ${orange}Brave-Browser.${end} \n2) ${cyan}Chromium.${end}\n"
+printf "${ask} - Which browser would you like to install?\n1) ${orange}Brave-Browser.${end} \n2) ${cyan}Chromium.${end}\n"
 read -r -p "$(echo -e '\e[1;32mSelect: \e[0m')" browser
 printf " \n"
 

@@ -119,7 +119,7 @@ fi
 
 # Blacklist nouveau
     if [[ -z $blacklist_nouveau ]]; then
-      printf "${attention} - Would you like to blacklist nouveau? ${cyan}[ y/n ]${end}\n" 
+      printf "${attention} - Would you like to blacklist nouveau? ${cyan}[ ${green}y${end}/${red}n ${cyan}]${end}\n" 
       read -r -p "$(echo -e '\e[1;32mSelect: \e[0m')" blacklist_nouveau
     fi
 echo

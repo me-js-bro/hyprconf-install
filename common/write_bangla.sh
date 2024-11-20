@@ -53,9 +53,7 @@ printf "${attention} - This script will creand a Log dir in your ${HOME} directo
 sleep 1
 
 # OpenBangla-Building url was forked from ( https://github.com/asifakonjee/openbangla-fcitx5 )
-inst_openbangla_cmd=$(wget -q https://raw.githubusercontent.com/me-js-bro/Build-OpenBangla-Keyboard/main/build.sh -O -)
-
-bash -c "$inst_openbangla_cmd"
+bash -c "$(wget -q https://raw.githubusercontent.com/me-js-bro/Build-OpenBangla-Keyboard/main/build.sh -O -)"
 
 if [[ -d "/usr/share/openbangla-keyboard" ]]; then
   printf "${done} - OpenBangla Keyboard was installed successfully!\n" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")

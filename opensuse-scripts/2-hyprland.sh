@@ -100,4 +100,4 @@ if git clone --depth=1 https://github.com/hyprwm/hyprsunset "$parent_dir/.cache/
     fi
 fi
 
-clear
+sleep 1 && clear

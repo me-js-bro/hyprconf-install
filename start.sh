@@ -117,7 +117,7 @@ fi
 
 #=========  asking for confirmation  ========= #
 
-printf "Would you like to continue with the script? ${cyan}[ y/n ]${end} \n"
+printf "Would you like to continue with the script? ${cyan}[ ${green}y${end}/${red}n ${cyan}]${end} \n"
 read -r -p "$(echo -e '\e[1;32mSelect: \e[0m')" continue
 
 
@@ -129,7 +129,7 @@ case $continue in
     n|N) printf "Exiting the script here..\n"
         exit 1
         ;;
-    *) echo "Please select between [ y/n ]"
+    *) echo "Please select between ${cyan}[ ${green}y${end}/${red}n ${cyan}]${end}"
         exit 1
         ;;
 esac
@@ -155,7 +155,7 @@ ask_prompts() {
     fi
 
     while true; do
-        printf "${ask} - $question ${cyan}[ y/n ]${end} \n"
+        printf "${ask} - $question ${cyan}[ ${green}y${end}/${red}n ${cyan}]${end} \n"
         read -r -p "$(echo -e '\e[1;32mSelect: \e[0m')" choice
         printf " \n"
         case "$choice" in
@@ -186,7 +186,7 @@ if [[ -f "$cache_file" ]]; then
     # exit if there is no coices
     if [[ "$nvidia" == "" ]]; then
         printf "${error} - User prompt was not given properly. Please run the script again...\n" && sleep 0.5
-        printf "${note} - Would you like to run the script again? ${cyan}[ y/n ]${end} \n"
+        printf "${note} - Would you like to run the script again? ${cyan}[ ${green}y${end}/${red}n ${cyan}]${end} \n"
         read -r -p "$(echo -e '\e[1;32mSelect: \e[0m')" run_again
 
         if [[ "$run_again" =~ ^[Yy]$ ]]; then
@@ -356,7 +356,7 @@ fi
 
 # =========  system reboot  ========= #
 
-printf "${done} - Congratulations! The script completes here. Now you can enjoy the newly installed Hyprland configuration in your system. The system needs to be rebooted first. would you like to reboot the system? ${cyan}[ y/n ]${end}\n" && sleep 1
+printf "${done} - Congratulations! The script completes here. Now you can enjoy the newly installed Hyprland configuration in your system. The system needs to be rebooted first. would you like to reboot the system? ${cyan}[ ${green}y${end}/${red}n ${cyan}]${end}\n" && sleep 1
 read -r -p "$(echo -e '\e[1;32mSelect: \e[0m')" reboot
 
 

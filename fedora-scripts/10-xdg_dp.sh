@@ -67,7 +67,7 @@ printf "\n"
 printf "${note} - XDG-desktop-portal-KDE & GNOME (if installed) should be manually disabled or removed!\n"
 
 while true; do
-    printf "${attention} - Would you like to remove other XDG-Desktop-Portal-Implementations? ${cyan}[ y/n ]${end}\n"
+    printf "${attention} - Would you like to remove other XDG-Desktop-Portal-Implementations? ${cyan}[ ${green}y${end}/${red}n ${cyan}]${end}\n"
     read -r -p "$(echo -e '\e[1;32mSelect: \e[0m')" XDPH1
     sleep 1
 

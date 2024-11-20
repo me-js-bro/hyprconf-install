@@ -56,7 +56,6 @@ touch "$log"
 
 packages=(
     brightnessctl
-    libinput
     wlroots
 )
 

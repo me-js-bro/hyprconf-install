@@ -63,10 +63,11 @@ sddm=(
 printf "${attention} - Installing sddm and dependencies.... \n"
 for sddm_pkgs in "${sddm[@]}"; do
   install_package "$sddm_pkgs"
-  if sudo dnf list installed "$sddm_pkgs" &>> /dev/null; then
+  if sudo dnf list installed "$sddm_pkgs" &> /dev/null; then
     printf "${done} - $sddm_pkgs was installed successfully..\n" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
   else
-    printf "${error} - Sorry, could not install $sddm_pkgs\n" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
+    printf "${error} - Sorry, could not install $sddm_pkgs (╥﹏╥)\n" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
+    exit 1
   fi
 done
 

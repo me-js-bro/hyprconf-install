@@ -52,8 +52,9 @@ touch "$log"
 
 # List of COPR repositories to be added and enabled
 copr_repos=(
-solopasha/hyprland
-erikreider/SwayNotificationCenter  
+  solopasha/hyprland
+  erikreider/SwayNotificationCenter
+  tofik/nwg-shell
 )
 
 # Function to add dnf config if not present in a file
@@ -79,7 +80,5 @@ install_package https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release
 
 # Enable COPR Repositories 
 for repo in "${copr_repos[@]}";do 
-  sudo dnf copr enable -y "$repo" 2>&1 | tee -a "$log" || { printf "${error} - Failed to enable necessary copr repos\n"; exit 1; }
+  sudo dnf copr enable -y "$repo" 2>&1 | tee -a "$log" || { printf "${error} - Failed to enable necessary copr repos (╥﹏╥)\n"; exit 1; }
 done
-
-# clear

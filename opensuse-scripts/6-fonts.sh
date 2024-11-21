@@ -78,7 +78,7 @@ DOWNLOAD_URL="https://github.com/ryanoasis/nerd-fonts/releases/latest/download/J
 MAX_ATTEMPTS=2
 for ((ATTEMPT = 1; ATTEMPT <= MAX_ATTEMPTS; ATTEMPT++)); do
     curl -OL "$DOWNLOAD_URL" && break
-    printf "Download attempt $ATTEMPT failed. Retrying in 2 seconds...\n"
+    printf "Download attempt $ATTEMPT failed. (╥﹏╥) Retrying in 2 seconds...\n"
     sleep 2
 done
 

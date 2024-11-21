@@ -84,6 +84,11 @@ if ! sudo zypper se -i cmake &> /dev/null; then
     install_package cmake
 fi
 
+if ! sudo zypper se -i make &> /dev/null; then
+    install_package make
+fi
+
+sleep 1 && clear
 
 if git clone --depth=1 https://github.com/hyprwm/hyprsunset "$parent_dir/.cache/hyprsunset"; then
     cd "$parent_dir/.cache/hyprsunset"
@@ -96,7 +101,7 @@ if git clone --depth=1 https://github.com/hyprwm/hyprsunset "$parent_dir/.cache/
     if command -v hyprsunset &> /dev/null; then
         printf "${done} - Hyprsunset was installed successfully!\n" 2>&1 | tee -a "$log"
     else
-        printf "${error} - Sorry, could not install Hyprsunset. :(\n" 2>&1 | tee -a "$log"
+        printf "${error} - Sorry, could not install Hyprsunset. (╥﹏╥)\n" 2>&1 | tee -a "$log"
     fi
 fi
 

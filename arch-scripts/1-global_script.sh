@@ -42,7 +42,7 @@ install_package() {
       printf "${done} - $1 was installed successfully!\n\n"
     else
       # Something is missing, exiting to review log
-      printf "${error} - $1 failed to install :( , please check the install.log .Maybe you may need to install manually.\n"
+      printf "${error} - $1 failed to install, please check the install.log .Maybe you may need to install manually. (╥﹏╥)\n"
     fi
   fi
 }
@@ -62,7 +62,7 @@ install_from_aur() {
       printf "${done} - $1 was installed successfully!\n\n"
     else
       # Something is missing, exiting to review log
-      printf "${error} - $1 failed to install :( , please check the install.log .Maybe you need to install manually.\n"
+      printf "${error} - $1 failed to install, please check the install.log .Maybe you need to install manually. (╥﹏╥)\n"
     fi
   fi
 }

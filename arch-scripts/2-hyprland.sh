@@ -148,4 +148,4 @@ for file_man in "${thunar[@]}"; do
     fi
 done
 
-clear
+sleep 1 && clear

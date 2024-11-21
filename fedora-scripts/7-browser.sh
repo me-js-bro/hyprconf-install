@@ -71,3 +71,5 @@ else
     printf "${attention} - A browser installation is important to open some web-applications\n"
     exit 1
 fi
+
+sleep 1 && clear

@@ -72,12 +72,12 @@ check_distro() {
                 echo "distro=$distro" >> "$distro_cache" 2>&1 | tee -a "$log"
                 ;;
             fedora)
-                printf "${action} - Starting the script for ${cyan}$ID${end}\n\n"
+                printf "${action} - Starting the script for ${blue}$ID${end}\n\n"
                 distro="fedora"
                 echo "distro=$distro" >> "$distro_cache" 2>&1 | tee -a "$log"
                 ;;
             opensuse*)
-                printf "${action} - Starting the script for ${cyan}$ID${end}\n\n"
+                printf "${action} - Starting the script for ${green}$ID${end}\n\n"
                 distro="opensuse"
                 echo "distro=$distro" >> "$distro_cache" 2>&1 | tee -a "$log"
                 ;;
@@ -101,13 +101,13 @@ printf "${cyan}Starting the Installation Script${end}...\n" && sleep 1
 check_distro && sleep 1 && clear
 
 
-printf "${cyan}Hyprland${end} Installation Script by\n" && sleep 0.5
+printf "${cyan}Hyprland${end} Installation Script by,\n" && sleep 0.5
 
-if [[ "$distro" == "arch" ]]; then
+if [[ "$distro" == "arch" && "$distro" == "opensuse" ]]; then
     printf "${orange}          _        ${end}\n"
     printf "${orange}  |  _    |_) __ _  ${end}\n"
     printf "${orange}\_| _)    |_) | (_) ${end}\n"
-else
+elif [[ "$distro" == "fedora" ]]; then
     printf "${orange} ┳   ┳┓     ${end}\n"
     printf "${orange} ┃┏  ┣┫┏┓┏┓ ${end}\n"
     printf "${orange}┗┛┛  ┻┛┛ ┗┛ ${end}\n"
@@ -115,7 +115,7 @@ fi
 
 
 
-#=========  asking for confirmation  ========= #
+# =========  asking for confirmation  ========= #
 
 printf "Would you like to continue with the script? ${cyan}[ ${green}y${end}/${red}n ${cyan}]${end} \n"
 read -r -p "$(echo -e '\e[1;32mSelect: \e[0m')" continue
@@ -251,9 +251,8 @@ fi
 "$scripts_dir/2-hyprland.sh" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
 "$scripts_dir/3-other_packages.sh" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
 
-# nwg-look and pywal installation script only for fedora
+# pywal installation script only for fedora
 if [[ "$distro" == "fedora" ]]; then
-    "$scripts_dir/4-nwg_look.sh" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
     "$scripts_dir/5-pywal.sh" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
 fi
 
@@ -308,7 +307,6 @@ is_laptop() {
 system_type=$(is_laptop)
 if [ "$system_type" = "Desktop" ]; then
     printf "${attention} - This system is a Desktop. Some configuration will be skipped\n" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
-    exit 0
 else
     "$common_scripts/laptop.sh" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
 fi
@@ -329,7 +327,7 @@ if [[ "$distro" = "arch" ]]; then
 
     for pkg in "${uninstall_pkg[@]}"; do
         if sudo "$pkg_man" -Qs "$pkg" &> /dev/null; then
-            printf "${note} - Removing $pkg\n" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
+            printf "${attention} - Removing $pkg\n" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
             sudo pacman -Rns --noconfirm "$pkg" 2>&1 | tee -a "$log" &> /dev/null
         fi
     done
@@ -338,7 +336,7 @@ elif [[ "$distro" = "fedora" ]]; then
 
     for pkg in "${uninstall_pkg[@]}"; do
         if sudo dnf list installed "$pkg" &> /dev/null; then
-            printf "${note} - Removing $pkg\n" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
+            printf "${attention} - Removing $pkg\n" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
             sudo dnf remove -y "$pkg" 2>&1 | tee -a "$log"  &> /dev/null
         fi
     done
@@ -347,8 +345,13 @@ elif [[ "$distro" = "opensuser" ]]; then
 
     for pkg in "$uninstall_pkg[@]"; do
         if sudo zypper se -i "$pkg" &> /dev/null; then
-            printf "${note} - Removing $pkg\n" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
+            printf "${attention} - Removing $pkg\n" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
             sudo zypper remove -y "$pkg" 2>&1 | tee -a "$log" &> /dev/null
+            sleep 1
+            if command -v openbox &> /dev/null; then
+                printf "${attention} - Removing openbox.\n"
+                sudo zypper remove -y openbox 2>&1 | tee -a "$log"
+            fi
         fi
     done
 fi
@@ -382,10 +385,11 @@ if [[ "$reboot" =~ ^[Yy]$ ]]; then
 
     clear && display_text_reboot && sleep 2
 
-    systemctl reboot --now 2>&1 | tee -a "$log"
+    systemctl reboot --now
 else
-    printf "${orange}Ok, but it's good to reboot the system. So exiting the script...${end}\n" && sleep 2
-    exit 1
+    printf "${orange}[ * ] - Ok, but it's good to reboot the system. Anyway, the script successfully ends here..${end}\n" && sleep 1
+    printf "${orange}[ * ] - Enjoy ${cyan}Hyprland. (◠‿◠)${end}\n"
+    exit 0
 fi
 
 

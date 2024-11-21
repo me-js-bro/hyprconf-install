@@ -68,18 +68,18 @@ sleep 1
 
 # if repo clonned successfully, then setting up the config
 if [[ -d "$cache_dir/hyprconf" ]]; then
-  cd "$cache_dir/hyprconf" || { printf "${error} - Could not changed directory to $cache_dir/hyprconf\n" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log"); exit 1; }
+  cd "$cache_dir/hyprconf" || { printf "${error} - Could not changed directory to $cache_dir/hyprconf (╥﹏╥)\n" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log"); exit 1; }
 
   chmod +x setup.sh
   
-  ./setup.sh || { printf "${error} - Could not run the setup script for hyprconf\n" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log"); exit 1; }
+  ./setup.sh || { printf "${error} - Could not run the setup script for hyprconf (╥﹏╥)\n" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log"); exit 1; }
 fi
 
 if [[ -f "$HOME/.config/hypr/scripts/startup.sh" ]]; then
   printf "${done} - Dotfiles setup was successful.!\n" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
-  exit 0
-  clear
 else
-  printf "${error} - Could not setup dotfiles. Maybe there was an error. Please check the ${green}'$log'${end} file.\n" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
+  printf "${error} - Could not setup dotfiles. Maybe there was an error. Please check the ${green}'$log'${end} file. (╥﹏╥)\n" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
   exit 1
 fi
+
+sleep 1 && clear

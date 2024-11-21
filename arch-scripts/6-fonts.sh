@@ -72,3 +72,5 @@ for font_pkgs in "${fonts[@]}"; do
         echo "[ ERROR ] - Sorry, could not install $font_pkgs!\n" 2>&1 | tee -a "$log" &> /dev/null
     fi
 done
+
+sleep 1 && clear

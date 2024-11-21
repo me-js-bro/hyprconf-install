@@ -91,3 +91,5 @@ for other_pkgs in "${other_packages[@]}"; do
         echo "[ ERROR ] - Sorry, could not install $other_pkgs!\n" 2>&1 | tee -a "$log" &> /dev/null
     fi
 done
+
+sleep 1 && clear

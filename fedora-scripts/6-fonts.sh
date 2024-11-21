@@ -84,11 +84,11 @@ mkdir -p ~/.local/share/fonts/JetBrainsMonoNerd
 tar -xJkf JetBrainsMono.tar.xz -C ~/.local/share/fonts/JetBrainsMonoNerd
 
 # Update font cache and log the output
-fc-cache -v
+fc-cache -v &> /dev/null
 
 # clean up 
 if [ -d "JetBrainsMono.tar.xz" ]; then
 	rm -r JetBrainsMono.tar.xz
 fi
 
-clear
+sleep 1 && clear

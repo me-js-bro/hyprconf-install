@@ -68,11 +68,11 @@ else
     if sudo dnf list installed code &>> /dev/null; then
         printf "${done} - Visual Studio Code was installed successfully..\n" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
     else
-        printf "${error} - Could not installed Visual Studio Code. Please check the $log file Maybe you need to install it manually.\n" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
+        printf "${error} - Could not installed Visual Studio Code. Please check the $log file Maybe you need to install it manually. (╥﹏╥)\n" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
     fi
 fi
 
 common_scripts="$parent_dir/common"
 "$common_scripts/vs_code_theme.sh"
 
-clear
+sleep 1 && clear

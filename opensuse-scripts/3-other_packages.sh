@@ -178,22 +178,14 @@ if command -v go &> /dev/null; then
     printf "${done} - Successfully installed cliphist!\n" 2>&1 | tee -a "$log"
     sudo rm -rf "$HOME/go"
   else
-    printf "${error} - Could not install cliphist.\n" 2>&1 | tee -a "$log"
+    printf "${error} - Could not install cliphist. (╥﹏╥)\n" 2>&1 | tee -a "$log"
   fi
 fi
 
 sleep 2 && clear
 
-# installing pywal
-if command -v pipx &> /dev/null; then
-  printf "${action} - Installing pywal using ${green}'pipx'${end}\n"
-  pipx install pywal
-  sleep 1
-  if command -v wal &> /dev/null; then
-    printf "${done} - pywal was install successfully\n" 2>&1 | tee -a "$log"
-  else
-    printf "${erorr} - Sorry, could not install pywal. You need to install it manually. :(\n" 2>&1 | tee -a "$log"
-  fi
-fi
+printf "${note} - Redirecting to another script to install pywal.\n"
 
-sleep 2 && clear
+chmod +x "$dir/pywal-opensuse.sh"
+"$dir/pywal-opensuse.sh"
+

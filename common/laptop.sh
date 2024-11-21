@@ -64,5 +64,5 @@ printf "${attention} - This system is a Laptop. Proceeding with some configurati
 # Install necessary packages
 printf "${action} - Installing necessary packages\n"
 for pkgs in "${packages[@]}"; do
-    install_package "$pkgs" || { printf "${error} - Could not install $pkgs, exiting..\n"; exit 1; } 2>&1 | tee -a "$log"
+    install_package "$pkgs" || { printf "${error} - Could not install $pkgs, exiting. (╥﹏╥)\n"; exit 1; } 2>&1 | tee -a "$log"
 done

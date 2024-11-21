@@ -105,6 +105,7 @@ other_packages=(
   gnome-disk-utility 
   mpv
   mpv-mpris
+  nwg-look
   pamixer
   SwayNotificationCenter
   swww
@@ -154,4 +155,4 @@ if [ -f '/usr/local/bin/grimblast' ]; then
   printf "${done} - Grimblast was installed successfully...\n" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
 fi
 
-clear
+sleep 1 && clear

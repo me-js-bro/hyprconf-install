@@ -54,6 +54,7 @@ hypr=(
     hyprlock
     hyprpaper
     hypridle
+    hyprcursor
 )
 
 # Installation of Hyprland and Hyprlock
@@ -66,4 +67,4 @@ for hypr_pkgs in "${hypr[@]}"; do
     fi
 done
 
-clear
+sleep 1 && clear

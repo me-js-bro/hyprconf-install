@@ -63,4 +63,4 @@ fi
 printf "${action} - Now starting the direct installation script for my customized Bash...\n"
 printf " \n" && sleep 1
 
-"bash <(curl https://raw.githubusercontent.com/me-js-bro/Bash/main/direct_install.sh)" 2>&1 | tee -a "$log"
+bash <(curl https://raw.githubusercontent.com/me-js-bro/Bash/main/direct_install.sh) 2>&1 | tee -a "$log"

@@ -59,3 +59,5 @@ cp -r "$assets_dir/.vscode" "$HOME/" 2>&1 | tee -a "$log"
 sleep 1
 
 printf "${done} - Vs Code themes and some plugins have been copied\n"
+
+sleep 1 && clear

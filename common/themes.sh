@@ -84,12 +84,12 @@ if [ ! -d "$HOME/.icons/TokyoNight-SE" ]; then
     if [[ -d "$HOME/.icons/TokyoNight-SE" ]]; then
         printf "${done} - Successfully Installed Tokyo Night icons. \n" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
     else
-        printf "${error} - Could not install Tokyo Night icons.\n" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
+        printf "${error} - Could not install Tokyo Night icons. (╥﹏╥)\n" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
     fi
 fi
 
 # installing the cursor
-unzip "$cursor" -d ~/.icons/ &> /devlnull 2>&1 | tee -a "$log"
+unzip "$cursor" -d ~/.icons/ &> /dev/null 2>&1 | tee -a "$log"
 
 # clear
 

@@ -58,3 +58,5 @@ bash -c "$(wget -q https://raw.githubusercontent.com/me-js-bro/Build-OpenBangla-
 if [[ -d "/usr/share/openbangla-keyboard" ]]; then
   printf "${done} - OpenBangla Keyboard was installed successfully!\n" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
 fi
+
+sleep 1 && clear

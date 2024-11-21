@@ -105,6 +105,6 @@ fi
 if [[ -n "$aur_helper" ]]; then
     printf "${done} - $aur_helper was installed successfully!\n" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
 else
-    printf "${error} - ${red}$aur_helper could not be installed. Maybe there was a network isseu. Please check the '$log' file...${end}\n"
+    printf "${error} - ${red}$aur_helper could not be installed. Maybe there was a network isseu. Please check the '$log' file. (╥﹏╥)${end}\n"
     exit 1
 fi

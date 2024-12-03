@@ -22,15 +22,19 @@ ask="[${orange} QUESTION ${end}]"
 error="[${red} ERROR ${end}]"
 
 display_text() {
-    cat << "EOF"
-     _   _                      _                    _           
-    | | | | _   _  _ __   _ __ | |  __ _  _ __    __| |          
-    | |_| || | | || '_ \ | '__|| | / _` || '_ \  / _` |          
-    |  _  || |_| || |_) || |   | || (_| || | | || (_| |  _  _  _ 
-    |_| |_| \__, || .__/ |_|   |_| \__,_||_| |_| \__,_| (_)(_)(_)
-            |___/ |_|                                            
-   
-EOF
+    gum style \
+        --border rounded \
+        --align center \
+        --width 60 \
+        --margin "1" \
+        --padding "1" \
+'
+   __ __              __             __
+  / // /_ _____  ____/ /__ ____  ___/ /
+ / _  / // / _ \/ __/ / _ `/ _ \/ _  / 
+/_//_/\_, / .__/_/ /_/\_,_/_//_/\_,_/  
+     /___/_/                           
+'
 }
 
 clear && display_text
@@ -44,6 +48,8 @@ source "$dir/1-global_script.sh"
 
 # log directory
 parent_dir="$(dirname "$dir")"
+source "$parent_dir/interaction_fn.sh"
+
 log_dir="$parent_dir/Logs"
 log="$log_dir/hyprland-$(date +%d-%m-%y).log"
 mkdir -p "$log_dir"

@@ -22,15 +22,19 @@ ask="[${orange} QUESTION ${end}]"
 error="[${red} ERROR ${end}]"
 
 display_text() {
-    cat << "EOF"
-      ___   _    _                   ____               _                                      
-     / _ \ | |_ | |__    ___  _ __  |  _ \  __ _   ___ | | __ __ _   __ _   ___  ___           
-    | | | || __|| '_ \  / _ \| '__| | |_) |/ _` | / __|| |/ // _` | / _` | / _ \/ __|          
-    | |_| || |_ | | | ||  __/| |    |  __/| (_| || (__ |   <| (_| || (_| ||  __/\__ \  _  _  _ 
-     \___/  \__||_| |_| \___||_|    |_|    \__,_| \___||_|\_\\__,_| \__, | \___||___/ (_)(_)(_)
-                                                                    |___/                      
-   
-EOF
+    gum style \
+        --border rounded \
+        --align center \
+        --width 40 \
+        --margin "1" \
+        --padding "1" \
+'
+  ____  __  __             
+ / __ \/ /_/ /  ___ _______
+/ /_/ / __/ _ \/ -_) __(_-<
+\____/\__/_//_/\__/_/ /___/
+                             
+'
 }
 
 clear && display_text
@@ -128,7 +132,7 @@ grimblast_url=https://github.com/hyprwm/contrib.git
 
 
 # Installation of main components
-printf "${action} - Installing hyprland packages.... \n"
+fn_check "Installing other packages..." "2"
 
 for packages in "${hypr_package[@]}" "${other_packages[@]}"; do
   install_package "$packages"
@@ -151,10 +155,11 @@ done
 
 # installing grimblast
 if [ -f '/usr/local/bin/grimblast' ]; then
-  printf "${done} - Grimblast is already installed...\n" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
+  fn_done "Grimblast is already installed.."
+  echo "[ DONE ] - Grimblast is already installed" 2>&1 | tee -a  "$log" &> /dev/null
 else
 
-  printf "${attention} - Cloning grimblast grom github to install for screenshot...\n"
+  fn_action "Installing grimblast" "0.5"
   git clone --depth=1 "$grimblast_url" ~/grimblast
   cd "$HOME/grimblast/grimblast"
   make
@@ -162,30 +167,32 @@ else
 
   sleep 1
   rm -rf ~/grimblast
-  printf "${done} - Grimblast was installed successfully\n" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
+  fn_done "Grimblast was installed successfully!"
+  echo "[ DONE ] - Grimblast was installed successfully!" 2>&1 | tee -a  "$log" &> /dev/null
 fi
 
 sleep 2 && clear
 
 # Install cliphist using go
 if command -v go &> /dev/null; then
-  printf "${action} - Installing cliphist\n"
+  fn_action "Installing cliphist" "0.5"
   export PATH=$PATH:/usr/local/bin
 
   if go install go.senan.xyz/cliphist@latest 2>&1 | tee -a "$log" &> /dev/null; then
     # copy cliphist into /usr/local/bin for some reason it is installing in ~/go/bin
     sudo cp -r "$HOME/go/bin/cliphist" "/usr/local/bin/" 2>&1 | tee -a "$log" &> /dev/null
-    printf "${done} - Successfully installed cliphist!\n" 2>&1 | tee -a "$log"
+    fn_done "Cliphist was installed successfully!"
+    echo "[ DONE ] - Cliphist was installed successfully!" 2>&1 | tee -a  "$log" &> /dev/null
+
     sudo rm -rf "$HOME/go"
   else
-    printf "${error} - Could not install cliphist. (╥﹏╥)\n" 2>&1 | tee -a "$log"
+    fn_error "Could not install cliphist. (╥﹏╥)"
+    echo "[ ERROR ] - Could not install cliphist. (╥﹏╥)" 2>&1 | tee -a "$log" &> /dev/null
   fi
 fi
 
 sleep 2 && clear
 
-printf "${note} - Redirecting to another script to install pywal.\n"
-
-chmod +x "$dir/pywal-opensuse.sh"
-"$dir/pywal-opensuse.sh"
+chmod +x "$dir/pywal.sh"
+"$dir/pywal.sh"
 

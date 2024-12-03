@@ -22,6 +22,11 @@ ask="[${orange} QUESTION ${end}]"
 error="[${red} ERROR ${end}]"
 
 
+dir="$(dirname "$(realpath "$0")")"
+parent_dir="$(dirname "$dir")"
+source "$parent_dir/interaction_fn.sh"
+
+
 ###------ Startup ------###
 
 # package installation function..
@@ -29,18 +34,17 @@ install_package() {
 
 # Checking if package is already installed
 if sudo dnf list installed "$1" &>> /dev/null ; then
-    printf "${done} - $1 is already installed. Skipping...\n"
+    fn_done "$1 is already installed. Skipping."
 else
-    # Package not installed
-    printf "${action} - Installing $1 ...\n"
+
+    fn_action "Installing $1." "0.5"
     sudo dnf install -y "$1"
-    # Making sure package is installed
+    
     if sudo dnf list installed "$1" &>> /dev/null ; then
-      printf "${done} - $1 was installed successfully!\n \n"
+      fn_done " $1 was installed successfully!"
     else
-      # Something is missing, exiting to review log
-      printf "${error} - $1 failed to install, please check the install.log .Maybe you may need to install manually. (╥﹏╥)\n"
-      # exit 1
+    
+      fn_error "$1 failed to install. Maybe there was an issue. (╥﹏╥)"
     fi
   fi
 }

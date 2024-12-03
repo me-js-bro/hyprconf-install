@@ -22,15 +22,20 @@ ask="[${orange} QUESTION ${end}]"
 error="[${red} ERROR ${end}]"
 
 display_text() {
-    cat << "EOF"
-     _                   _                              
-    | |     __ _  _ __  | |_  ___   _ __   ___          
-    | |    / _` || '_ \ | __|/ _ \ | '_ \ / __|         
-    | |___| (_| || |_) || |_| (_) || |_) |\__ \ _  _  _ 
-    |_____|\__,_|| .__/  \__|\___/ | .__/ |___/(_)(_)(_)
-                 |_|               |_|                                                                  
-   
-EOF
+    gum style \
+        --border rounded \
+        --align center \
+        --width 60 \
+        --margin "1" \
+        --padding "1" \
+'
+   __             __          
+  / /  ___ ____  / /____  ___ 
+ / /__/ _ `/ _ \/ __/ _ \/ _ \
+/____/\_,_/ .__/\__/\___/ .__/
+         /_/           /_/    
+                               
+'
 }
 
 clear && display_text
@@ -41,6 +46,8 @@ printf " \n \n"
 # install script dir
 dir="$(dirname "$(realpath "$0")")"
 parent_dir="$(dirname "$dir")"
+source "$parent_dir/interaction_fn.sh"
+
 cache_dir="$parent_dir/.cache"
 distro_cache="$cache_dir/distro"
 source "$distro_cache"
@@ -59,10 +66,9 @@ packages=(
     wlroots
 )
 
-printf "${attention} - This system is a Laptop. Proceeding with some configuration.\n" && sleep 1
+fn_action "This system is a Laptop. Proceeding with some configuration."
 
 # Install necessary packages
-printf "${action} - Installing necessary packages\n"
 for pkgs in "${packages[@]}"; do
     install_package "$pkgs" || { printf "${error} - Could not install $pkgs, exiting. (╥﹏╥)\n"; exit 1; } 2>&1 | tee -a "$log"
 done

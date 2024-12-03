@@ -22,19 +22,23 @@ ask="[${orange} QUESTION ${end}]"
 error="[${red} ERROR ${end}]"
 
 display_text() {
-    cat << "EOF"
-     _   _                      _                    _           
-    | | | | _   _  _ __   _ __ | |  __ _  _ __    __| |          
-    | |_| || | | || '_ \ | '__|| | / _` || '_ \  / _` |          
-    |  _  || |_| || |_) || |   | || (_| || | | || (_| |  _  _  _ 
-    |_| |_| \__, || .__/ |_|   |_| \__,_||_| |_| \__,_| (_)(_)(_)
-            |___/ |_|                                            
-   
-EOF
+    gum style \
+        --border rounded \
+        --align center \
+        --width 60 \
+        --margin "1" \
+        --padding "1" \
+'
+   __ __              __             __
+  / // /_ _____  ____/ /__ ____  ___/ /
+ / _  / // / _ \/ __/ / _ `/ _ \/ _  / 
+/_//_/\_, / .__/_/ /_/\_,_/_//_/\_,_/  
+     /___/_/                           
+'
 }
 
 clear && display_text
-printf " \n \n"
+printf " \n"
 
 ###------ Startup ------###
 
@@ -44,6 +48,8 @@ source "$dir/1-global_script.sh"
 
 # log directory
 parent_dir="$(dirname "$dir")"
+source "$parent_dir/interaction_fn.sh"
+
 log_dir="$parent_dir/Logs"
 log="$log_dir/hyprland-$(date +%d-%m-%y).log"
 mkdir -p "$log_dir"
@@ -99,10 +105,12 @@ if git clone --depth=1 https://github.com/hyprwm/hyprsunset "$parent_dir/.cache/
     sleep 1
 
     if command -v hyprsunset &> /dev/null; then
-        printf "${done} - Hyprsunset was installed successfully!\n" 2>&1 | tee -a "$log"
+        fn_done "Hyprsunset was installed successfully!"
+        echo "[ DONE ] - Hyprsunset was installed successfully!" 2>&1 | tee -a "$log" &> /dev/null
     else
-        printf "${error} - Sorry, could not install Hyprsunset. (╥﹏╥)\n" 2>&1 | tee -a "$log"
-    fi
+        fn_error "Sorry, could not install Hyprsunset. (╥﹏╥)"
+        echo "[ ERROR ] - Sorry, could not install Hyprsunset. (╥﹏╥)\n" 2>&1 | tee -a "$log" &> /dev/null
+    fi 
 fi
 
 sleep 1 && clear

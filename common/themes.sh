@@ -22,14 +22,20 @@ ask="[${orange} QUESTION ${end}]"
 error="[${red} ERROR ${end}]"
 
 display_text() {
-    cat << "EOF"
-     _____  _                                           
-    |_   _|| |__    ___  _ __ ___    ___  ___           
-      | |  | '_ \  / _ \| '_ ` _ \  / _ \/ __|          
-      | |  | | | ||  __/| | | | | ||  __/\__ \  _  _  _ 
-      |_|  |_| |_| \___||_| |_| |_| \___||___/ (_)(_)(_)
-                                                      
-EOF
+    gum style \
+        --border rounded \
+        --align center \
+        --width 60 \
+        --margin "1" \
+        --padding "1" \
+'
+ ________                
+/_  __/ /  ___ __ _  ___ 
+ / / / _ \/ -_)  ; \/ -_)
+/_/ /_//_/\__/_/_/_/\__/ 
+                          
+                               
+'
 }
 
 clear && display_text
@@ -45,6 +51,8 @@ dir="$(dirname "$(realpath "$0")")"
 
 # log directory
 parent_dir="$(dirname "$dir")"
+source "$parent_dir/interaction_fn.sh"
+
 log_dir="$parent_dir/Logs"
 log="$log_dir/themes-$(date +%d-%m-%y).log"
 mkdir -p "$log_dir"
@@ -64,7 +72,7 @@ mkdir -p ~/.icons
 Download_URL="https://github.com/ljmill/tokyo-night-icons/releases/latest/download/TokyoNight-SE.tar.bz2"
 
 if [ ! -d "$HOME/.icons/TokyoNight-SE" ]; then
-    printf "${action} - Installing Tokyo Night icons.\n"
+    fn_action "Installing Tokyo Night icons."
 
     # if the tokyo night icon directory was not downloaded, it will download if first
     if [ ! -d "TokyoNight-SE.tar.bz2" ]; then
@@ -82,9 +90,11 @@ if [ ! -d "$HOME/.icons/TokyoNight-SE" ]; then
     sleep 2
 
     if [[ -d "$HOME/.icons/TokyoNight-SE" ]]; then
-        printf "${done} - Successfully Installed Tokyo Night icons. \n" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
+        fn_done "Successfully Installed Tokyo Night icons."
+        echo "[ DONE ] - Successfully Installed Tokyo Night icons. \n" 2>&1 | tee -a "$log" &> /dev/null
     else
-        printf "${error} - Could not install Tokyo Night icons. (╥﹏╥)\n" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
+        fn_error "Could not install Tokyo Night icons. (╥﹏╥)"
+        echo "[ ERROR ] - Could not install Tokyo Night icons. (╥﹏╥)\n" 2>&1 | tee -a "$log" &> /dev/null
     fi
 fi
 
@@ -98,10 +108,10 @@ env_file=/etc/environment
 sudo sh -c "echo \"QT_QPA_PLATFORMTHEME='qt5ct'\" >> $env_file" 2>&1 | tee -a "$log"
 
 # extracting themes to ~/.themes/
-printf "${action} - Copying themes\n" && sleep 1
+fn_action "Copying themes." "0.5"
 tar -xf "$theme" -C ~/.themes/ &> /dev/null 2>&1 | tee -a "$log"
 
-printf "${done} - Themes copied successfully...\n" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
+fn_done "Themes copied successfully."
 
 sleep 1
 

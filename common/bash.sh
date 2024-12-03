@@ -22,14 +22,19 @@ ask="[${orange} QUESTION ${end}]"
 error="[${red} ERROR ${end}]"
 
 display_text() {
-    cat << "EOF"
-     ____               _               
-    | __ )   __ _  ___ | |__            
-    |  _ \  / _` |/ __|| '_ \           
-    | |_) || (_| |\__ \| | | |  _  _  _ 
-    |____/  \__,_||___/|_| |_| (_)(_)(_)                                    
-                                     
-EOF
+    gum style \
+        --border rounded \
+        --align center \
+        --width 60 \
+        --margin "1" \
+        --padding "1" \
+'
+   ___           __ 
+  / _ )___ ____ / / 
+ / _  / _ `(_-</ _ \
+/____/\_,_/___/_//_/
+                     
+'
 }
 
 clear && display_text
@@ -39,6 +44,8 @@ printf " \n \n"
 
 dir="$(dirname "$(realpath "$0")")"
 parent_dir="$(dirname "$dir")"
+source "$parent_dir/interaction_fn.sh"
+
 cache_dir="$parent_dir/.cache"
 distro_cache="$cache_dir/distro"
 source "$distro_cache"
@@ -53,14 +60,10 @@ touch "$log"
 
 # check if there is a .bash directory available. if available, then backup it.
 if [ -d ~/.bash ]; then
-    printf "${note} - A ${green}.bash${end} directory is available... Backing it up\n" && sleep 1
+    printf "${note}\n:: A ${green}.bash${end} directory is available. Backing it up\n" && sleep 1
 
     cp -r ~/.bash ~/.bash-${USER} 2>&1 | tee -a "$log"
-    printf "${done} - Backup done..\n \n"
+    fn_done "Backe up."
 fi
-
-# now install bash
-printf "${action} - Now starting the direct installation script for my customized Bash...\n"
-printf " \n" && sleep 1
 
 bash <(curl https://raw.githubusercontent.com/me-js-bro/Bash/main/direct_install.sh) 2>&1 | tee -a "$log"

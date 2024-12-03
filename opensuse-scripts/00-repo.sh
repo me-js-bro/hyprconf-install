@@ -22,19 +22,23 @@ ask="[${orange} QUESTION ${end}]"
 error="[${red} ERROR ${end}]"
 
 display_text() {
-    cat << "EOF"
-  ____                           _  _                _                     
- |  _ \  ___  _ __    ___   ___ (_)| |_  ___   _ __ (_)  ___  ___          
- | |_) |/ _ \| '_ \  / _ \ / __|| || __|/ _ \ | '__|| | / _ \/ __|         
- |  _ <|  __/| |_) || (_) |\__ \| || |_| (_) || |   | ||  __/\__ \ _  _  _ 
- |_| \_\\___|| .__/  \___/ |___/|_| \__|\___/ |_|   |_| \___||___/(_)(_)(_)
-             |_|                                                             
-   
-EOF
+    gum style \
+        --border rounded \
+        --align center \
+        --width 60 \
+        --margin "1" \
+        --padding "1" \
+'
+   ___                    _ __           _       
+  / _ \___ ___  ___  ___ (_) /____  ____(_)__ ___
+ / , _/ -_) _ \/ _ \(_-</ / __/ _ \/ __/ / -_|_-<
+/_/|_|\__/ .__/\___/___/_/\__/\___/_/ /_/\__/___/
+        /_/                                       
+'
 }
 
 clear && display_text
-printf " \n \n"
+printf " \n"
 
 
 ###------ Startup ------###
@@ -45,6 +49,8 @@ source "$dir/1-global_script.sh"
 
 # log directory
 parent_dir="$(dirname "$dir")"
+source "$parent_dir/interaction_fn.sh"
+
 log_dir="$parent_dir/Logs"
 log="$log_dir/repo-$(date +%d-%m-%y).log"
 mkdir -p "$log_dir"
@@ -59,11 +65,14 @@ dependencies=(
 
 
 # Adding Packman repository and switching over to Packman
-printf "${attention} - Adding Packman repository (Globally).... \n"
+# printf "${attention} - Adding Packman repository (Globally).... \n"
+fn_check "Adding packman repository" "1"
 
 sudo zypper -n --quiet ar --refresh -p 90 "$packman_repo" packman 2>&1 | tee -a "$log"
 sudo zypper --gpg-auto-import-keys refresh 2>&1 | tee -a "$log"
 sudo zypper -n dup --from packman --allow-vendor-change 2>&1 | tee -a "$log"
+
+echo 
 
 for deps in "${dependencies[@]}"; do
     install_package_base "$deps"

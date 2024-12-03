@@ -22,14 +22,19 @@ ask="[${orange} QUESTION ${end}]"
 error="[${red} ERROR ${end}]"
 
 display_text() {
-    cat << "EOF"
-   ____          _    _____  _  _                      
-  |  _ \   ___  | |_ |  ___|(_)| |  ___  ___           
-  | | | | / _ \ | __|| |_   | || | / _ \/ __|          
-  | |_| || (_) || |_ |  _|  | || ||  __/\__ \  _  _  _ 
-  |____/  \___/  \__||_|    |_||_| \___||___/ (_)(_)(_)
-
-EOF
+    gum style \
+        --border rounded \
+        --align center \
+        --width 60 \
+        --margin "1" \
+        --padding "1" \
+'
+   ___       __  ____ __      
+  / _ \___  / /_/ _(_) /__ ___
+ / // / _ \/ __/ _/ / / -_|_-<
+/____/\___/\__/_//_/_/\__/___/
+                               
+'
 }
 
 clear && display_text
@@ -39,6 +44,8 @@ printf " \n \n"
 
 dir="$(dirname "$(realpath "$0")")"
 parent_dir="$(dirname "$dir")"
+source "$parent_dir/interaction_fn.sh"
+
 cache_dir="$parent_dir/.cache"
 distro_cache="$cache_dir/distro"
 source "$distro_cache"
@@ -54,8 +61,7 @@ touch "$log"
 
 # _______ Testing _______ #
 
-printf "${attention} - Clonning the dotfiles repository and setting it to your system..\n"
-sleep 1
+fn_action "Clonning the dotfiles repository and setting it to your system." "1"
 # Create the cache directory if it doesn't exist
 mkdir -p "$cache_dir"
 
@@ -68,17 +74,17 @@ sleep 1
 
 # if repo clonned successfully, then setting up the config
 if [[ -d "$cache_dir/hyprconf" ]]; then
-  cd "$cache_dir/hyprconf" || { printf "${error} - Could not changed directory to $cache_dir/hyprconf (╥﹏╥)\n" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log"); exit 1; }
+  cd "$cache_dir/hyprconf" || { printf "${error}\n! Could not changed directory to $cache_dir/hyprconf (╥﹏╥)\n" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log"); exit 1; }
 
   chmod +x setup.sh
   
-  ./setup.sh || { printf "${error} - Could not run the setup script for hyprconf (╥﹏╥)\n" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log"); exit 1; }
+  ./setup.sh || { printf "${error}\n! Could not run the setup script for hyprconf (╥﹏╥)\n" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log"); exit 1; }
 fi
 
 if [[ -f "$HOME/.config/hypr/scripts/startup.sh" ]]; then
-  printf "${done} - Dotfiles setup was successful.!\n" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
+  printf "${done}\n:: Dotfiles setup was successful.!\n" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
 else
-  printf "${error} - Could not setup dotfiles. Maybe there was an error. Please check the ${green}'$log'${end} file. (╥﹏╥)\n" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
+  printf "${error}\n! Could not setup dotfiles. Maybe there was an error. Please check the ${green}'$log'${end} file. (╥﹏╥)\n" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
   exit 1
 fi
 

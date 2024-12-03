@@ -26,18 +26,17 @@ error="[${red} ERROR ${end}]"
 
 display_text() {
     cat << "EOF"
-        _                  _   _        _                              
-       / \   _   _  _ __  | | | |  ___ | | _ __    ___  _ __           
-      / _ \ | | | || '__| | |_| | / _ \| || '_ \  / _ \| '__|          
-     / ___ \| |_| || |    |  _  ||  __/| || |_) ||  __/| |     _  _  _ 
-    /_/   \_\\__,_||_|    |_| |_| \___||_|| .__/  \___||_|    (_)(_)(_)
-                                          |_|                                
+   ___             __ __    __            
+  / _ |__ ______  / // /__ / /__  ___ ____
+ / __ / // / __/ / _  / -_) / _ \/ -_) __/
+/_/ |_\_,_/_/   /_//_/\__/_/ .__/\__/_/   
+                          /_/                   
    
 EOF
 }
 
 clear && display_text
-printf " \n \n"
+printf " \n\n"
 
 ###------ Startup ------###
 
@@ -51,6 +50,7 @@ source "$dir/1-global_script.sh"
 # log directory
 parent_dir="$(dirname "$dir")"
 cache_file="$parent_dir/.cache/user-cache"
+source "$parent_dir/interaction_fn.sh"
 
 log_dir="$parent_dir/Logs"
 log="$log_dir/aur_helper-$(date +%d-%m-%y).log"
@@ -66,19 +66,19 @@ fi
 
 # install git before installing the aur helper.
 if ! pacman -Qe git &> /dev/null; then
-    printf "${orange}Git was not installed, installing it...${end}\n"
+    fn_action "Installing git."
     sudo pacman -S --noconfirm git 2>&1 | tee -a "$log" &> /dev/null
-    printf "${cyan}Git was installed successfully!${end}\n"
+    fn_done "Git was installed successfully!"
 fi
 
 if [[ -z "$aur_helper" ]]; then
-    printf "${attention} - Which AUR helper would you like to install? It is necessary...\n1) paru \n2) yay \n"
-    read -r -p "$(echo -e '\e[1;32mSelect: \e[0m')" aur
+
+    aur=$(gum choose "paru" "yay")
 
     sudo rm -rf /var/lib/pacman/db.lck
 
-    if [[ "$aur" == "1" ]]; then
-        echo "aur='1'" >> "$cache_file"
+    if [[ "$aur" == "paru" ]]; then
+        echo "aur='paru'" >> "$cache_file"
         git clone "https://aur.archlinux.org/paru.git"
         cd paru
         makepkg -si --noconfirm
@@ -86,25 +86,24 @@ if [[ -z "$aur_helper" ]]; then
         cd "$parent_dir"
         sudo rm -rf paru
         
-    elif [[ "$aur" == "2" ]]; then
-        echo "aur='2'" >> "$cache_file"
+    elif [[ "$aur" == "yay" ]]; then
+        echo "aur='yay'" >> "$cache_file"
         git clone "https://aur.archlinux.org/yay.git"
         cd yay
         makepkg -si --noconfirm
         sleep 1
         cd "$parent_dir"
         sudo rm -rf yay
-    else
-        printf "${note} - Invalid selection. Please re-execute the script and choose between [1/2]. Exiting the script.\n"
-        exit 1
     fi
-else
-    printf "${attention} - AUR helper ($aur_helper) already installed. No need to choose again.\n" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
 fi
 
+fn_check "Checking $aur_helper..." "3"
+
 if [[ -n "$aur_helper" ]]; then
-    printf "${done} - $aur_helper was installed successfully!\n" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
+    fn_done "Aur helper $aur was installed successfully!"
+    echo "[ DONE ] - Aur helper $aur was installed successfully!" 2>&1 | tee -a "$log" &> /dev/null
 else
-    printf "${error} - ${red}$aur_helper could not be installed. Maybe there was a network isseu. Please check the '$log' file. (╥﹏╥)${end}\n"
+    fn_error "$aur could not be installed. Maybe there was an issue. (╥﹏╥)"
+    echo "[ ERROR ] - $aur could not be installed. Maybe there was an isseu.(╥﹏╥)" 2>&1 | tee -a "$log" &> /dev/null
     exit 1
 fi

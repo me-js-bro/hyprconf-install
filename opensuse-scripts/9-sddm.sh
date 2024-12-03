@@ -22,13 +22,19 @@ ask="[${orange} QUESTION ${end}]"
 error="[${red} ERROR ${end}]"
 
 display_text() {
-    cat << "EOF"
-     ____       _      _                      
-    / ___|   __| |  __| | _ __ ___            
-    \___ \  / _` | / _` || '_ ` _ \           
-     ___) || (_| || (_| || | | | | |  _  _  _ 
-    |____/  \__,_| \__,_||_| |_| |_| (_)(_)(_)
-EOF
+    gum style \
+        --border rounded \
+        --align center \
+        --width 40 \
+        --margin "1" \
+        --padding "1" \
+'
+   _______  ___  __  ___
+  / __/ _ \/ _ \/  |/  /
+ _\ \/ // / // / /|_/ / 
+/___/____/____/_/  /_/   
+
+'
 }
 
 clear && display_text
@@ -42,6 +48,8 @@ source "$dir/1-global_script.sh"
 
 # log directory
 parent_dir="$(dirname "$dir")"
+source "$parent_dir/interaction_fn.sh"
+
 log_dir="$parent_dir/Logs"
 log="$log_dir/sddm-$(date +%d-%m-%y).log"
 mkdir -p "$log_dir"
@@ -60,7 +68,7 @@ sddm_pkgs=(
 )
 
 # Install SDDM 
-printf "${action} - Installing sddm and dependencies.... \n"
+fn_action "Installing packages for sddm" "0.5"
 for sddm in "${sddm_pkgs[@]}" ; do
   install_package_no_recommands "$sddm"
     if sudo zypper se -i "$sddm" &>> /dev/null ; then
@@ -79,7 +87,7 @@ for login_manager in lightdm gdm lxdm lxdm-gtk3; do
 done
 
 # activation of sddm service
-printf "${action} - Activating sddm service........\n"
+fn_action "Activating login manager (sddm)" "0.5"
 sudo systemctl set-default graphical.target 2>&1 | tee -a "$log"
 sudo update-alternatives --set default-displaymanager /usr/lib/X11/displaymanagers/sddm 2>&1 | tee -a "$log"
 sudo systemctl enable sddm.service 2>&1 | tee -a "$log"

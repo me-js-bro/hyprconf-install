@@ -22,13 +22,19 @@ ask="[${orange} QUESTION ${end}]"
 error="[${red} ERROR ${end}]"
 
 display_text() {
-    cat << "EOF"
-    __     __          ____            _                 
-    \ \   / /___      / ___| ___    __| |  ___           
-     \ \ / // __|    | |    / _ \  / _` | / _ \          
-      \ V / \__ \ _  | |___| (_) || (_| ||  __/  _  _  _ 
-       \_/  |___/(_)  \____|\___/  \__,_| \___| (_)(_)(_)
-EOF
+    gum style \
+        --border rounded \
+        --align center \
+        --width 40 \
+        --margin "1" \
+        --padding "1" \
+'
+ _   __        _____        __   
+| | / /__     / ___/__  ___/ /__ 
+| |/ (_-<_   / /__/ _ \/ _  / -_)
+|___/___(_)  \___/\___/\_,_/\__/ 
+                                 
+'
 }
 
 clear && display_text
@@ -43,13 +49,14 @@ source "$dir/1-global_script.sh"
 
 # log directory
 parent_dir="$(dirname "$dir")"
+source "$parent_dir/interaction_fn.sh"
+
 log_dir="$parent_dir/Logs"
 log="$log_dir/vs_code-$(date +%d-%m-%y).log"
 mkdir -p "$log_dir"
 touch "$log"
 
-printf "${attention} - Processing to install Visual Studio Code... \n"
-sleep 1
+fn_action "Installing Visual Studio Code" "0.5"
 
 sudo rpm --import https://packages.microsoft.com/keys/microsoft.asc 2>&1 | tee -a "$log"
 sudo zypper addrepo https://packages.microsoft.com/yumrepos/vscode vscode 2>&1 | tee -a "$log"

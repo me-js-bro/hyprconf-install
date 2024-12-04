@@ -59,7 +59,7 @@ touch "$log"
 fn_choose "Which browser would you like to install?" "Brave" "Chromium"
 
 if [[ "$choose" == "Brave" ]]; then
-    fn_action "Installing Brave" "0.5"
+    printf "${action}\n==> Installing Brave"
     sudo zypper in -y curl
     sudo rpm --import https://brave-browser-rpm-release.s3.brave.com/brave-core.asc
     sudo zypper addrepo https://brave-browser-rpm-release.s3.brave.com/brave-browser.repo 
@@ -67,7 +67,7 @@ if [[ "$choose" == "Brave" ]]; then
     sudo zypper in -y brave-browser
     sleep 1 && clear
 elif [[ "$choose" == "Chromium" ]]; then
-    fn_action "Installing Chromium" "0.5"
+    printf "${action}\n==> Installing Chromium"
     install_package chromium 2>&1 | tee -a "$log"
     sleep 1 && clear
 else

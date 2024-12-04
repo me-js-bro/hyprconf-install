@@ -68,7 +68,7 @@ sddm=(
 )
 
 # Installation of additional sddm stuff
-fn_action "Installing sddm and dependencies." "0.5"
+printf "${action}\n==>Installing sddm and dependencies."
 for sddm_pkgs in "${sddm[@]}"; do
   install_package "$sddm_pkgs"
   if sudo pacman -Qe "$sddm_pkgs" &> /dev/null; then
@@ -86,7 +86,7 @@ for login_manager in lightdm gdm lxdm lxdm-gtk3; do
   fi
 done
 
-fn_action "Activating sddm service." "0.5"
+printf "${action}\n==> Activating sddm service."
 sudo systemctl enable sddm.service 2>&1 | tee -a "$log"
 
 # run sddm theme script

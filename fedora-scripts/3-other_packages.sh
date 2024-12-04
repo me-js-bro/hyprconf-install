@@ -145,7 +145,7 @@ if [ -f '/usr/local/bin/grimblast' ]; then
   printf "${done}\n:: Grimblast is already installed.\n" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
 else
 
-  fn_action "Installing Grumblast" "0.5"
+  printf "${action}\n==> Installing Grumblast"
   git clone --depth=1 "$grimblast_url" "$parent_dir"/.cache/grimblast/ 2>&1 | tee -a "$log"
   cd "$parent_dir/.cache/grimblast/grimblast"
   make 2>&1 | tee -a "$log"

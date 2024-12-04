@@ -41,18 +41,18 @@ vs_code_plugins_dir="$HOME/.vscode"
 
     # backing up vs code directory "Code"
     if [ -d "$vs_code_dir" ]; then
-        fn_action "Backing up .config/Code directory." "0.5"
+        printf "${action}\n==> Backing up .config/Code directory."
         mv "$vs_code_dir" "$vs_code_dir"-${USER} 2>&1 | tee -a "$log"
     fi
 
     # backing up vs code directory "Plugins"
     if [ -d "$vs_code_plugins_dir" ]; then
-        fn_action "Backing up directory." "0.5"
+        printf "${action}\n==> Backing up directory."
         mv "$vs_code_plugins_dir" "$vs_code_plugins_dir"-${USER} 2>&1 | tee -a "$log"
     fi
     
 # copying vs code themes and plugins dir
-fn_action "Copying config." "0.5"
+printf "${action}\n==> Copying config."
 assets_dir="$parent_dir/assets"
 
 cp -r "$assets_dir/Code" "$HOME/.config/" 2>&1 | tee -a "$log"

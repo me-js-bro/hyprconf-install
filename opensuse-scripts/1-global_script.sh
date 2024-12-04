@@ -39,7 +39,7 @@ install_package() {
   else
     # Package not installed
     # printf "${action} - Installing $1 ...\n"
-    fn_action "Installing $1" "0.5"
+    printf "${action}\n==> Installing $1"
     sudo zypper in -y "$1"
     # Making sure package is installed
     if sudo zypper se -i "$1" &> /dev/null ; then
@@ -63,7 +63,7 @@ install_package_base() {
   else
     # Package not installed
     # printf "${action} - Installing $1 ...\n"
-    fn_action "Installing $1" "0.5"
+    printf "${action}\n==> Installing $1"
     sudo zypper in -y -t pattern "$1"
     # Making sure package is installed
     if sudo zypper se -i "$1" &> /dev/null ; then
@@ -87,7 +87,7 @@ install_package_no_recommands() {
   else
     # Package not installed
     # printf "${action} - Installing $1 ...\n"
-    fn_action "Installing $1" "0.5"
+    printf "${action}\n==> Installing $1"
     sudo zypper in -y --no-recommends "$1"
     # Making sure package is installed
     if sudo zypper se -i "$1" &> /dev/null ; then

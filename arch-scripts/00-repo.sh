@@ -66,7 +66,7 @@ fi
 
 # install git before installing the aur helper.
 if ! pacman -Qe git &> /dev/null; then
-    fn_action "Installing git."
+    printf "${action}\n==> Installing git."
     sudo pacman -S --noconfirm git 2>&1 | tee -a "$log" &> /dev/null
     fn_done "Git was installed successfully!"
 fi

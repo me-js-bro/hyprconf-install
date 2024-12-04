@@ -56,10 +56,10 @@ mkdir -p "$log_dir"
 touch "$log"
 
 # asking which browser wants to install
-fn_choose "Which browser would you like to install? \nChromium is recommended." "Brave" "Chromium"
+fn_choose "Which browser would you like to install? \n  Chromium is recommended." "Brave" "Chromium"
 
 if [[ "$choose" == "Brave" ]]; then
-    fn_action "Installing Brave Browser" "0.5"
+    printf "${action}\n==> Installing Brave Browser"
     sudo dnf install -y dnf-plugins-core 2>&1 | tee -a "$log"
     sudo dnf config-manager --add-repo https://brave-browser-rpm-release.s3.brave.com/brave-browser.repo 2>&1 | tee -a "$log"
     sudo rpm --import https://brave-browser-rpm-release.s3.brave.com/brave-core.asc 2>&1 | tee -a "$log"
@@ -69,7 +69,7 @@ if [[ "$choose" == "Brave" ]]; then
     sudo dnf install -y brave-browser
     sleep 1 && clear
 elif [[ "$choose" == "Chromium" ]]; then
-    fn_action "Installing Chromium" "0.5"
+    printf "${action}\n==> Installing Chromium"
     install_package chromium
     sleep 1 && clear
 else

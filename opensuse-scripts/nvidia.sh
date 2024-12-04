@@ -83,7 +83,7 @@ sudo zypper --gpg-auto-import-keys refresh 2>&1 | tee -a "$log"
 sudo zypper install-new-recommends --repo NVIDIA 2>&1 | tee -a "$log"
 
 # Install additional Nvidia packages
-fn_action "Installing nvidia drivers" "0.5"
+printf "${action}\n==> Installing nvidia drivers"
  for NVIDIA in "${nvidia_pkg[@]}" "${nvidia_drivers[@]}"; do
    sudo zypper in --auto-agree-with-licenses -y "$NVIDIA"
     if sudo zypper se -i "$NVIDIA" &> /dev/null ; then
@@ -94,7 +94,7 @@ fn_action "Installing nvidia drivers" "0.5"
  done
 
 # adding additional nvidia-stuff
-fn_action "Adding nvidia-stuff to /etc/default/grub" "0.5"
+printf "${action}\n==> Adding nvidia-stuff to /etc/default/grub"
 
 # Additional options to add to GRUB_CMDLINE_LINUX
 additional_options="rd.driver.blacklist=nouveau modprobe.blacklist=nouveau nvidia-drm.modeset=1"

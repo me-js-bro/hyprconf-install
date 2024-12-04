@@ -65,8 +65,7 @@ dependencies=(
 
 
 # Adding Packman repository and switching over to Packman
-# printf "${attention} - Adding Packman repository (Globally).... \n"
-fn_check "Adding packman repository" "1"
+printf "${attention}\n:: Adding Packman repository (Globally).... \n"
 
 sudo zypper -n --quiet ar --refresh -p 90 "$packman_repo" packman 2>&1 | tee -a "$log"
 sudo zypper --gpg-auto-import-keys refresh 2>&1 | tee -a "$log"

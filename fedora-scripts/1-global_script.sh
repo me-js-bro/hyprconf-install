@@ -37,7 +37,7 @@ if sudo dnf list installed "$1" &>> /dev/null ; then
     fn_done "$1 is already installed. Skipping."
 else
 
-    fn_action "Installing $1." "0.5"
+    printf "${action}\n==> Installing $1."
     sudo dnf install -y "$1"
     
     if sudo dnf list installed "$1" &>> /dev/null ; then

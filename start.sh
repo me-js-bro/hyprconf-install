@@ -111,7 +111,7 @@ for pkg in "${first_packages[@]}"; do
         if sudo pacman -Qe "$pkg" &> /dev/null ; then
             fn_done "$pkg was installed already..." 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
         else
-            fn_action "Installing $pkg"
+            printf "${action}\n==>  Installing $pkg"
             if sudo pacman -S --noconfirm "$pkg"; then
                 fn_done "$pkg was installed successfully!" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
             fi
@@ -122,7 +122,7 @@ for pkg in "${first_packages[@]}"; do
         if sudo dnf list installed git &> /dev/null ; then
             fn_done "git was installed already..." 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
         else
-            fn_action "Installing git"
+            printf "${action}\n==> Installing git"
             if sudo dnf install -y git; then
                 fn_done "git was installed successfully!" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
             fi
@@ -130,7 +130,7 @@ for pkg in "${first_packages[@]}"; do
 
         sleep 1
 
-        fn_action "Installing gum"
+        printf "${action}\n==> Installing gum"
         chmod +x "$dir/fedora-scripts/gum_install.sh"
         "$dir/fedora-scripts/gum_install.sh"
 
@@ -143,7 +143,7 @@ for pkg in "${first_packages[@]}"; do
         if sudo zypper se -i "$pkg" &> /dev/null; then
             fn_done "$pkg was installed already..." 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
         else
-            fn_action "Installing $pkg"
+            printf "${action}\n==> Installing $pkg"
             if sudo zypper in -y "$pkg"; then
                 fn_done "$pkg was installed sucessfully!" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
             fi
@@ -184,14 +184,14 @@ if [[ -f "$cache_file" ]]; then
 
         fn_ask "Would you like to run the script again?"
         if [[ $? -eq 0 ]]; then
-            fn_action "Starting the script again..." "2"
+            printf "${action}\n==> Starting the script again."
             rm -f "$cache_file"
             "$dir/start.sh"
         else
-            fn_exit "Exiting the script here. Goodbye..."
+            fn_exit "Exiting the script here. Goodbye."
         fi
     else
-        printf "${attention} - Cache file is there. Skipping prompts...\n\n" && sleep 1
+        printf "${attention}\n:: Cache file is there. Skipping prompts...\n\n" && sleep 1
     fi
 else
     touch "$cache_file"
@@ -318,7 +318,7 @@ if [[ "$distro" = "arch" ]]; then
 
     for pkg in "${uninstall_pkg[@]}"; do
         if sudo "$pkg_man" -Qs "$pkg" &> /dev/null; then
-            fn_action "Removing $pkg"
+            printf "${action}\n==> Removing $pkg"
             sudo pacman -Rns --noconfirm "$pkg" 2>&1 | tee -a "$log" &> /dev/null
         fi
     done
@@ -327,7 +327,7 @@ elif [[ "$distro" = "fedora" ]]; then
 
     for pkg in "${uninstall_pkg[@]}"; do
         if sudo dnf list installed "$pkg" &> /dev/null; then
-            fn_action "Removing $pkg"
+            printf "${action}\n==> Removing $pkg"
             sudo dnf remove -y "$pkg" 2>&1 | tee -a "$log"  &> /dev/null
         fi
     done
@@ -336,11 +336,11 @@ elif [[ "$distro" = "opensuser" ]]; then
 
     for pkg in "$uninstall_pkg[@]"; do
         if sudo zypper se -i "$pkg" &> /dev/null; then
-            fn_action "Removing $pkg"
+            printf "${action}\n==> Removing $pkg"
             sudo zypper remove -y "$pkg" 2>&1 | tee -a "$log" &> /dev/null
             sleep 1
             if command -v openbox &> /dev/null; then
-                fn_action "Removing openbox"
+                printf "${action}\n==> Removing openbox"
                 sudo zypper remove -y openbox 2>&1 | tee -a "$log"
             fi
         fi
@@ -355,7 +355,7 @@ fn_ask "Need to reboot the syste. Would you like to reboot now?"
 
 # rebooting the system in 5 seconds
 if [[ $? -eq 0 ]]; then
-    fn_action "Rebooting the system in 3s" "3"
+    printf "${action}\n==> Rebooting the system in 3s" "3"
     systemctl reboot --now
 else
     printf "${orange}[ * ] - Ok, but it's good to reboot the system. Anyway, the script successfully ends here..${end}\n" && sleep 1

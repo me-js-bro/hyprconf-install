@@ -72,7 +72,7 @@ mkdir -p ~/.icons
 Download_URL="https://github.com/ljmill/tokyo-night-icons/releases/latest/download/TokyoNight-SE.tar.bz2"
 
 if [ ! -d "$HOME/.icons/TokyoNight-SE" ]; then
-    fn_action "Installing Tokyo Night icons."
+    printf "${action}\n==> Installing Tokyo Night icons."
 
     # if the tokyo night icon directory was not downloaded, it will download if first
     if [ ! -d "TokyoNight-SE.tar.bz2" ]; then
@@ -108,7 +108,7 @@ env_file=/etc/environment
 sudo sh -c "echo \"QT_QPA_PLATFORMTHEME='qt5ct'\" >> $env_file" 2>&1 | tee -a "$log"
 
 # extracting themes to ~/.themes/
-fn_action "Copying themes." "0.5"
+printf "${action}\n==> Copying themes."
 tar -xf "$theme" -C ~/.themes/ &> /dev/null 2>&1 | tee -a "$log"
 
 fn_done "Themes copied successfully."

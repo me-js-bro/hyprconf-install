@@ -63,18 +63,18 @@ theme_dir=/usr/share/sddm/themes
 
 # creating sddm theme dir
 if [ ! -d "$theme_dir" ]; then
-    fn_action "Sddm theme dir was not found, creatint it." "0.5"
+    printf "${action}\n==> Sddm theme dir was not found, creatint it."
     sudo mkdir -p "$theme_dir"
 fi
 
 # Set up SDDM
-fn_action "Setting up the Login Screen." "0.5"
+printf "${action}\n==> Setting up the Login Screen."
 sddm_conf_dir=/etc/sddm.conf.d
 [ ! -d "$sddm_conf_dir" ] && { printf "$sddm_conf_dir not found, creating...\n"; sudo mkdir -p "$sddm_conf_dir"; }
 
 
 sudo tar -xf "$theme" -C "$theme_dir"
-echo "[Theme]\nCurrent=minimal_sddm" | sudo tee "$sddm_conf_dir/theme.conf.user"
+echo -e "[Theme]\nCurrent=minimal_sddm" | sudo tee "$sddm_conf_dir/theme.conf.user" &> /dev/null
 
 if [ -d "$theme_dir/minimal_sddm" ]; then
     fn_done "Sddm theme was installed successfully!"

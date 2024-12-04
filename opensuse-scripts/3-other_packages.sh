@@ -159,7 +159,7 @@ if [ -f '/usr/local/bin/grimblast' ]; then
   echo "[ DONE ] - Grimblast is already installed" 2>&1 | tee -a  "$log" &> /dev/null
 else
 
-  fn_action "Installing grimblast" "0.5"
+  printf "${action}\n==> Installing grimblast"
   git clone --depth=1 "$grimblast_url" ~/grimblast
   cd "$HOME/grimblast/grimblast"
   make
@@ -175,7 +175,7 @@ sleep 2 && clear
 
 # Install cliphist using go
 if command -v go &> /dev/null; then
-  fn_action "Installing cliphist" "0.5"
+  printf "${action}\n==> Installing cliphist"
   export PATH=$PATH:/usr/local/bin
 
   if go install go.senan.xyz/cliphist@latest 2>&1 | tee -a "$log" &> /dev/null; then

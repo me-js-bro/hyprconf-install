@@ -69,9 +69,9 @@ nvidia_pkg=(
 )
 
 # nvidia stuff
-fn_action "Checking for other hyprland packages and remove if any." "0.5"
+printf "${action}\n==> Checking for other hyprland packages and remove if any."
 if pacman -Qs hyprland &> /dev/null; then
-    fn_action "Hyprland detected. uninstalling to install Hyprland from official repo." "1"
+    printf "${action}\n==> Hyprland detected. uninstalling to install Hyprland from official repo." "1"
 
     for hyprnvi in hyprland-git hyprland-nvidia hyprland-nvidia-git hyprland-nvidia-hidpi-git; do
     sudo pacman -Rns --noconfirm "$hyprnvi" 2>&1 | tee -a "$log" &> /dev/null
@@ -79,7 +79,7 @@ if pacman -Qs hyprland &> /dev/null; then
 fi
 
 # Install additional Nvidia packages
-fn_action "Installing addition Nvidia packages." "0.5"
+printf "${action}\n==> Installing addition Nvidia packages."
 for krnl in $(cat /usr/lib/modules/*/pkgbase); do
   for NVIDIA in "${krnl}-headers" "${nvidia_pkg[@]}"; do
     install_package "$NVIDIA" 2>&1 | tee -a "$log"
@@ -102,7 +102,7 @@ NVEA="/etc/modprobe.d/nvidia.conf"
 if [ -f "$NVEA" ]; then
   fn_done "Seems like nvidia-drm modeset=1 is already added in your system..moving on."
 else
-  fn_action "Adding options to $NVEA." "0.5"
+  printf "${action}\n==> Adding options to $NVEA."
   sudo echo -e "options nvidia-drm modeset=1" | sudo tee -a /etc/modprobe.d/nvidia.conf 2>&1 | tee -a "$log"
   echo
 fi

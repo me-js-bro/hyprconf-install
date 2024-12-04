@@ -47,14 +47,14 @@ for xdgs in "${xdg[@]}"; do
   install_package_no_recommands "$xdgs" 2>&1 | tee -a "$log"
 done
 
-fn_action "Checking for other XDG-Desktop-Portal-Implementations." "0.5"
+printf "${action}\n==> Checking for other XDG-Desktop-Portal-Implementations."
 
 while true; do
     fn_ask "Would you like to remove other XDG-Desktop-Portal-Implementations?"
 
     if [[ $? -eq 0 ]]; then
         # Clean out other portals
-        fn_action "Clearing any other xdg-desktop-portal implementations" "0.5"
+        printf "${action}\n==> Clearing any other xdg-desktop-portal implementations"
         #Check if packages are installed and uninstall if present
         if sudo zypper se -i xdg-desktop-portal-wlr &> /dev/null; then
           printf "Removing xdg-desktop-portal-wlr...\n"

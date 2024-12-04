@@ -81,12 +81,12 @@ elif [[ "$distro" == "opensuse" ]]; then
 
 # Bluetooth
 
-fn_action "Installing Bluetooth Packages" "0.5"
+printf "${action}\n==> Installing Bluetooth Packages"
  for bluetooth_pkgs in "${bluetooth[@]}"; do
    install_package "$bluetooth_pkgs"
   done
 
-fn_action "Activating Bluetooth Services." "0.5"
+printf "${action}\n==> Activating Bluetooth Services."
 sudo systemctl enable --now bluetooth.service 2>&1 | tee -a "$log"
 
 clear

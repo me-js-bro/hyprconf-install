@@ -61,7 +61,7 @@ jetbrains-mono-fonts
 )
 
 # Installation of main components
-fn_action "Installing necessary fonts." "0.5"
+printf "${action}\n==> Installing necessary fonts."
 
 for font in "${fonts[@]}"; do
   install_package "$font"

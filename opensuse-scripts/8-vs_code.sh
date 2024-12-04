@@ -56,7 +56,7 @@ log="$log_dir/vs_code-$(date +%d-%m-%y).log"
 mkdir -p "$log_dir"
 touch "$log"
 
-fn_action "Installing Visual Studio Code" "0.5"
+printf "${action}\n==> Installing Visual Studio Code"
 
 sudo rpm --import https://packages.microsoft.com/keys/microsoft.asc 2>&1 | tee -a "$log"
 sudo zypper addrepo https://packages.microsoft.com/yumrepos/vscode vscode 2>&1 | tee -a "$log"

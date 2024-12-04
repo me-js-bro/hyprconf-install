@@ -78,39 +78,7 @@ for packages in "${hypr_pkgs[@]}"; do
     fi
 done
 
-sleep 1
-
-printf "${action} - Installing Hyprsunset...\n"
-
-if ! sudo zypper se -i git &> /dev/null; then
-    install_package git
-fi
-
-if ! sudo zypper se -i cmake &> /dev/null; then
-    install_package cmake
-fi
-
-if ! sudo zypper se -i make &> /dev/null; then
-    install_package make
-fi
-
 sleep 1 && clear
 
-if git clone --depth=1 https://github.com/hyprwm/hyprsunset "$parent_dir/.cache/hyprsunset"; then
-    cd "$parent_dir/.cache/hyprsunset"
-    mkdir build && cd build
-    cmake ..
-    sudo make install
-
-    sleep 1
-
-    if command -v hyprsunset &> /dev/null; then
-        fn_done "Hyprsunset was installed successfully!"
-        echo "[ DONE ] - Hyprsunset was installed successfully!" 2>&1 | tee -a "$log" &> /dev/null
-    else
-        fn_error "Sorry, could not install Hyprsunset. (╥﹏╥)"
-        echo "[ ERROR ] - Sorry, could not install Hyprsunset. (╥﹏╥)\n" 2>&1 | tee -a "$log" &> /dev/null
-    fi 
-fi
-
-sleep 1 && clear
+chmod +x "$dir/2.1-hyprsunset.sh"
+"$dir/2.1-hyprsunset.sh"

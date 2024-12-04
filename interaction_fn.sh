@@ -82,7 +82,7 @@ fn_exit() {
 
 # only for asking the prompts...
 fn_choose_prompts() {
-    printf "${attention}\n==> You can choose multiple options. Just press 'Space' and the option will be chosen.\n"
+    printf "${attention}\n:: You can choose multiple options. Just press 'Space' and the option will be chosen.\n"
 
     # Show options with gum and capture multiple selections
     local choice=$(gum choose --no-limit "$@")
@@ -96,18 +96,8 @@ fn_choose_prompts() {
 }
 
 fn_choose() {
-    printf "${attention}\n==> %s\n" "$1"
+    printf "${attention}\n:: %s\n" "$1"
     choose=$(gum choose --selected.foreground "$cyan_hex" "${@:2}")
-}
-
-
-fn_action() {
-    printf "${action}\n"
-    gum spin --spinner minidot \
-    --spinner.foreground "$green_hex" \
-    --title " $1" \
-    --title.foreground "$green_hex" -- \
-    sleep "$2"
 }
 
 fn_check() {

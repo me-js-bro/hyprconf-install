@@ -56,7 +56,7 @@ touch "$log"
 
 ###------ Startup ------###
 
-printf "${attention}\n==> This script will creand a Log dir in your ${HOME} directory. Please remove that Log dir after you finish the script.\n"
+printf "${attention}\n:: This script will creand a Log dir in your ${HOME} directory. Please remove that Log dir after you finish the script.\n"
 sleep 1
 
 # OpenBangla-Building url was forked from ( https://github.com/asifakonjee/openbangla-fcitx5 )

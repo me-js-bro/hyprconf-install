@@ -61,7 +61,7 @@ touch "$log"
 
 # _______ Testing _______ #
 
-fn_action "Clonning the dotfiles repository and setting it to your system." "1"
+printf "${action}\n==> Clonning the dotfiles repository and setting it to your system." "1"
 # Create the cache directory if it doesn't exist
 mkdir -p "$cache_dir"
 

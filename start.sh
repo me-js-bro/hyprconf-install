@@ -260,6 +260,7 @@ fi
 
 "$scripts_dir/9-sddm.sh" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
 "$scripts_dir/10-xdg_dp.sh" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
+"$scripts_dir/11-uninstall.sh" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
 
 
 if [[ "$setup_for_Nvidia" =~ ^[Yy]$ ]]; then
@@ -302,66 +303,24 @@ else
     "$common_scripts/laptop.sh" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
 fi
 
-clear
-sleep 1
-
-
-# =========  removing package  ========= #
-
-uninstall_pkg=(
-    wofi
-)
-
-if [[ "$distro" = "arch" ]]; then
-
-    pkg_man=$(command -v pacman || command -v yay || command -v paru)
-
-    for pkg in "${uninstall_pkg[@]}"; do
-        if sudo "$pkg_man" -Qs "$pkg" &> /dev/null; then
-            printf "${action}\n==> Removing $pkg"
-            sudo pacman -Rns --noconfirm "$pkg" 2>&1 | tee -a "$log" &> /dev/null
-        fi
-    done
-
-elif [[ "$distro" = "fedora" ]]; then
-
-    for pkg in "${uninstall_pkg[@]}"; do
-        if sudo dnf list installed "$pkg" &> /dev/null; then
-            printf "${action}\n==> Removing $pkg"
-            sudo dnf remove -y "$pkg" 2>&1 | tee -a "$log"  &> /dev/null
-        fi
-    done
-
-elif [[ "$distro" = "opensuser" ]]; then
-
-    for pkg in "$uninstall_pkg[@]"; do
-        if sudo zypper se -i "$pkg" &> /dev/null; then
-            printf "${action}\n==> Removing $pkg"
-            sudo zypper remove -y "$pkg" 2>&1 | tee -a "$log" &> /dev/null
-            sleep 1
-            if command -v openbox &> /dev/null; then
-                printf "${action}\n==> Removing openbox"
-                sudo zypper remove -y openbox 2>&1 | tee -a "$log"
-            fi
-        fi
-    done
-fi
-
+sleep 1 && clear
 
 # =========  system reboot  ========= #
 
 fn_done "Congratulations! The script completes here." && sleep 2
-fn_ask "Need to reboot the syste. Would you like to reboot now?"
+fn_ask "Need to reboot the system. Would you like to reboot now?"
 
 # rebooting the system in 5 seconds
 if [[ $? -eq 0 ]]; then
-    printf "${action}\n==> Rebooting the system in 3s" "3"
-    systemctl reboot --now
+    clear
+    for second in 3 2 1; do
+        printf "${action}\n==> Rebooting the system in ${second}s" && sleep 1 && clear
+    done
+        systemctl reboot --now
 else
     printf "${orange}[ * ] - Ok, but it's good to reboot the system. Anyway, the script successfully ends here..${end}\n" && sleep 1
     printf "${orange}[ * ] - Enjoy ${cyan}Hyprland. (◠‿◠)${end}\n"
     exit 0
 fi
-
 
 # =========______  Script ends here  ______========= #

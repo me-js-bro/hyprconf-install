@@ -33,14 +33,14 @@ source "$parent_dir/interaction_fn.sh"
 install_package() {
 
 # Checking if package is already installed
-if sudo dnf list installed "$1" &>> /dev/null ; then
+if sudo dnf list installed "$1" &> /dev/null ; then
     fn_done "$1 is already installed. Skipping."
 else
 
     printf "${action}\n==> Installing $1."
     sudo dnf install -y "$1"
     
-    if sudo dnf list installed "$1" &>> /dev/null ; then
+    if sudo dnf list installed "$1" &> /dev/null ; then
       fn_done " $1 was installed successfully!"
     else
     

@@ -76,9 +76,23 @@ for browser in "${browsers[@]}"; do
             ;;
         "Brave")
             install_from_aur brave-bin
+
+            sleep 1
+            if [[ -d "$HOME/.config/BraveSoftware" ]]; then
+                mkdir -p "$HOME/.config/browser-backup"
+                mv "$HOME/.config/BraveSoftware" "$HOME/.config/browser-backup/" &> /dev/null
+            fi
+            unzip "$brave" "$HOME/.config/"
             ;;
         "Chromium")
             install_from_aur ungoogled-chromium-bin
+
+            sleep 1
+            if [[ -d "$HOME/.config/chromium" ]];
+                mkdir -p "$HOME/.config/browser-backup"
+                mv "$HOME/.config/chromium" "$HOME/.config/browser-backup" &> /dev/null
+            fi
+            unzip "$chromium" "$HOME/.config/"
             ;;
     esac
 done

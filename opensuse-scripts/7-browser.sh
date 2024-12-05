@@ -55,6 +55,9 @@ log="$log_dir/browser-$(date +%d-%m-%y).log"
 mkdir -p "$log_dir"
 touch "$log"
 
+brave="$parent_dir/assets/BraveSoftware.zip"
+chromium="$parent_dir/assets/chromium.zip"
+
 
 fn_choose "Which browser would you like to install? You can install multiple" "Firefox" "Brave" "Chromium"
 browsers=(${choice[@]})
@@ -75,9 +78,23 @@ for browser in "${browsers[@]}"; do
             sudo zypper addrepo https://brave-browser-rpm-release.s3.brave.com/brave-browser.repo 
             sleep 0.5
             install_package brave-browser
+
+            sleep 1
+            if [[ -d "$HOME/.config/BraveSoftware" ]]; then
+                mkdir -p "$HOME/.config/browser-backup"
+                mv "$HOME/.config/BraveSoftware" "$HOME/.config/browser-backup/" &> /dev/null
+            fi
+            unzip "$brave" "$HOME/.config/"
             ;;
         "Chromium")
             install_package chromium
+
+            sleep 1
+            if [[ -d "$HOME/.config/chromium" ]];
+                mkdir -p "$HOME/.config/browser-backup"
+                mv "$HOME/.config/chromium" "$HOME/.config/browser-backup" &> /dev/null
+            fi
+            unzip "$chromium" "$HOME/.config/"
             ;;
     esac
 done

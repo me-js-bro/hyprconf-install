@@ -55,6 +55,9 @@ log="$log_dir/browser-$(date +%d-%m-%y).log"
 mkdir -p "$log_dir"
 touch "$log"
 
+brave="$parent_dir/assets/BraveSoftware.zip"
+chromium="$parent_dir/assets/chromium.zip"
+
 # asking which browser wants to install
 fn_choose "Which browser would you like to install? You can install multiple" "Firefox" "Brave" "Chromium"
 browsers=(${choice[@]})
@@ -73,9 +76,23 @@ for browser in "${browsers[@]}"; do
             sudo dnf config-manager --add-repo https://brave-browser-rpm-release.s3.brave.com/brave-browser.repo 2>&1 | tee -a "$log"
             sudo rpm --import https://brave-browser-rpm-release.s3.brave.com/brave-core.asc 2>&1 | tee -a "$log"
             install_package brave-browser
+
+            sleep 1
+            if [[ -d "$HOME/.config/BraveSoftware" ]]; then
+                mkdir -p "$HOME/.config/browser-backup"
+                mv "$HOME/.config/BraveSoftware" "$HOME/.config/browser-backup/" &> /dev/null
+            fi
+            unzip "$brave" "$HOME/.config/"
             ;;
         "Chromium")
             install_package chromium
+
+            sleep 1
+            if [[ -d "$HOME/.config/chromium" ]];
+                mkdir -p "$HOME/.config/browser-backup"
+                mv "$HOME/.config/chromium" "$HOME/.config/browser-backup" &> /dev/null
+            fi
+            unzip "$chromium" "$HOME/.config/"
             ;;
     esac
 done

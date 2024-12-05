@@ -97,7 +97,7 @@ fn_choose_prompts() {
 
 fn_choose() {
     printf "${attention}\n:: %s\n" "$1"
-    choose=$(gum choose --selected.foreground "$cyan_hex" "${@:2}")
+    choice=$(gum choose --no-limit --selected.foreground "$cyan_hex" "${@:2}")
 }
 
 fn_check() {

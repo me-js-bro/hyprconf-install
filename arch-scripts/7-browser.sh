@@ -62,12 +62,25 @@ touch "$log"
 aur_helper=$(command -v yay || command -v paru)
 
 # asking which browser wants to install
-fn_choose "Which browser would you like to install?" "Brave" "Chromium"
+fn_choose "Which browser would you like to install? You can install multiple" "Firefox" "Brave" "Chromium"
+browsers=(${choice[@]})
 
-if [[ "$choose" == "Brave" ]]; then
-    "$aur_helper" -S --noconfirm brave-bin 2>&1 | tee -a "$log"
-elif [[ "$choose" == "Chromium" ]]; then
-    "$aur_helper" -S --noconfirm ungoogled-chromium-bin 2>&1 | tee -a "$log"
-else
-    fn_exit "A browser is necessary to be installed. Exiting the script"
-fi
+# Split the choices into an array
+IFS=$'\n' read -r -d '' -a browsers <<<"$choice"
+
+# Loop through the selected browsers
+for browser in "${browsers[@]}"; do
+    case $browser in
+        "Firefox")
+            install_package firefox
+            ;;
+        "Brave")
+            install_from_aur brave-bin
+            ;;
+        "Chromium")
+            install_from_aur ungoogled-chromium-bin
+            ;;
+    esac
+done
+
+sleep 1 && clear

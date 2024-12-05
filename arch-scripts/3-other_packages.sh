@@ -63,7 +63,6 @@ other_packages=(
     btop
     curl
     fastfetch
-    firefox
     ffmpeg
     gnome-disk-utility
     ibus

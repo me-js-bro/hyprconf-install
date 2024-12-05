@@ -56,24 +56,28 @@ mkdir -p "$log_dir"
 touch "$log"
 
 # asking which browser wants to install
-fn_choose "Which browser would you like to install? \n  Chromium is recommended." "Brave" "Chromium"
+fn_choose "Which browser would you like to install? You can install multiple" "Firefox" "Brave" "Chromium"
+browsers=(${choice[@]})
 
-if [[ "$choose" == "Brave" ]]; then
-    printf "${action}\n==> Installing Brave Browser"
-    sudo dnf install -y dnf-plugins-core 2>&1 | tee -a "$log"
-    sudo dnf config-manager --add-repo https://brave-browser-rpm-release.s3.brave.com/brave-browser.repo 2>&1 | tee -a "$log"
-    sudo rpm --import https://brave-browser-rpm-release.s3.brave.com/brave-core.asc 2>&1 | tee -a "$log"
+# Split the choices into an array
+IFS=$'\n' read -r -d '' -a browsers <<<"$choice"
 
-    sleep 0.5
-
-    sudo dnf install -y brave-browser
-    sleep 1 && clear
-elif [[ "$choose" == "Chromium" ]]; then
-    printf "${action}\n==> Installing Chromium"
-    install_package chromium
-    sleep 1 && clear
-else
-    fn_exit "A browser is necessary to be installed. Exiting the script"
-fi
+# Loop through the selected browsers
+for browser in "${browsers[@]}"; do
+    case $browser in
+        "Firefox")
+            install_package firefox
+            ;;
+        "Brave")
+            sudo dnf install -y dnf-plugins-core 2>&1 | tee -a "$log"
+            sudo dnf config-manager --add-repo https://brave-browser-rpm-release.s3.brave.com/brave-browser.repo 2>&1 | tee -a "$log"
+            sudo rpm --import https://brave-browser-rpm-release.s3.brave.com/brave-core.asc 2>&1 | tee -a "$log"
+            install_package brave-browser
+            ;;
+        "Chromium")
+            install_package chromium
+            ;;
+    esac
+done
 
 sleep 1 && clear

@@ -55,21 +55,48 @@ log="$log_dir/browser-$(date +%d-%m-%y).log"
 mkdir -p "$log_dir"
 touch "$log"
 
+brave="$parent_dir/assets/BraveSoftware.zip"
+chromium="$parent_dir/assets/chromium.zip"
 
-fn_choose "Which browser would you like to install?" "Brave" "Chromium"
 
-if [[ "$choose" == "Brave" ]]; then
-    printf "${action}\n==> Installing Brave"
-    sudo zypper in -y curl
-    sudo rpm --import https://brave-browser-rpm-release.s3.brave.com/brave-core.asc
-    sudo zypper addrepo https://brave-browser-rpm-release.s3.brave.com/brave-browser.repo 
-    sleep 0.5
-    sudo zypper in -y brave-browser
-    sleep 1 && clear
-elif [[ "$choose" == "Chromium" ]]; then
-    printf "${action}\n==> Installing Chromium"
-    install_package chromium 2>&1 | tee -a "$log"
-    sleep 1 && clear
-else
-    fn_exit "A browser is necessary to be installed. Exiting the script"
-fi
+fn_choose "Which browser would you like to install? You can install multiple" "Firefox" "Brave" "Chromium"
+browsers=(${choice[@]})
+
+# Split the choices into an array
+IFS=$'\n' read -r -d '' -a browsers <<<"$choice"
+
+# Loop through the selected browsers
+for browser in "${browsers[@]}"; do
+    case $browser in
+        "Firefox")
+            install_package firefox
+            ;;
+        "Brave")
+            printf "${action}\n==> Installing Brave"
+            sudo zypper in -y curl
+            sudo rpm --import https://brave-browser-rpm-release.s3.brave.com/brave-core.asc
+            sudo zypper addrepo https://brave-browser-rpm-release.s3.brave.com/brave-browser.repo 
+            sleep 0.5
+            install_package brave-browser
+
+            sleep 1
+            if [[ -d "$HOME/.config/BraveSoftware" ]]; then
+                mkdir -p "$HOME/.config/browser-backup"
+                mv "$HOME/.config/BraveSoftware" "$HOME/.config/browser-backup/" &> /dev/null
+            fi
+            unzip "$brave" "$HOME/.config/"
+            ;;
+        "Chromium")
+            install_package chromium
+
+            sleep 1
+            if [[ -d "$HOME/.config/chromium" ]];
+                mkdir -p "$HOME/.config/browser-backup"
+                mv "$HOME/.config/chromium" "$HOME/.config/browser-backup" &> /dev/null
+            fi
+            unzip "$chromium" "$HOME/.config/"
+            ;;
+    esac
+done
+
+sleep 1 && clear

@@ -57,7 +57,6 @@ touch "$log"
 hypr_package=( 
   curl
   ffmpeg
-  firefox
   fastfetch
   git
   gnome-disk-utility

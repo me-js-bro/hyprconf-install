@@ -59,7 +59,6 @@ main_packages=(
   curl
   eog
   fastfetch
-  firefox
   ffmpeg-free
   git
   grim

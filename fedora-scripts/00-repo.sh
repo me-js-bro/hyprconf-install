@@ -22,15 +22,19 @@ ask="[${orange} QUESTION ${end}]"
 error="[${red} ERROR ${end}]"
 
 display_text() {
-    cat << "EOF"
-      ____                      ____                               
-     / ___| ___   _ __   _ __  |  _ \  ___  _ __    ___            
-    | |    / _ \ | '_ \ | '__| | |_) |/ _ \| '_ \  / _ \           
-    | |___| (_) || |_) || |    |  _ <|  __/| |_) || (_) |  _  _  _ 
-     \____|\___/ | .__/ |_|    |_| \_\\___|| .__/  \___/  (_)(_)(_)
-                 |_|                       |_|                      
-      
-EOF
+    gum style \
+        --border rounded \
+        --align center \
+        --width 60 \
+        --margin "1" \
+        --padding "1" \
+'
+   ___                    _ __           _       
+  / _ \___ ___  ___  ___ (_) /____  ____(_)__ ___
+ / , _/ -_) _ \/ _ \(_-</ / __/ _ \/ __/ / -_|_-<
+/_/|_|\__/ .__/\___/___/_/\__/\___/_/ /_/\__/___/
+        /_/                                       
+'
 }
 
 clear && display_text
@@ -45,6 +49,8 @@ source "$dir/1-global_script.sh"
 
 # log directory
 parent_dir="$(dirname "$dir")"
+source "$parent_dir/interaction_fn.sh"
+
 log_dir="$parent_dir/Logs"
 log="$log_dir/copr-$(date +%d-%m-%y).log"
 mkdir -p "$log_dir"
@@ -64,10 +70,9 @@ add_config_if_not_present() {
   grep -qF "$config" "$file" || echo "$config" | sudo tee -a "$file" &>> /dev/null
 }
 
-printf "${attention} - Have you added 'fastestmirrors=True' & 'max_paralled_downloads=10' in your dnf.conf file? ${cyan}[ ${green}y${end}/${red}n ${cyan}]${end} \n"
-read -p "Select: " config
+fn_ask "Have you added 'fastestmirrors=True' & 'max_paralled_downloads=10' in your dnf.conf file?"
 
-if [[ "$config" =~ ^[Nn]$ ]]; then
+if [[ $? -eq 1 ]]; then
     # Check and add configuration settings to /etc/dnf/dnf.conf
     add_config_if_not_present "/etc/dnf/dnf.conf" "max_parallel_downloads=5" 2>&1 | tee -a "$log"
     add_config_if_not_present "/etc/dnf/dnf.conf" "fastestmirrors=True" 2>&1 | tee -a "$log"
@@ -80,5 +85,5 @@ install_package https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release
 
 # Enable COPR Repositories 
 for repo in "${copr_repos[@]}";do 
-  sudo dnf copr enable -y "$repo" 2>&1 | tee -a "$log" || { printf "${error} - Failed to enable necessary copr repos (╥﹏╥)\n"; exit 1; }
+  sudo dnf copr enable -y "$repo" 2>&1 | tee -a "$log" || { printf "${error}\n! Failed to enable necessary copr repos (╥﹏╥)\n"; exit 1; }
 done

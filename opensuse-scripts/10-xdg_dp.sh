@@ -21,20 +21,6 @@ done="[${cyan} DONE ${end}]"
 ask="[${orange} QUESTION ${end}]"
 error="[${red} ERROR ${end}]"
 
-display_text() {
-    cat << "EOF"
-     ____              _     _                  ____               _          _           
-    |  _ \   ___  ___ | | __| |_  ___   _ __   |  _ \  ___   _ __ | |_  __ _ | |          
-    | | | | / _ \/ __|| |/ /| __|/ _ \ | '_ \  | |_) |/ _ \ | '__|| __|/ _` || |          
-    | |_| ||  __/\__ \|   < | |_| (_) || |_) | |  __/| (_) || |   | |_| (_| || |  _  _  _ 
-    |____/  \___||___/|_|\_\ \__|\___/ | .__/  |_|    \___/ |_|    \__|\__,_||_| (_)(_)(_)
-                                       |_|                                                   
-EOF
-}
-
-clear && display_text
-printf " \n \n"
-
 ###------ Startup ------###
 
 # install script dir
@@ -43,6 +29,8 @@ source "$dir/1-global_script.sh"
 
 # log directory
 parent_dir="$(dirname "$dir")"
+source "$parent_dir/interaction_fn.sh"
+
 log_dir="$parent_dir/Logs"
 log="$log_dir/xdg_dp-$(date +%d-%m-%y).log"
 mkdir -p "$log_dir"
@@ -57,47 +45,30 @@ xdg-desktop-portal-gtk
 # XDG-DESKTOP-PORTALS
 for xdgs in "${xdg[@]}"; do
   install_package_no_recommands "$xdgs" 2>&1 | tee -a "$log"
-  if [ $? -ne 0 ]; then
-    printf "${error} - $xdph install had failed, please check the install.log"
-    exit 1
-  fi
 done
 
-printf "${note} Checking for other XDG-Desktop-Portal-Implementations....\n"
-sleep 1
-printf "\n"
-printf "${note} XDG-desktop-portal-KDE & GNOME (if installed) should be manually disabled or removed!\n"
-while true; do
-    printf "${note} Would you like to remove other XDG-Desktop-Portal-Implementations? ${cyan}[ ${green}y${end}/${red}n ${cyan}]${end}\n"
-    read -r -p "$(echo -e '\e[1;32mSelect: \e[0m')" XDPH1
-    sleep 1
+printf "${action}\n==> Checking for other XDG-Desktop-Portal-Implementations."
 
-    case $XDPH1 in
-      [Yy])
+while true; do
+    fn_ask "Would you like to remove other XDG-Desktop-Portal-Implementations?"
+
+    if [[ $? -eq 0 ]]; then
         # Clean out other portals
-        printf "${note} Clearing any other xdg-desktop-portal implementations...\n"
-        # Check if packages are installed and uninstall if present
+        printf "${action}\n==> Clearing any other xdg-desktop-portal implementations"
+        #Check if packages are installed and uninstall if present
         if sudo zypper se -i xdg-desktop-portal-wlr &> /dev/null; then
-        printf "Removing xdg-desktop-portal-wlr...\n"
-        sudo zypper rm -y xdg-desktop-portal-wlr 2>&1 | tee -a "$log"
+          printf "Removing xdg-desktop-portal-wlr...\n"
+          sudo zypper rm -y xdg-desktop-portal-wlr 2>&1 | tee -a "$log"
         fi
 
         if sudo zypper se -i xdg-desktop-portal-lxqt &> /dev/null; then
-        printf "Removing xdg-desktop-portal-lxqt...\n"
-        sudo zypper rm -y xdg-desktop-portal-lxqt 2>&1 | tee -a "$log"
+          printf "Removing xdg-desktop-portal-lxqt...\n"
+          sudo zypper rm -y xdg-desktop-portal-lxqt 2>&1 | tee -a "$log"
         fi
 
-        break
-        ;;
-      [Nn])
+    else
         printf "no other XDG-implementations will be removed.\n" 2>&1 | tee -a "$log"
-        break
-        ;;
-        
-      *)
-        printf "Invalid input. Please enter 'y' for yes or 'n' for no.\n"
-        ;;
-    esac
+    fi
 done
 
 clear

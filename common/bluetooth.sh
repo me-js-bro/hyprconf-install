@@ -22,13 +22,19 @@ ask="[${orange} QUESTION ${end}]"
 error="[${red} ERROR ${end}]"
 
 display_text() {
-    cat << "EOF"
-   ____   _               _                 _    _               
-  | __ ) | | _   _   ___ | |_  ___    ___  | |_ | |__            
-  |  _ \ | || | | | / _ \| __|/ _ \  / _ \ | __|| '_ \           
-  | |_) || || |_| ||  __/| |_| (_) || (_) || |_ | | | |  _  _  _ 
-  |____/ |_| \__,_| \___| \__|\___/  \___/  \__||_| |_| (_)(_)(_)
-EOF
+    gum style \
+        --border rounded \
+        --align center \
+        --width 60 \
+        --margin "1" \
+        --padding "1" \
+'
+   ___  __         __            __  __ 
+  / _ )/ /_ _____ / /____  ___  / /_/ / 
+ / _  / / // / -_) __/ _ \/ _ \/ __/ _ \
+/____/_/\_,_/\__/\__/\___/\___/\__/_//_/
+                                          
+'
 }
 
 clear && display_text
@@ -39,6 +45,8 @@ printf " \n \n"
 # install script dir
 dir="$(dirname "$(realpath "$0")")"
 parent_dir="$(dirname "$dir")"
+source "$parent_dir/interaction_fn.sh"
+
 cache_dir="$parent_dir/.cache"
 distro_cache="$cache_dir/distro"
 source "$distro_cache"
@@ -73,12 +81,12 @@ elif [[ "$distro" == "opensuse" ]]; then
 
 # Bluetooth
 
-printf "${action} Installing Bluetooth Packages...\n"
+printf "${action}\n==> Installing Bluetooth Packages"
  for bluetooth_pkgs in "${bluetooth[@]}"; do
    install_package "$bluetooth_pkgs"
   done
 
-printf "${note} - Activating Bluetooth Services...\n"
+printf "${action}\n==> Activating Bluetooth Services."
 sudo systemctl enable --now bluetooth.service 2>&1 | tee -a "$log"
 
 clear

@@ -21,6 +21,15 @@ done="[${cyan} DONE ${end}]"
 ask="[${orange} QUESTION ${end}]"
 error="[${red} ERROR ${end}]"
 
+# color defination (hex for gum)
+red_hex="#FF0000"       # Bright red
+green_hex="#00FF00"     # Bright green
+yellow_hex="#FFFF00"    # Bright yellow
+blue_hex="#0000FF"      # Bright blue
+magenta_hex="#FF00FF"   # Bright magenta (corrected spelling)
+cyan_hex="#00FFFF"      # Bright cyan
+orange_hex="#FFAF00"    # Approximation for color code 214 in ANSI (orange)
+
 # log directory
 dir="$(dirname "$(realpath "$0")")"
 log_dir="$dir/Logs"
@@ -33,31 +42,24 @@ cache_dir="$dir/.cache"
 cache_file="$cache_dir/user-cache"
 distro_cache="$cache_dir/distro"
 
+# sourcing the interaction prompts
+if [[ -f "$dir/interaction_fn.sh" ]]; then
+    source "$dir/interaction_fn.sh"
+fi
+
 if [[ ! -d "$cache_dir" ]]; then
     mkdir -p "$cache_dir"
 fi
 
 display_text() {
-    cat << "EOF"
-    _______ __   __      __   _ _______ _______ _______      _____ _______
-    |  |  |   \_/        | \  | |_____| |  |  | |______        |   |______
-    |  |  |    |         |  \_| |     | |  |  | |______      __|__ ______|  
-
-            .___  ___.      ___       __    __   __  .__   __.
-            |   \/   |     /   \     |  |  |  | |  | |  \ |  |
-            |  \  /  |    /  ^  \    |  |__|  | |  | |   \|  |
-            |  |\/|  |   /  /_\  \   |   __   | |  | |  . `  |
-            |  |  |  |  /  _____  \  |  |  |  | |  | |  |\   |
-            |__|  |__| /__/     \__\ |__|  |__| |__| |__| \__|
-
-                        ______  _______ _  _  _
-                        |_____]    |    |  |  |
-                        |_____]    |    |__|__|    
+    cat << "EOF"     
+   __  ___     _        ____        _      __ 
+  /  |/  /__ _(_)__    / __/_______(_)__  / /_
+ / /|_/ / _ `/ / _ \  _\ \/ __/ __/ / _ \/ __/
+/_/  /_/\_,_/_/_//_/ /___/\__/_/ /_/ .__/\__/ 
+                                  /_/                            
 EOF
 }
-
-
-###------ Startup ------###
 
 
 # =========  checking the distro  ========= #
@@ -67,166 +69,153 @@ check_distro() {
         . /etc/os-release
         case "$ID" in
             arch)
-                printf "${action} - Starting the script for ${cyan}$ID${end} Linux\n\n"
+                printf "${action}\n:: Starting the script for ${cyan}$ID${end} Linux\n\n"
                 distro="arch"
                 echo "distro=$distro" >> "$distro_cache" 2>&1 | tee -a "$log"
                 ;;
             fedora)
-                printf "${action} - Starting the script for ${blue}$ID${end}\n\n"
+                printf "${action}\n:: Starting the script for ${blue}$ID${end}\n\n"
                 distro="fedora"
                 echo "distro=$distro" >> "$distro_cache" 2>&1 | tee -a "$log"
                 ;;
             opensuse*)
-                printf "${action} - Starting the script for ${green}$ID${end}\n\n"
+                printf "${action}\n:: Starting the script for ${green}$ID${end}\n\n"
                 distro="opensuse"
                 echo "distro=$distro" >> "$distro_cache" 2>&1 | tee -a "$log"
                 ;;
             *)
-                printf "${error} - Sorry, the script won't work in your distro...\n"
-                exit 1
+                fn_exit "Sorry, the script won't work in your distro for now..."
                 ;;
         esac
     else
-        printf "${error} - Sorry, the script won't work in $ID...\n"
+        printf "${error}\n! Sorry, the script won't work in $ID.\n"
         exit 1
     fi
 }
 
-clear && sleep 1
+check_distro
+clear && fn_welcome && sleep 1
 
-printf "${cyan}Starting the Installation Script${end}.\n" && sleep 1 && clear
-printf "${cyan}Starting the Installation Script${end}..\n" && sleep 1 && clear
-printf "${cyan}Starting the Installation Script${end}...\n" && sleep 1
+printf "${attention}\n:: Need to install some packages first...\n"
+echo
 
-check_distro && sleep 1 && clear
+first_packages=(
+    git
+    gum
+)
 
+for pkg in "${first_packages[@]}"; do
 
-printf "${cyan}Hyprland${end} Installation Script by,\n" && sleep 0.5
+    if [[ "$distro" == "arch" ]]; then
 
-if [[ "$distro" == "arch" && "$distro" == "opensuse" ]]; then
-    printf "${orange}          _        ${end}\n"
-    printf "${orange}  |  _    |_) __ _  ${end}\n"
-    printf "${orange}\_| _)    |_) | (_) ${end}\n"
-elif [[ "$distro" == "fedora" ]]; then
-    printf "${orange} ┳   ┳┓     ${end}\n"
-    printf "${orange} ┃┏  ┣┫┏┓┏┓ ${end}\n"
-    printf "${orange}┗┛┛  ┻┛┛ ┗┛ ${end}\n"
-fi
+        if sudo pacman -Qe "$pkg" &> /dev/null ; then
+            fn_done "$pkg was installed already..." 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
+        else
+            printf "${action}\n==>  Installing $pkg"
+            if sudo pacman -S --noconfirm "$pkg"; then
+                fn_done "$pkg was installed successfully!" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
+            fi
+        fi
 
+    elif [[ "$distro" == "fedora" ]]; then
+        
+        if sudo dnf list installed git &> /dev/null ; then
+            fn_done "git was installed already..." 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
+        else
+            printf "${action}\n==> Installing git"
+            if sudo dnf install -y git; then
+                fn_done "git was installed successfully!" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
+            fi
+        fi
+
+        sleep 1
+
+        printf "${action}\n==> Installing gum"
+        chmod +x "$dir/fedora-scripts/gum_install.sh"
+        "$dir/fedora-scripts/gum_install.sh"
+
+        if command -v gum &> /dev/null; then
+            fn_done "Gum was installed successfully!" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
+        fi
+
+    elif [[ "$distro" == "opensuse" ]]; then
+
+        if sudo zypper se -i "$pkg" &> /dev/null; then
+            fn_done "$pkg was installed already..." 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
+        else
+            printf "${action}\n==> Installing $pkg"
+            if sudo zypper in -y "$pkg"; then
+                fn_done "$pkg was installed sucessfully!" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
+            fi
+        fi
+
+    fi
+done
+
+sleep 1 && clear
+
+# starting the main script prompt...
+gum spin --spinner line \
+         --spinner.foreground "#dddddd" \
+         --title "Starting the main script now..." \
+         --title.foreground "#dddddd" -- \
+         sleep 3
+clear
 
 
 # =========  asking for confirmation  ========= #
 
-printf "Would you like to continue with the script? ${cyan}[ ${green}y${end}/${red}n ${cyan}]${end} \n"
-read -r -p "$(echo -e '\e[1;32mSelect: \e[0m')" continue
+fn_ask "Would you like to continue with the script?"
+if [[ $? -eq 1 ]]; then
+    fn_exit "Exiting the script here..."
+fi
 
-
-# =========  startinf if yes, exiting if no  ========= #
-case $continue in
-    y|Y) printf "Proceeding to the next step...\n"
-        clear && sleep 0.5
-        ;;
-    n|N) printf "Exiting the script here..\n"
-        exit 1
-        ;;
-    *) echo "Please select between ${cyan}[ ${green}y${end}/${red}n ${cyan}]${end}"
-        exit 1
-        ;;
-esac
-
-display_text && sleep 1
-printf " \n"
-
-
+clear && display_text && sleep 1
+echo
 
 # =========  functions to ask user prompts  ========= #
-
-ask_prompts() {
-    local question="$1"
-    local var_name="$2"
-
-    # Check if the variable referenced by var_name is not empty
-    if [[ -n "${!var_name}" ]]; then
-        if [[ "${!var_name}" =~ ^[Yy]$ ]]; then
-            return 0
-        else
-            return 1
-        fi
-    fi
-
-    while true; do
-        printf "${ask} - $question ${cyan}[ ${green}y${end}/${red}n ${cyan}]${end} \n"
-        read -r -p "$(echo -e '\e[1;32mSelect: \e[0m')" choice
-        printf " \n"
-        case "$choice" in
-            [Yy]* )
-                eval "$var_name='Y'"
-                echo "$var_name='Y'" >> "$cache_file"
-                return 0
-                ;;
-            [Nn]* )
-                eval "$var_name='N'"
-                echo "$var_name='N'" >> "$cache_file"
-                return 1
-                ;;
-            * )
-                echo "Please answer with y or n."
-                ;;
-        esac
-    done
-}
-
-
-
-# =========  caching  ========= #
 
 if [[ -f "$cache_file" ]]; then
     source "$cache_file"
 
-    # exit if there is no coices
-    if [[ "$nvidia" == "" ]]; then
+    # Check if Nvidia prompt has no value set
+    if [[ -z "$setup_for_Nvidia" ]]; then
         printf "${error} - User prompt was not given properly. Please run the script again...\n" && sleep 0.5
-        printf "${note} - Would you like to run the script again? ${cyan}[ ${green}y${end}/${red}n ${cyan}]${end} \n"
-        read -r -p "$(echo -e '\e[1;32mSelect: \e[0m')" run_again
 
-        if [[ "$run_again" =~ ^[Yy]$ ]]; then
-            rm -rf "$dir/.cache" 2>&1 | tee -a "$log"
-            "$dir/start.sh" 2>&1 | tee -a "$log"
+        fn_ask "Would you like to run the script again?"
+        if [[ $? -eq 0 ]]; then
+            printf "${action}\n==> Starting the script again."
+            rm -f "$cache_file"
+            "$dir/start.sh"
         else
-            exit 1
+            fn_exit "Exiting the script here. Goodbye."
         fi
     else
-        printf "${attention} - Cache file is there. No need to answer the questions again.\n\n" && sleep 1
+        printf "${attention}\n:: Cache file is there. Skipping prompts...\n\n" && sleep 1
     fi
 else
-    if [[ ! -f "$cache_file" ]]; then
-        touch "$cache_file"
+    touch "$cache_file"
 
-        bluetooth=""
-        write_bangla=""
-        sddm=""
-        shell=""
-        vs_code=""
-        nvidia=""
-        
-        # Ask user prompts if cache file doesn't contain variables
-        ask_prompts "Would you like to install and enable ${blue}Bluetooth${end} service?" "bluetooth"
-        ask_prompts "Would like to install ${yellow}Openbangla keyboard${end} and ${yellow}fcitx${end} to write in Bangla?" "write_bangla"
-        ask_prompts "Would you like to install ${orange}Brave Browser${end} or ${cyan}Chromium${end}?" "browsr"
-        ask_prompts "Would you like to enable and configure ${green}sddm${end} theme?" "sddm"
-        ask_prompts "Would like to install zsh & oh-my-zsh?\nIf no, then we will be customizing your bash with a custom themes created by ${cyan}Js Bro${end}..." "shell"
-        ask_prompts "Would you like to install and configure ${cyan}Vs-Code${end}?" "vs_code"
-        ask_prompts "Do you have any ${yellow}Nvidia${end} gpu in your system?" "nvidia"
-    fi
+    cat > "$cache_file" << EOF
+install_Bluetooth_service=''
+install_OpenBangla_Keyboard=''
+install_brave_or_chromium=''
+install_zsh=''
+configure_your_default_Bash=''
+install_Visual_Studio_Code=''
+setup_for_Nvidia=''
+EOF
+
+    fn_choose_prompts "install_Bluetooth_service" "install_OpenBangla_Keyboard" "install_brave_or_chromium" "install_zsh" "configure_your_default_Bash" "install_Visual_Studio_Code" "setup_for_Nvidia"
+
+    source "$cache_file"
 fi
-
 
 
 # =========  script execution  ========= #
 
 scripts_dir="$dir/${distro}-scripts"
 common_scripts="$dir"/common
-
 
 # =========  run scripts  ========= #
 
@@ -251,45 +240,48 @@ fi
 "$scripts_dir/2-hyprland.sh" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
 "$scripts_dir/3-other_packages.sh" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
 
-# pywal installation script only for fedora
-if [[ "$distro" == "fedora" ]]; then
-    "$scripts_dir/5-pywal.sh" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
-fi
-
 
 "$scripts_dir/6-fonts.sh" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
 
-if [[ "$write_bangla" =~ ^[Yy]$ ]]; then
+if [[ "$install_OpenBangla_Keyboard" =~ ^[Yy]$ ]]; then
     "$common_scripts/write_bangla.sh" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
 fi
 
-if [[ "$browsr" =~ ^[Yy]$ ]]; then
+
+if [[ "$install_brave_or_chromium" =~ ^[Yy]$ ]]; then
     "$scripts_dir/7-browser.sh" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
 fi
 
-if [[ "$vs_code" =~ ^[Yy]$ ]]; then
+
+if [[ "$install_Visual_Studio_Code" =~ ^[Yy]$ ]]; then
     "$scripts_dir/8-vs_code.sh" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
 fi
 
-if [[ "$sddm" =~ ^[Yy]$ ]]; then
-    "$scripts_dir/9-sddm.sh" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
-fi
 
+"$scripts_dir/9-sddm.sh" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
 "$scripts_dir/10-xdg_dp.sh" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
+"$scripts_dir/11-uninstall.sh" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
 
-if [[ "$nvidia" =~ ^[Yy]$ ]]; then
+
+if [[ "$setup_for_Nvidia" =~ ^[Yy]$ ]]; then
     "$scripts_dir/nvidia.sh" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
 fi
 
-if [[ "$bluetooth" =~ ^[Yy]$ ]]; then
+
+if [[ "$install_Bluetooth_service" =~ ^[Yy]$ ]]; then
     "$common_scripts/bluetooth.sh" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
 fi
 
-if [[ "$shell" =~ ^[Yy]$ ]]; then
+
+if [[ "$install_zsh" =~ ^[Yy]$ ]]; then
     "$common_scripts/zsh.sh" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
-else 
+fi
+
+
+if [[ "$configure_your_default_Bash" =~ ^[Yy]$ ]]; then
     "$common_scripts/bash.sh" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
 fi
+
 
 "$common_scripts/themes.sh" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
 "$common_scripts/dotfiles.sh" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
@@ -306,91 +298,29 @@ is_laptop() {
 # Determine if the system is a laptop or desktop
 system_type=$(is_laptop)
 if [ "$system_type" = "Desktop" ]; then
-    printf "${attention} - This system is a Desktop. Some configuration will be skipped\n" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
+    printf "${attention}\n:: This system is a Desktop. Some configuration will be skipped\n" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
 else
     "$common_scripts/laptop.sh" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
 fi
 
-clear
-sleep 1
-
-
-# =========  removing package  ========= #
-
-uninstall_pkg=(
-    wofi
-)
-
-if [[ "$distro" = "arch" ]]; then
-
-    pkg_man=$(command -v pacman || command -v yay || command -v paru)
-
-    for pkg in "${uninstall_pkg[@]}"; do
-        if sudo "$pkg_man" -Qs "$pkg" &> /dev/null; then
-            printf "${attention} - Removing $pkg\n" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
-            sudo pacman -Rns --noconfirm "$pkg" 2>&1 | tee -a "$log" &> /dev/null
-        fi
-    done
-
-elif [[ "$distro" = "fedora" ]]; then
-
-    for pkg in "${uninstall_pkg[@]}"; do
-        if sudo dnf list installed "$pkg" &> /dev/null; then
-            printf "${attention} - Removing $pkg\n" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
-            sudo dnf remove -y "$pkg" 2>&1 | tee -a "$log"  &> /dev/null
-        fi
-    done
-
-elif [[ "$distro" = "opensuser" ]]; then
-
-    for pkg in "$uninstall_pkg[@]"; do
-        if sudo zypper se -i "$pkg" &> /dev/null; then
-            printf "${attention} - Removing $pkg\n" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
-            sudo zypper remove -y "$pkg" 2>&1 | tee -a "$log" &> /dev/null
-            sleep 1
-            if command -v openbox &> /dev/null; then
-                printf "${attention} - Removing openbox.\n"
-                sudo zypper remove -y openbox 2>&1 | tee -a "$log"
-            fi
-        fi
-    done
-fi
-
+sleep 1 && clear
 
 # =========  system reboot  ========= #
 
-printf "${done} - Congratulations! The script completes here. Now you can enjoy the newly installed Hyprland configuration in your system. The system needs to be rebooted first. would you like to reboot the system? ${cyan}[ ${green}y${end}/${red}n ${cyan}]${end}\n" && sleep 1
-read -r -p "$(echo -e '\e[1;32mSelect: \e[0m')" reboot
-
-
-display_text_reboot() {
-    cat << "EOF"
-  ____        _                    _    _                                                              _                            
- |  _ \  ___ | |__    ___    ___  | |_ (_) _ __    __ _   _   _   ___   _   _  _ __   ___  _   _  ___ | |_  ___  _ __ ___           
- | |_) |/ _ \| '_ \  / _ \  / _ \ | __|| || '_ \  / _` | | | | | / _ \ | | | || '__| / __|| | | |/ __|| __|/ _ \| '_ ` _ \          
- |  _ <|  __/| |_) || (_) || (_) || |_ | || | | || (_| | | |_| || (_) || |_| || |    \__ \| |_| |\__ \| |_|  __/| | | | | | _  _  _ 
- |_| \_\\___||_.__/  \___/  \___/  \__||_||_| |_| \__, |  \__, | \___/  \__,_||_|    |___/ \__, ||___/ \__|\___||_| |_| |_|(_)(_)(_)
-                                                  |___/   |___/                            |___/                                      
-EOF
-}
-
+fn_done "Congratulations! The script completes here." && sleep 2
+fn_ask "Need to reboot the system. Would you like to reboot now?"
 
 # rebooting the system in 5 seconds
-if [[ "$reboot" =~ ^[Yy]$ ]]; then
-    sleep 0.5 && clear
-    for time in 5 4 3 2 1; do
-        printf "${attention} - The system will Reboot in ${cyan}${time}s ${end}\n"
-        sleep 1 && clear
+if [[ $? -eq 0 ]]; then
+    clear
+    for second in 3 2 1; do
+        printf "${action}\n==> Rebooting the system in ${second}s" && sleep 1 && clear
     done
-
-    clear && display_text_reboot && sleep 2
-
-    systemctl reboot --now
+        systemctl reboot --now
 else
     printf "${orange}[ * ] - Ok, but it's good to reboot the system. Anyway, the script successfully ends here..${end}\n" && sleep 1
     printf "${orange}[ * ] - Enjoy ${cyan}Hyprland. (◠‿◠)${end}\n"
     exit 0
 fi
-
 
 # =========______  Script ends here  ______========= #

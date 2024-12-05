@@ -22,14 +22,19 @@ ask="[${orange} QUESTION ${end}]"
 error="[${red} ERROR ${end}]"
 
 display_text() {
-    cat << "EOF"
-  ____   ____   ____   __  __   _____  _                                     
- / ___| |  _ \ |  _ \ |  \/  | |_   _|| |__    ___  _ __ ___    ___          
- \___ \ | | | || | | || |\/| |   | |  | '_ \  / _ \| '_ ` _ \  / _ \         
-  ___) || |_| || |_| || |  | |   | |  | | | ||  __/| | | | | ||  __/ _  _  _ 
- |____/ |____/ |____/ |_|  |_|   |_|  |_| |_| \___||_| |_| |_| \___|(_)(_)(_)
-                                                      
-EOF
+    gum style \
+        --border rounded \
+        --align center \
+        --width 60 \
+        --margin "1" \
+        --padding "1" \
+'
+   _______  ___  __  ___  ________                
+  / __/ _ \/ _ \/  |/  / /_  __/ /  ___ __ _  ___ 
+ _\ \/ // / // / /|_/ /   / / / _ \/ -_)  ; \/ -_)
+/___/____/____/_/  /_/   /_/ /_//_/\__/_/_/_/\__/ 
+                                                   
+'
 }
 
 clear && display_text
@@ -45,6 +50,8 @@ dir="$(dirname "$(realpath "$0")")"
 
 # log directory
 parent_dir="$(dirname "$dir")"
+source "$parent_dir/interaction_fn.sh"
+
 log_dir="$parent_dir/Logs"
 log="$log_dir/sddm_theme-$(date +%d-%m-%y).log"
 mkdir -p "$log_dir"
@@ -56,19 +63,19 @@ theme_dir=/usr/share/sddm/themes
 
 # creating sddm theme dir
 if [ ! -d "$theme_dir" ]; then
-    printf "${attention} - Sddm theme dir was not found, creatint it.\n"
+    printf "${action}\n==> Sddm theme dir was not found, creatint it."
     sudo mkdir -p "$theme_dir"
 fi
 
 # Set up SDDM
-printf "${action} - Setting up the login screen."
+printf "${action}\n==> Setting up the Login Screen."
 sddm_conf_dir=/etc/sddm.conf.d
 [ ! -d "$sddm_conf_dir" ] && { printf "$sddm_conf_dir not found, creating...\n"; sudo mkdir -p "$sddm_conf_dir"; }
 
 
 sudo tar -xf "$theme" -C "$theme_dir"
-printf "[Theme]\nCurrent=minimal_sddm\n" | sudo tee "$sddm_conf_dir/theme.conf.user"
+echo -e "[Theme]\nCurrent=minimal_sddm" | sudo tee "$sddm_conf_dir/theme.conf.user" &> /dev/null
 
 if [ -d "$theme_dir/minimal_sddm" ]; then
-    printf "${done} - Sddm theme was installed successfully!\n"
+    fn_done "Sddm theme was installed successfully!"
 fi

@@ -30,20 +30,24 @@ dir="$(dirname "$(realpath "$0")")"
 
 # log directory
 parent_dir="$(dirname "$dir")"
+source "$parent_dir/interaction_fn.sh"
+
 log_dir="$parent_dir/Logs"
 log="$log_dir/pywal-$(date +%d-%m-%y).log"
 mkdir -p "$log_dir"
 touch "$log"
 
 if command -v pipx &> /dev/null; then
-  printf "${attention} - pywal will be installed using ${green}pipx${end}\n" && sleep 1
+  printf "${action}\n==> Pywal will be installed using pipx"
 
   pipx install pywal
 
   if command -v wal &> /dev/null; then
-    printf "${done} - pywal was installed successfully!\n" 2>&1 | tee -a "$log"
+    fn_done "Pywal was installed successfully!"
+    echo "[ DONE ] - pywal was installed successfully!" 2>&1 | tee -a "$log" &> /dev/null
     sleep 1 && clear
   else
-    printf "${error} - Sorry, could not install pywal..\n" 2>&1 | tee -a "$log"
+    fn_error "Sorry, could not install pywal"
+    echo "[ ERROR ] - Sorry, could not install pywal" 2>&1 | tee -a "$log" &> /dev/null
   fi
 fi

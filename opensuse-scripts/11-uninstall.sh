@@ -25,45 +25,48 @@ display_text() {
     gum style \
         --border rounded \
         --align center \
-        --width 40 \
+        --width 60 \
         --margin "1" \
         --padding "1" \
 '
- _   __        _____        __   
-| | / /__     / ___/__  ___/ /__ 
-| |/ (_-<_   / /__/ _ \/ _  / -_)
-|___/___(_)  \___/\___/\_,_/\__/ 
-                                 
+  __  __     _          __       ____
+ / / / /__  (_)__  ___ / /____ _/ / /
+/ /_/ / _ \/ / _ \(_-</ __/ _ `/ / / 
+\____/_//_/_/_//_/___/\__/\_,_/_/_/    
+                                    
 '
 }
 
 clear && display_text
-printf " \n \n"
+printf " \n"
 
 ###------ Startup ------###
 
 # install script dir
 dir="$(dirname "$(realpath "$0")")"
-source "$dir/1-global_script.sh"
-
-
-# log directory
 parent_dir="$(dirname "$dir")"
 source "$parent_dir/interaction_fn.sh"
 
+# log
 log_dir="$parent_dir/Logs"
-log="$log_dir/vs_code-$(date +%d-%m-%y).log"
+log="$log_dir/uninstall-$(date +%d-%m-%y).log"
 mkdir -p "$log_dir"
 touch "$log"
 
-printf "${action}\n==> Installing Visual Studio Code"
+removable=(
+    wofi
+    openbox
+)
 
-sudo rpm --import https://packages.microsoft.com/keys/microsoft.asc 2>&1 | tee -a "$log"
-sudo zypper addrepo https://packages.microsoft.com/yumrepos/vscode vscode 2>&1 | tee -a "$log"
-sudo zypper refresh 2>&1 | tee -a "$log"
-sudo zypper in -y code 2>&1 | tee -a "$log"
+for pkg in "${removable[@]}"; do
+    if sudo zypper se -i "$pkg" &> /dev/null; then
+        printf "${action}\n==> $pkg was found, removing it\n"
+        sudo zypper rm -y "$pkg" 2>&1 | tee -a "$log"
 
-common_scripts="$parent_dir/common"
-"$common_scripts/vs_code_theme.sh"
-
-clear
+        if ! sudo zypper se -i "$pkg" &> /dev/null; then
+            fn_done "$pkg was removed successfully!"
+        else
+            fn_error "Could not remove $pkg (╥﹏╥)"
+        fi
+    fi
+done

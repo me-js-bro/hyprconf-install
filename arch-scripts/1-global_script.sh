@@ -21,6 +21,11 @@ done="[${cyan} DONE ${end}]"
 ask="[${orange} QUESTION ${end}]"
 error="[${red} ERROR ${end}]"
 
+# sourcing the intaraction functions
+dir="$(dirname "$(realpath "$0")")"
+parent_dir="$(dirname "$dir")"
+source "$parent_dir/interaction_fn.sh"
+
 
 ###------ Startup ------###
 
@@ -30,19 +35,18 @@ aur_helper=$(command -v yay || command -v paru) # find the aur helper
 # package installation from main repo function..
 install_package() {
  
-  # Checking if package is already installed
   if sudo "$package_manager" -Qe "$1" &> /dev/null ; then
-    printf "${done} - $1 is already installed. Skipping...\n\n"
+    fn_done "$1 is already installed. Skipping..."
   else
-    # Package not installed
-    printf "${action} - Installing $1 ...\n"
+  
+    printf "${action}\n==> Installing $1..."
     sudo pacman -S --noconfirm "$1"
-    # Making sure package is installed
+    
     if sudo "$package_manager" -Qe "$1" &> /dev/null ; then
-      printf "${done} - $1 was installed successfully!\n\n"
+      fn_done "$1 was installed successfully!"
     else
-      # Something is missing, exiting to review log
-      printf "${error} - $1 failed to install, please check the install.log .Maybe you may need to install manually. (╥﹏╥)\n"
+    
+      fn_error "$1 failed to install. Maybe therer is an issue. (╥﹏╥)"
     fi
   fi
 }
@@ -50,19 +54,18 @@ install_package() {
 # package installation from aur helper function..
 install_from_aur() {
 
-  # Checking if package is already installed
   if sudo "$package_manager" -Qe "$1" &> /dev/null ; then
-    printf "${done} - $1 is already installed. Skipping...\n\n"
+    fn_done "$1 is already installed. Skipping..."
   else
-    # Package not installed
-    printf "${action} - Installing $1 ...\n"
+
+    printf "${action}\n==> Installing $1..."
     "$aur_helper" -S --noconfirm "$1"
-    # Making sure package is installed
+    
     if sudo "$package_manager" -Qe "$1" &> /dev/null ; then
-      printf "${done} - $1 was installed successfully!\n\n"
+      fn_done "$1 was installed successfully!"
     else
-      # Something is missing, exiting to review log
-      printf "${error} - $1 failed to install, please check the install.log .Maybe you need to install manually. (╥﹏╥)\n"
+    
+      fn_error "$1 failed to install. Maybe therer is an issue. (╥﹏╥)"
     fi
   fi
 }

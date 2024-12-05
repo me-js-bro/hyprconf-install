@@ -22,15 +22,20 @@ ask="[${orange} QUESTION ${end}]"
 error="[${red} ERROR ${end}]"
 
 display_text() {
-    cat << "EOF"
-      ___                       ____                        _                  
-     / _ \  _ __    ___  _ __  | __ )   __ _  _ __    __ _ | |  __ _           
-    | | | || '_ \  / _ \| '_ \ |  _ \  / _` || '_ \  / _` || | / _` |          
-    | |_| || |_) ||  __/| | | || |_) || (_| || | | || (_| || || (_| |  _  _  _ 
-     \___/ | .__/  \___||_| |_||____/  \__,_||_| |_| \__, ||_| \__,_| (_)(_)(_)
-           |_|                                       |___/                                             
-        
-EOF
+    gum style \
+        --border rounded \
+        --align center \
+        --width 60 \
+        --margin "1" \
+        --padding "1" \
+'
+  ____                ___                 __    
+ / __ \___  ___ ___  / _ )___ ____  ___ _/ /__ _
+/ /_/ / _ \/ -_) _ \/ _  / _ `/ _ \/ _ `/ / _ `/
+\____/ .__/\__/_//_/____/\_,_/_//_/\_, /_/\_,_/ 
+    /_/                           /___/         
+                               
+'
 }
 
 clear && display_text
@@ -41,6 +46,8 @@ dir="$(dirname "$(realpath "$0")")"
 
 # log directory
 parent_dir="$(dirname "$dir")"
+source "$parent_dir/interaction_fn.sh"
+
 log_dir="$parent_dir/Logs"
 log="$log_dir/openbangla-$(date +%d-%m-%y).log"
 mkdir -p "$log_dir"
@@ -49,14 +56,15 @@ touch "$log"
 
 ###------ Startup ------###
 
-printf "${attention} - This script will creand a Log dir in your ${HOME} directory. Please remove that Log dir after you finish the script \n"
+printf "${attention}\n:: This script will creand a Log dir in your ${HOME} directory. Please remove that Log dir after you finish the script.\n"
 sleep 1
 
 # OpenBangla-Building url was forked from ( https://github.com/asifakonjee/openbangla-fcitx5 )
 bash -c "$(wget -q https://raw.githubusercontent.com/me-js-bro/Build-OpenBangla-Keyboard/main/build.sh -O -)"
 
 if [[ -d "/usr/share/openbangla-keyboard" ]]; then
-  printf "${done} - OpenBangla Keyboard was installed successfully!\n" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
+  fn_done "OpenBangla Keyboard was installed successfully!\n"
+  echo "[ DONE ] - OpenBangla Keyboard was installed successfully!" 2>&1 | tee -a "$log"
 fi
 
 sleep 1 && clear

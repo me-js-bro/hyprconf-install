@@ -24,13 +24,19 @@ ask="[${orange} QUESTION ${end}]"
 error="[${red} ERROR ${end}]"
 
 display_text() {
-    cat << "EOF"
-     _   _         _      _  _                  
-    | \ | |__   __(_)  __| |(_)  __ _           
-    |  \| |\ \ / /| | / _` || | / _` |          
-    | |\  | \ V / | || (_| || || (_| |  _  _  _ 
-    |_| \_|  \_/  |_| \__,_||_| \__,_| (_)(_)(_)
-EOF
+    gum style \
+        --border rounded \
+        --align center \
+        --width 40 \
+        --margin "1" \
+        --padding "1" \
+'
+   _  __     _    ___     
+  / |/ /_ __(_)__/ (_)__ _
+ /    / |/ / / _  / / _ `/
+/_/|_/|___/_/\_,_/_/\_,_/ 
+                          
+'
 }
 
 clear && display_text
@@ -77,10 +83,10 @@ sudo zypper --gpg-auto-import-keys refresh 2>&1 | tee -a "$log"
 sudo zypper install-new-recommends --repo NVIDIA 2>&1 | tee -a "$log"
 
 # Install additional Nvidia packages
-printf "${action} - Installing Nvidia packages...\n"
+printf "${action}\n==> Installing nvidia drivers"
  for NVIDIA in "${nvidia_pkg[@]}" "${nvidia_drivers[@]}"; do
    sudo zypper in --auto-agree-with-licenses -y "$NVIDIA"
-    if sudo zypper se -i "$NVIDIA" &>> /dev/null ; then
+    if sudo zypper se -i "$NVIDIA" &> /dev/null ; then
         echo "[ DONE ] - $NVIDIA was installed successfully!" 2>&1 | tee -a "$log" &> /dev/null
     else
         echo "[ ERROR ] - Could not install $NVIDIA..." 2>&1 | tee -a "$log" &> /dev/null
@@ -88,7 +94,7 @@ printf "${action} - Installing Nvidia packages...\n"
  done
 
 # adding additional nvidia-stuff
-printf "${action} - adding nvidia-stuff to /etc/default/grub..."
+printf "${action}\n==> Adding nvidia-stuff to /etc/default/grub"
 
 # Additional options to add to GRUB_CMDLINE_LINUX
 additional_options="rd.driver.blacklist=nouveau modprobe.blacklist=nouveau nvidia-drm.modeset=1"

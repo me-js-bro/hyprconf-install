@@ -25,15 +25,19 @@ ask="[${orange} QUESTION ${end}]"
 error="[${red} ERROR ${end}]"
 
 display_text() {
-    cat << "EOF"
-      ___   _    _                   ____               _                                      
-     / _ \ | |_ | |__    ___  _ __  |  _ \  __ _   ___ | | __ __ _   __ _   ___  ___           
-    | | | || __|| '_ \  / _ \| '__| | |_) |/ _` | / __|| |/ // _` | / _` | / _ \/ __|          
-    | |_| || |_ | | | ||  __/| |    |  __/| (_| || (__ |   <| (_| || (_| ||  __/\__ \  _  _  _ 
-     \___/  \__||_| |_| \___||_|    |_|    \__,_| \___||_|\_\\__,_| \__, | \___||___/ (_)(_)(_)
-                                                                    |___/                      
-   
-EOF
+    gum style \
+        --border rounded \
+        --align center \
+        --width 40 \
+        --margin "1" \
+        --padding "1" \
+'
+  ____  __  __             
+ / __ \/ /_/ /  ___ _______
+/ /_/ / __/ _ \/ -_) __(_-<
+\____/\__/_//_/\__/_/ /___/
+                             
+'
 }
 
 clear && display_text
@@ -47,6 +51,8 @@ source "$dir/1-global_script.sh"
 
 # log directory
 parent_dir="$(dirname "$dir")"
+source "$parent_dir/interaction_fn.sh"
+
 log_dir="$parent_dir/Logs"
 log="$log_dir/others-$(date +%d-%m-%y).log"
 mkdir -p "$log_dir"
@@ -80,15 +86,54 @@ other_packages=(
     yad
 )
 
-printf "${action} - Now installing some necessary packages...\n" && sleep 1
-printf " \n"
+aur_packages=(
+    grimblast-git
+    hyprsunset
+)
 
+# thunar file manager
+thunar=(
+    ffmpegthumbnailer
+    file-roller
+    gvfs
+    gvfs-mtp 
+    thunar 
+    thunar-volman 
+    tumbler 
+    thunar-archive-plugin
+)
+
+printf "${action}\n==> Installing necessary packages"
 for other_pkgs in "${other_packages[@]}"; do
     install_package "$other_pkgs"
     if sudo pacman -Qe "$other_pkgs" &> /dev/null; then
         echo "[ DONE ] - $other_pkgs was installed successfully!\n" 2>&1 | tee -a "$log" &> /dev/null
     else
         echo "[ ERROR ] - Sorry, could not install $other_pkgs!\n" 2>&1 | tee -a "$log" &> /dev/null
+    fi
+done
+
+sleep 1 && clear
+
+# Installing from the AUR Helper
+for aur_pkgs in "${aur_packages[@]}"; do
+    install_from_aur "$aur_pkgs"
+    if sudo "$aur_helper" -Qe "$aur_pkgs" &> /dev/null; then
+        echo "[ DONE ] - $aur_pkgs was installed successfully!\n" 2>&1 | tee -a "$log" &> /dev/null
+    else
+        echo "[ ERROR ] - Sorry, could not install $aur_pkgs!\n" 2>&1 | tee -a "$log" &> /dev/null
+    fi
+done
+
+sleep 1 && clear
+
+# installing thunar file manager 
+for file_man in "${thunar[@]}"; do
+    install_package "$file_man"
+    if sudo pacman -Qe "$file_man" &> /dev/null; then
+        echo "[ DONE ] - $file_man was installed successfully!\n" 2>&1 | tee -a "$log" &> /dev/null
+    else
+        echo "[ ERROR ] - Sorry, could not install $file_man!\n" 2>&1 | tee -a "$log" &> /dev/null
     fi
 done
 

@@ -24,13 +24,19 @@ ask="[${orange} QUESTION ${end}]"
 error="[${red} ERROR ${end}]"
 
 display_text() {
-    cat << "EOF"
-     _   _         _      _  _                  
-    | \ | |__   __(_)  __| |(_)  __ _           
-    |  \| |\ \ / /| | / _` || | / _` |          
-    | |\  | \ V / | || (_| || || (_| |  _  _  _ 
-    |_| \_|  \_/  |_| \__,_||_| \__,_| (_)(_)(_)
-EOF
+    gum style \
+        --border rounded \
+        --align center \
+        --width 40 \
+        --margin "1" \
+        --padding "1" \
+'
+   _  __     _    ___     
+  / |/ /  __(_)__/ (_)__ _
+ /    / |/ / / _  / / _ `/
+/_/|_/|___/_/\_,_/_/\_,_/   
+
+'
 }
 
 clear && display_text
@@ -44,6 +50,8 @@ source "$dir/1-global_script.sh"
 
 # log directory
 parent_dir="$(dirname "$dir")"
+source "$parent_dir/interaction_fn.sh"
+
 log_dir="$parent_dir/Logs"
 log="$log_dir/nvidia-$(date +%d-%m-%y).log"
 mkdir -p "$log_dir"
@@ -58,13 +66,10 @@ nvidia_pkg=(
 
 
 # Install additional Nvidia packages
-printf "${action} Installing Nvidia packages...\n"
+printf "${action}\n==> Installing Nvidia packages."
   for NVIDIA in "${nvidia_pkg[@]}"; do
     install_package "$NVIDIA" 2>&1 | tee -a "$log"
   done
-
-
-printf "${action} - nvidia-stuff to /etc/default/grub..."
 
 # Additional options to add to GRUB_CMDLINE_LINUX
 additional_options="rd.driver.blacklist=nouveau modprobe.blacklist=nouveau nvidia-drm.modeset=1"
@@ -81,6 +86,6 @@ fi
 # Update GRUB configuration
 sudo grub2-mkconfig -o /boot/grub2/grub.cfg
 
-printf "${done} - Nvidia DRM modeset and additional options have been added to /etc/default/grub. Please reboot for changes to take effect." 2>&1 | tee -a "$log"
+printf "${done}\n:: Nvidia DRM modeset and additional options have been added to /etc/default/grub. Please reboot for changes to take effect." 2>&1 | tee -a "$log"
 
 clear

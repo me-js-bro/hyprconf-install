@@ -39,17 +39,17 @@ install_git() {
     elif [ -n "$(command -v dnf)" ]; then  # Fedora
 
         if sudo dnf list installed git &> /dev/null; then
-            sudo dnf install git -y
+            sudo dnf install -y git
         fi
 
     elif [ -n "$(command -v zypper)" ]; then  # openSUSE
 
         if sudo zypper se -i git &> /dev/null; then
-            sudo zypper in -y git
+            sudo zypper in --no-recommends -y git
         fi
 
     else
-        printf "Unsupported distribution for now..Sorry.\n"
+        printf "! Unsupported distribution for now..Sorry.\n"
         exit 1
     fi
 }

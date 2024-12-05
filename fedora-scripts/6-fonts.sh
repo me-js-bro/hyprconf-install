@@ -44,6 +44,8 @@ source "$dir/1-global_script.sh"
 
 # log directory
 parent_dir="$(dirname "$dir")"
+source "$parent_dir/interaction_fn.sh"
+
 log_dir="$parent_dir/Logs"
 log="$log_dir/fonts-$(date +%d-%m-%y).log"
 mkdir -p "$log_dir"
@@ -59,10 +61,11 @@ jetbrains-mono-fonts
 )
 
 # Installation of main components
-printf "${action} - Installing necessary fonts.... \n"
+printf "${action}\n==> Installing necessary fonts."
 
 for font in "${fonts[@]}"; do
-  install_package "$font" || printf "${error} - Sorry, could not install $font\n" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
+  install_package "$font"
+  echo " [ DONE ] - $font was installed successfully!" 2>&1 | tee -a "$log"
 done
 
 DOWNLOAD_URL="https://github.com/ryanoasis/nerd-fonts/releases/latest/download/JetBrainsMono.tar.xz"

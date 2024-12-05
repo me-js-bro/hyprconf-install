@@ -22,13 +22,19 @@ ask="[${orange} QUESTION ${end}]"
 error="[${red} ERROR ${end}]"
 
 display_text() {
-    cat << "EOF"
-     ____       _      _                      
-    / ___|   __| |  __| | _ __ ___            
-    \___ \  / _` | / _` || '_ ` _ \           
-     ___) || (_| || (_| || | | | | |  _  _  _ 
-    |____/  \__,_| \__,_||_| |_| |_| (_)(_)(_)
-EOF
+    gum style \
+        --border rounded \
+        --align center \
+        --width 40 \
+        --margin "1" \
+        --padding "1" \
+'
+   _______  ___  __  ___
+  / __/ _ \/ _ \/  |/  /
+ _\ \/ // / // / /|_/ / 
+/___/____/____/_/  /_/   
+
+'
 }
 
 clear && display_text
@@ -45,6 +51,8 @@ source "$dir/1-global_script.sh"
 
 # log directory
 parent_dir="$(dirname "$dir")"
+source "$parent_dir/interaction_fn.sh"
+
 log_dir="$parent_dir/Logs"
 log="$log_dir/sddm-$(date +%d-%m-%y).log"
 mkdir -p "$log_dir"
@@ -60,13 +68,13 @@ sddm=(
 )
 
 # Installation of additional sddm stuff
-printf "${attention} - Installing sddm and dependencies.... \n"
+printf "${action}\n==> Installing sddm and dependencies."
 for sddm_pkgs in "${sddm[@]}"; do
   install_package "$sddm_pkgs"
   if sudo dnf list installed "$sddm_pkgs" &> /dev/null; then
-    printf "${done} - $sddm_pkgs was installed successfully..\n" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
+    printf "${done}\n:: $sddm_pkgs was installed successfully.\n" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
   else
-    printf "${error} - Sorry, could not install $sddm_pkgs (╥﹏╥)\n" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
+    printf "${error}\n! Sorry, could not install $sddm_pkgs (╥﹏╥)\n" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
     exit 1
   fi
 done
@@ -79,7 +87,7 @@ for login_manager in lightdm gdm lxdm lxdm-gtk3; do
   fi
 done
 
-printf "${action} - Activating sddm service........\n"
+printf "${action}\n==> Activating sddm service."
 sudo systemctl set-default graphical.target 2>&1 | tee -a "$log"
 sudo systemctl enable sddm.service 2>&1 | tee -a "$log"
 

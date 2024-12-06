@@ -60,7 +60,7 @@ touch "$log"
 
 # Install THEME
 CONFIG_DIR="$HOME/.config"
-theme="$parent_dir/assets/themes.tar.gz"
+theme="$parent_dir/assets/themes.zip"
 icon="$parent_dir/assets/Icon_TelaDracula.tar.gz"
 cursor="$parent_dir/assets/catppuccin-mocha-light-cursors.zip"
 
@@ -109,14 +109,14 @@ sudo sh -c "echo \"QT_QPA_PLATFORMTHEME='qt5ct'\" >> $env_file" 2>&1 | tee -a "$
 
 # extracting themes to ~/.themes/
 printf "${action}\n==> Copying themes."
-tar -xf "$theme" -C ~/.themes/ &> /dev/null 2>&1 | tee -a "$log"
+unzip "$theme" -d ~/.themes/ &> /dev/null 2>&1 | tee -a "$log"
 
 fn_done "Themes copied successfully."
 
 sleep 1
 
 # setting default themes, icon and cursor
-gsettings set org.gnome.desktop.interface gtk-theme "theme"
+gsettings set org.gnome.desktop.interface gtk-theme "Dracula"
 gsettings set org.gnome.desktop.interface icon-theme "TokyoNight-SE"
 gsettings set org.gnome.desktop.interface cursor-theme "catppuccin-mocha-light-cursors"
 

@@ -87,7 +87,6 @@ hypr_package=(
   libqt5-qtquickcontrols2
   libqt5-qtgraphicaleffects
   nwg-look
-  ranger
   rofi-wayland
   slurp
   SwayNotificationCenter
@@ -101,6 +100,7 @@ hypr_package=(
   xdg-utils
   xwayland
   yad
+  yazi
 )
 
 other_packages=(

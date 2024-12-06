@@ -87,7 +87,6 @@ main_packages=(
   qt5ct
   qt6ct
   qt6-qtsvg
-  ranger
   rofi-wayland
   slurp
   swappy
@@ -98,6 +97,7 @@ main_packages=(
   wl-clipboard
   xdg-utils
   yad
+  yazi
 )
 
 # other necessary packages

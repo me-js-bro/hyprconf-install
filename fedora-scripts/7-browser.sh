@@ -82,7 +82,7 @@ for browser in "${browsers[@]}"; do
                 mkdir -p "$HOME/.config/browser-backup"
                 mv "$HOME/.config/BraveSoftware" "$HOME/.config/browser-backup/" &> /dev/null
             fi
-            unzip "$brave" "$HOME/.config/"
+            unzip "$brave" -d "$HOME/.config/" &> /dev/null
             ;;
         "Chromium")
             install_package chromium
@@ -92,7 +92,7 @@ for browser in "${browsers[@]}"; do
                 mkdir -p "$HOME/.config/browser-backup"
                 mv "$HOME/.config/chromium" "$HOME/.config/browser-backup" &> /dev/null
             fi
-            unzip "$chromium" "$HOME/.config/"
+            unzip "$chromium" -d "$HOME/.config/" &> /dev/null
             ;;
     esac
 done

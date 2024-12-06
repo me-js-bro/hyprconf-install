@@ -80,9 +80,9 @@ other_packages=(
     pavucontrol
     python-pillow
     python-pywal
-    ranger
     wget
     yad
+    yazi
 )
 
 aur_packages=(

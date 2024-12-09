@@ -61,19 +61,16 @@ touch "$log"
 # finding the aur helper
 aur_helper=$(command -v yay || command -v paru)
 
-# asking which browser wants to install
-fn_choose "Which browser would you like to install? You can install multiple" "Firefox" "Brave" "Chromium"
-browsers=(${choice[@]})
+# Ask user for browser selection
+printf "${ask}\n? Choose which browser would you like to install. You can choose multiple.\n"
+browsers=$(gum choose --no-limit "Brave" "Chromium" "Firefox" "Vivaldi" "Zen")
 
-# Split the choices into an array
-IFS=$'\n' read -r -d '' -a browsers <<<"$choice"
+# Fix: Convert gum choice string into an array
+IFS=$'\n' read -r -d '' -a browser_array <<< "$browsers"
 
 # Loop through the selected browsers
-for browser in "${browsers[@]}"; do
+for browser in "${browser_array[@]}"; do
     case $browser in
-        "Firefox")
-            install_package firefox
-            ;;
         "Brave")
             install_from_aur brave-bin
 
@@ -88,11 +85,14 @@ for browser in "${browsers[@]}"; do
             install_from_aur ungoogled-chromium-bin
 
             sleep 1
-            if [[ -d "$HOME/.config/chromium" ]];
+            if [[ -d "$HOME/.config/chromium" ]]; then
                 mkdir -p "$HOME/.config/browser-backup"
                 mv "$HOME/.config/chromium" "$HOME/.config/browser-backup" &> /dev/null
             fi
             unzip "$chromium" -d "$HOME/.config/" &> /dev/null
+            ;;
+        "Firefox")
+            install_package firefox
             ;;
     esac
 done

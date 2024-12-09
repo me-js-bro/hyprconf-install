@@ -39,7 +39,7 @@ install_package() {
     fn_done "$1 is already installed. Skipping..."
   else
   
-    printf "${action}\n==> Installing $1..."
+    printf "${action}\n==> Installing $1...\n"
     sudo pacman -S --noconfirm "$1"
     
     if sudo "$package_manager" -Qe "$1" &> /dev/null ; then
@@ -58,7 +58,7 @@ install_from_aur() {
     fn_done "$1 is already installed. Skipping..."
   else
 
-    printf "${action}\n==> Installing $1..."
+    printf "${action}\n==> Installing $1...\n"
     "$aur_helper" -S --noconfirm "$1"
     
     if sudo "$package_manager" -Qe "$1" &> /dev/null ; then

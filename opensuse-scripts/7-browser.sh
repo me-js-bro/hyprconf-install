@@ -3,7 +3,7 @@
 #### Advanced Hyprland Installation Script by ####
 #### Js Bro ( https://github.com/me-js-bro ) ####
 
-# color defination
+# color definition
 red="\e[1;31m"
 green="\e[1;32m"
 yellow="\e[1;33m"
@@ -58,27 +58,19 @@ touch "$log"
 brave="$parent_dir/assets/BraveSoftware.zip"
 chromium="$parent_dir/assets/chromium.zip"
 
+# Ask user for browser selection
+printf "${ask}\n? Choose which browser would you like to install. You can choose multiple.\n"
+browsers=$(gum choose --no-limit "Brave" "Chromium" "Firefox" "Vivaldi" "Zen")
 
-fn_choose "Which browser would you like to install? You can install multiple" "Firefox" "Brave" "Chromium"
-browsers=(${choice[@]})
-
-# Split the choices into an array
-IFS=$'\n' read -r -d '' -a browsers <<<"$choice"
+# Fix: Convert gum choice string into an array
+IFS=$'\n' read -r -d '' -a browser_array <<< "$browsers"
 
 # Loop through the selected browsers
-for browser in "${browsers[@]}"; do
+for browser in "${browser_array[@]}"; do
     case $browser in
-        "Firefox")
-            install_package firefox
-            ;;
         "Brave")
-            printf "${action}\n==> Installing Brave"
-            sudo zypper in -y curl
-            sudo rpm --import https://brave-browser-rpm-release.s3.brave.com/brave-core.asc
-            sudo zypper addrepo https://brave-browser-rpm-release.s3.brave.com/brave-browser.repo 
-            sleep 0.5
-            install_package brave-browser
-
+            printf "${action}\n==> Installing Brave\n"
+            sudo opi brave-browser -n
             sleep 1
             if [[ -d "$HOME/.config/BraveSoftware" ]]; then
                 mkdir -p "$HOME/.config/browser-backup"
@@ -87,16 +79,30 @@ for browser in "${browsers[@]}"; do
             unzip "$brave" -d "$HOME/.config/" &> /dev/null
             ;;
         "Chromium")
+            printf "${action}\n==> Installing Chromium\n"
             install_package chromium
-
             sleep 1
-            if [[ -d "$HOME/.config/chromium" ]];
+            if [[ -d "$HOME/.config/chromium" ]]; then
                 mkdir -p "$HOME/.config/browser-backup"
                 mv "$HOME/.config/chromium" "$HOME/.config/browser-backup" &> /dev/null
             fi
             unzip "$chromium" -d "$HOME/.config/" &> /dev/null
             ;;
+        "Firefox")
+            install_package firefox
+            ;;
+        "Vivaldi")
+            printf "${action}\n==> Installing Vivaldi\n"
+            sudo opi vivaldi -n
+            ;;
+        "Zen")
+            printf "${action}\n==> Installing Zen-Browser\n"
+            sudo opi zen-browser -n
+            ;;
+        *)
+            printf "${error}\n==> Invalid choice: $browser\n"
+            ;;
     esac
 done
 
-sleep 1 && clear
+# sleep 1 && clear

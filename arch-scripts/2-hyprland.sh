@@ -89,7 +89,7 @@ hypr_packages=(
 
 
 # Instlling main packages...
-printf "${action}\n==> Installing main packages."
+printf "${action}\n==> Installing main packages.\n"
 # Install from official repo
 for hypr_pkgs in "${hypr_packages[@]}"; do
     install_package "$hypr_pkgs"

@@ -38,7 +38,7 @@ mkdir -p "$log_dir"
 touch "$log"
 
 if command -v pipx &> /dev/null; then
-  printf "${action}\n==> Pywal will be installed using pipx"
+  printf "${action}\n==> Pywal will be installed using pipx\n"
 
   pipx install pywal
 

@@ -111,7 +111,7 @@ for pkg in "${first_packages[@]}"; do
         if sudo pacman -Qe "$pkg" &> /dev/null ; then
             fn_done "$pkg was installed already..." 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
         else
-            printf "${action}\n==>  Installing $pkg"
+            printf "${action}\n==>  Installing $pkg\n"
             if sudo pacman -S --noconfirm "$pkg"; then
                 fn_done "$pkg was installed successfully!" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
             fi
@@ -122,7 +122,7 @@ for pkg in "${first_packages[@]}"; do
         if sudo dnf list installed git &> /dev/null ; then
             fn_done "git was installed already..." 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
         else
-            printf "${action}\n==> Installing git"
+            printf "${action}\n==> Installing git\n"
             if sudo dnf install -y git; then
                 fn_done "git was installed successfully!" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
             fi
@@ -130,7 +130,7 @@ for pkg in "${first_packages[@]}"; do
 
         sleep 1
 
-        printf "${action}\n==> Installing gum"
+        printf "${action}\n==> Installing gum\n"
         chmod +x "$dir/fedora-scripts/gum_install.sh"
         "$dir/fedora-scripts/gum_install.sh"
 
@@ -143,7 +143,7 @@ for pkg in "${first_packages[@]}"; do
         if sudo zypper se -i "$pkg" &> /dev/null; then
             fn_done "$pkg was installed already..." 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
         else
-            printf "${action}\n==> Installing $pkg"
+            printf "${action}\n==> Installing $pkg\n"
             if sudo zypper in -y "$pkg"; then
                 fn_done "$pkg was installed sucessfully!" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
             fi
@@ -184,7 +184,7 @@ if [[ -f "$cache_file" ]]; then
 
         fn_ask "Would you like to run the script again?"
         if [[ $? -eq 0 ]]; then
-            printf "${action}\n==> Starting the script again."
+            printf "${action}\n==> Starting the script again.\n"
             rm -f "$cache_file"
             "$dir/start.sh"
         else
@@ -314,7 +314,7 @@ fn_ask "Need to reboot the system. Would you like to reboot now?"
 if [[ $? -eq 0 ]]; then
     clear
     for second in 3 2 1; do
-        printf "${action}\n==> Rebooting the system in ${second}s" && sleep 1 && clear
+        printf "${action}\n==> Rebooting the system in ${second}s\n" && sleep 1 && clear
     done
         systemctl reboot --now
 else

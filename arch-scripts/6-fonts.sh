@@ -68,7 +68,7 @@ fonts=(
     noto-fonts-emoji
 )
 
-printf "${action}\n==> Installing some necessary fonts"
+printf "${action}\n==> Installing some necessary fonts\n"
 
 for font_pkgs in "${fonts[@]}"; do
     install_package "$font_pkgs"

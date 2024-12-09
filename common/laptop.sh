@@ -66,7 +66,7 @@ packages=(
     wlroots
 )
 
-printf "${action}\n==> This system is a Laptop. Proceeding with some configuration."
+printf "${action}\n==> This system is a Laptop. Proceeding with some configuration.\n"
 
 # Install necessary packages
 for pkgs in "${packages[@]}"; do

@@ -73,9 +73,10 @@ if git clone --depth=1 https://github.com/hyprwm/hyprsunset "$parent_dir/.cache/
     cd "$parent_dir/.cache/hyprsunset"
     mkdir build
     cd build
-    cmake .. &> /dev/null
     sleep 1
-    sudo make install &> /dev/null
+    cmake ..
+    sleep 1
+    sudo make install
 
     sleep 1
 

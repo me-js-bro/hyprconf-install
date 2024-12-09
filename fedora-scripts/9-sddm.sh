@@ -68,7 +68,7 @@ sddm=(
 )
 
 # Installation of additional sddm stuff
-printf "${action}\n==> Installing sddm and dependencies."
+printf "${action}\n==> Installing sddm and dependencies.\n"
 for sddm_pkgs in "${sddm[@]}"; do
   install_package "$sddm_pkgs"
   if sudo dnf list installed "$sddm_pkgs" &> /dev/null; then
@@ -87,7 +87,7 @@ for login_manager in lightdm gdm lxdm lxdm-gtk3; do
   fi
 done
 
-printf "${action}\n==> Activating sddm service."
+printf "${action}\n==> Activating sddm service.\n"
 sudo systemctl set-default graphical.target 2>&1 | tee -a "$log"
 sudo systemctl enable sddm.service 2>&1 | tee -a "$log"
 

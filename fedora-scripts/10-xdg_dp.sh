@@ -47,18 +47,18 @@ for xdgs in "${xdg[@]}"; do
   install_package "$xdgs" "$log"
 done
 
-printf "${action}\n==> Checking for other XDG-Desktop-Portal-Implementations."
+printf "${action}\n==> Checking for other XDG-Desktop-Portal-Implementations.\n"
 fn_ask "Would you like to remove other XDG-Desktop-Portal-Implementations?"
 
 if [[ $? -eq 0 ]]; then
     
   	if sudo dnf list installed xdg-desktop-portal-wlr &> /dev/null; then
-    	printf "${action}\n==> Removing xdg-desktop-portal-wlr."
+    	printf "${action}\n==> Removing xdg-desktop-portal-wlr.\n"
     	sudo dnf remove -y xdg-desktop-portal-wlr 2>&1 | tee -a "$log" &> /dev/null
   	fi
 
   	if sudo dnf list installed xdg-desktop-portal-lxqt &> /dev/null; then
-    	printf "${action}\n==> Removing xdg-desktop-portal-lxqt."
+    	printf "${action}\n==> Removing xdg-desktop-portal-lxqt.\n"
     	sudo dnf remove -y xdg-desktop-portal-lxqt 2>&1 | tee -a "$log" &> /dev/null
   	fi
 else

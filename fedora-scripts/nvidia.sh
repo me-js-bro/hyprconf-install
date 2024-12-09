@@ -66,7 +66,7 @@ nvidia_pkg=(
 
 
 # Install additional Nvidia packages
-printf "${action}\n==> Installing Nvidia packages."
+printf "${action}\n==> Installing Nvidia packages.\n"
   for NVIDIA in "${nvidia_pkg[@]}"; do
     install_package "$NVIDIA" 2>&1 | tee -a "$log"
   done

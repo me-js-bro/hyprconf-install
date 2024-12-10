@@ -104,8 +104,8 @@ You can now easily install the config directly without cloning the repository. J
 - Now cd into hyprconf-install directory and run this command.:
    ```
    cd ~/hyprconf-install
-   chmod +x start.sh
-   ./start.sh
+   chmod +x install.sh
+   ./install.sh
    ```
 Hurrah! Now select Hyprland from your login manager, login to your Hyprland and enjoy it.
 

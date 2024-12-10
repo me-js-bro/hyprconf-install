@@ -73,8 +73,8 @@ fi
 sleep 1
 
 # if repo clonned successfully, then setting up the config
-if [[ -d "$$parent_dir/.cache/hyprconf" ]]; then
-  cd "$$parent_dir/.cache/hyprconf" || { printf "${error}\n! Could not changed directory to $$parent_dir/.cache/hyprconf (╥﹏╥)\n" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log"); exit 1; }
+if [[ -d "$parent_dir/.cache/hyprconf" ]]; then
+  cd "$parent_dir/.cache/hyprconf" || { printf "${error}\n! Could not changed directory to $parent_dir/.cache/hyprconf (╥﹏╥)\n" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log"); exit 1; }
 
   chmod +x setup.sh
   

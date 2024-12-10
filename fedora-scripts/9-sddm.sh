@@ -61,6 +61,8 @@ common_scripts="$parent_dir/common"
 
 # packages for sddm
 sddm=(
+    qt5-qtgraphicaleffects
+    qt5-qtquickcontrols
     sddm
     qt6-qt5compat 
     qt6-qtdeclarative 
@@ -91,5 +93,8 @@ printf "${action}\n==> Activating sddm service.\n"
 sudo systemctl set-default graphical.target 2>&1 | tee -a "$log"
 sudo systemctl enable sddm.service 2>&1 | tee -a "$log"
 
+printf "${attention}\n! For now, we cannot set a theme for the sddm. Soon we will fix the issue.\n"
+sleep 1 && clear
+
 # run sddm theme script
-"$common_scripts/sddm_theme.sh"
+# "$common_scripts/sddm_theme.sh"

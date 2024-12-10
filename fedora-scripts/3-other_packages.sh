@@ -69,6 +69,7 @@ main_packages=(
   libX11-devel
   libXext-devel
   lxappearance
+  mate-polkit
   make
   network-manager-applet
   NetworkManager-tui
@@ -78,7 +79,6 @@ main_packages=(
   pavucontrol
   pipewire-alsa
   pipewire-utils
-  polkit-gnome
   python3-requests
   python3-devel
   python3-pip

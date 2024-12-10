@@ -22,14 +22,18 @@ ask="[${orange} QUESTION ${end}]"
 error="[${red} ERROR ${end}]"
 
 display_text() {
-    cat << "EOF"
-     _____              _                  
-    |  ___|___   _ __  | |_  ___           
-    | |_  / _ \ | '_ \ | __|/ __|          
-    |  _|| (_) || | | || |_ \__ \  _  _  _ 
-    |_|   \___/ |_| |_| \__||___/ (_)(_)(_)
-                                      
-EOF
+    gum style \
+        --border rounded \
+        --align center \
+        --width 40 \
+        --margin "1" \
+        --padding "1" \
+'
+   ____          __    
+  / __/__  ___  / /____
+ / _// _ \/ _ \/ __(_-<
+/_/  \___/_//_/\__/___/
+'
 }
 
 clear && display_text

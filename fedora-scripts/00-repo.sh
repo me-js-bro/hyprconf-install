@@ -61,23 +61,8 @@ copr_repos=(
   solopasha/hyprland
   erikreider/SwayNotificationCenter
   tofik/nwg-shell
+  metainfa/yazi
 )
-
-# Function to add dnf config if not present in a file
-add_config_if_not_present() {
-  local file="$1"
-  local config="$2"
-  grep -qF "$config" "$file" || echo "$config" | sudo tee -a "$file" &>> /dev/null
-}
-
-fn_ask "Have you added 'fastestmirrors=True' & 'max_paralled_downloads=10' in your dnf.conf file?"
-
-if [[ $? -eq 1 ]]; then
-    # Check and add configuration settings to /etc/dnf/dnf.conf
-    add_config_if_not_present "/etc/dnf/dnf.conf" "max_parallel_downloads=5" 2>&1 | tee -a "$log"
-    add_config_if_not_present "/etc/dnf/dnf.conf" "fastestmirrors=True" 2>&1 | tee -a "$log"
-    add_config_if_not_present "/etc/dnf/dnf.conf" "defaultyes=True" 2>&1 | tee -a "$log"
-fi
 
 # enabling 3rd party repo
 install_package https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm 2>&1 | tee -a "$log" &&

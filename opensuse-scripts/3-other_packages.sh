@@ -71,12 +71,12 @@ hypr_package=(
   kvantum-manager
   libnotify-tools
   lxappearance
+  mate-polkit
   make
   neovim
   pamixer
   pavucontrol
   pipewire-alsa
-  polkit-gnome
   python312-requests
   python312-pip
   python312-pipx

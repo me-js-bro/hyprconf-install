@@ -70,3 +70,5 @@ for pkg in "${removable[@]}"; do
         fi
     fi
 done
+
+exit 0

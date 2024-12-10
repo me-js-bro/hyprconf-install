@@ -60,7 +60,7 @@ chromium="$parent_dir/assets/chromium.zip"
 
 # Ask user for browser selection
 printf "${ask}\n? Choose which browser would you like to install. You can choose multiple.\n"
-browsers=$(gum choose --no-limit "Brave" "Chromium" "Firefox" "Vivaldi" "Zen")
+browsers=$(gum choose --no-limit "Brave" "Chromium" "Firefox" "Vivaldi" "Zen Browser")
 
 # Fix: Convert gum choice string into an array
 IFS=$'\n' read -r -d '' -a browser_array <<< "$browsers"
@@ -70,37 +70,52 @@ for browser in "${browser_array[@]}"; do
     case $browser in
         "Brave")
             printf "${action}\n==> Installing Brave\n"
-            sudo opi brave-browser -n
+            install_package_opi brave-browser
             sleep 1
-            if [[ -d "$HOME/.config/BraveSoftware" ]]; then
-                mkdir -p "$HOME/.config/browser-backup"
-                mv "$HOME/.config/BraveSoftware" "$HOME/.config/browser-backup/" &> /dev/null
-            fi
-            unzip "$brave" -d "$HOME/.config/" &> /dev/null
+            printf "${attention}\n! After completting the installation, please make sure to open the browser and follow the steps.\n" && sleep 2 && echo
+
+            printf "[ 1 ] - Open the browser and in the search bar, typr 'chrome://flags' and press enter\n"
+            printf "[ 2 ] - Now search for 'Ozone platform'\n"
+            printf "[ 3 ] - Choose 'Wayland' from default and restart the browser.\n"
+
+            sleep 3
+
             ;;
         "Chromium")
             printf "${action}\n==> Installing Chromium\n"
             install_package chromium
             sleep 1
-            if [[ -d "$HOME/.config/chromium" ]]; then
-                mkdir -p "$HOME/.config/browser-backup"
-                mv "$HOME/.config/chromium" "$HOME/.config/browser-backup" &> /dev/null
-            fi
-            unzip "$chromium" -d "$HOME/.config/" &> /dev/null
+            printf "${attention}\n! After completting the installation, please make sure to open the browser and follow the steps.\n" && sleep 2 && echo
+
+            printf "[ 1 ] - Open the browser and in the search bar, typr 'chrome://flags' and press enter\n"
+            printf "[ 2 ] - Now search for 'Ozone platform'\n"
+            printf "[ 3 ] - Choose 'Wayland' from default and restart the browser.\n"
+
+            sleep 3
+            
             ;;
         "Firefox")
             install_package firefox
             ;;
         "Vivaldi")
             printf "${action}\n==> Installing Vivaldi\n"
-            sudo opi vivaldi -n
+            install_package_opi vivaldi
+            sleep 1
+            printf "${attention}\n! After completting the installation, please make sure to open the browser and follow the steps.\n" && sleep 2 && echo
+
+            printf "[ 1 ] - Open the browser and in the search bar, typr 'chrome://flags' and press enter\n"
+            printf "[ 2 ] - Now search for 'Ozone platform'\n"
+            printf "[ 3 ] - Choose 'Wayland' from default and restart the browser.\n"
+
+            sleep 3
+
             ;;
-        "Zen")
+        "Zen Browser")
             printf "${action}\n==> Installing Zen-Browser\n"
-            sudo opi zen-browser -n
+            install_package_opi zen-browser
             ;;
         *)
-            printf "${error}\n==> Invalid choice: $browser\n"
+            printf "${error}\n! Invalid choice: $browser\n"
             ;;
     esac
 done

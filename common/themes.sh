@@ -98,10 +98,11 @@ if [ ! -d "$HOME/.icons/TokyoNight-SE" ]; then
 fi
 
 # installing the cursor
-if [[ -d "$HOME/.icons/catppuccin-mocha-light-cursors" ]];
+if [[ -d "$HOME/.icons/catppuccin-mocha-light-cursors" ]]; then
     rm -rf "$HOME/.icons/catppuccin-mocha-light-cursors"
-    unzip "$cursor" -d ~/.icons/ &> /dev/null 2>&1 | tee -a "$log"
 fi
+
+unzip "$cursor" -d ~/.icons/ &> /dev/null 2>&1 | tee -a "$log"
 
 # clear
 

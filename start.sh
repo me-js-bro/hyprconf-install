@@ -217,6 +217,10 @@ if [[ "$configure_your_default_Bash" =~ ^[Yy]$ ]]; then
     "$common_scripts/bash.sh" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
 fi
 
+# only for opensuse ( hyprsunset )
+chmod +x "$scripts_dir/2.1-hyprsunset.sh"
+"$scripts_dir/2.1-hyprsunset.sh"
+
 
 "$common_scripts/themes.sh" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
 "$common_scripts/dotfiles.sh" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")

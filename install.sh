@@ -32,8 +32,9 @@ clear && sleep 1
 typewriter() {
     local text="$1"
     local delay="$2"
+        printf "[ * ]\n"
     for (( i=0; i<${#text}; i++ )); do
-        printf "%s[ * ]" "${text:$i:1}"
+        printf "%s" "${text:$i:1}"
         sleep "$delay"
     done
     printf "${end}\n"
@@ -54,21 +55,21 @@ for pkg in "${packages[@]}"; do
 
     if command -v pacman &> /dev/null; then
         if sudo pacman -Qe "$pkg" &> /dev/null ; then
-            printf "${done}\n:: $pkg was installed already...\n"
+            printf "${done}\n:: $pkg was installed already...\n\n"
         else
             printf "${action}\n==>  Installing $pkg\n"
             if sudo pacman -S --noconfirm "$pkg"; then
-                printf "${done}\n:: $pkg was installed successfully!\n"
+                printf "${done}\n:: $pkg was installed successfully!\n\n"
             fi
         fi
     elif command -v zypper &> /dev/null; then
 
         if sudo zypper se -i "$pkg" &> /dev/null; then
-            printf "${done}\n:: $pkg was installed already...\n"
+            printf "${done}\n:: $pkg was installed already...\n\n"
         else
             printf "${action}\n==> Installing $pkg\n"
             if sudo zypper in -y "$pkg"; then
-                printf "${done}\n:: $pkg was installed sucessfully!\n"
+                printf "${done}\n:: $pkg was installed sucessfully!\n\n"
             fi
         fi
     fi
@@ -79,23 +80,23 @@ done
 if command -v dnf &> /dev/null; then
         
     if rpm -q git &> /dev/null ; then
-        printf "${done}\n:: git was installed already...\n"
+        printf "${done}\n:: git was installed already...\n\n"
     else
         printf "${action}\n==> Installing git\n"
         if sudo dnf install -y git; then
-            printf "${done}\n:: git was installed successfully!\n"
+            printf "${done}\n:: git was installed successfully!\n\n"
         fi
     fi
 
     sleep 1
 
     printf "${action}\n==> Installing gum\n"
-    printf "[charm]\n
-    name=Charm\n
-    baseurl=https://repo.charm.sh/yum/\n
-    enabled=1\n
-    gpgcheck=1\n
-    gpgkey=https://repo.charm.sh/yum/gpg.key\n" | sudo tee /etc/yum.repos.d/charm.repo &> /dev/null
+echo '[charm]
+name=Charm
+baseurl=https://repo.charm.sh/yum/
+enabled=1
+gpgcheck=1
+gpgkey=https://repo.charm.sh/yum/gpg.key\n' | sudo tee /etc/yum.repos.d/charm.repo &> /dev/null
 
     sudo yum install --assumeyes gum
 

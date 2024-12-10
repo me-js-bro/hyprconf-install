@@ -58,8 +58,7 @@ log="$log_dir/themes-$(date +%d-%m-%y).log"
 mkdir -p "$log_dir"
 touch "$log"
 
-# Install THEME
-CONFIG_DIR="$HOME/.config"
+# Install theme
 theme="$parent_dir/assets/themes.zip"
 icon="$parent_dir/assets/Icon_TelaDracula.tar.gz"
 cursor="$parent_dir/assets/catppuccin-mocha-light-cursors.zip"
@@ -99,7 +98,10 @@ if [ ! -d "$HOME/.icons/TokyoNight-SE" ]; then
 fi
 
 # installing the cursor
-unzip "$cursor" -d ~/.icons/ &> /dev/null 2>&1 | tee -a "$log"
+if [[ -d "$HOME/.icons/catppuccin-mocha-light-cursors" ]];
+    rm -rf "$HOME/.icons/catppuccin-mocha-light-cursors"
+    unzip "$cursor" -d ~/.icons/ &> /dev/null 2>&1 | tee -a "$log"
+fi
 
 # clear
 
@@ -109,7 +111,7 @@ sudo sh -c "echo \"QT_QPA_PLATFORMTHEME='qt5ct'\" >> $env_file" 2>&1 | tee -a "$
 
 # extracting themes to ~/.themes/
 printf "${action}\n==> Copying themes.\n"
-unzip "$theme" -d "$parent_dir/.cache/" &> /dev/null 2>&1 | tee -a "$log"
+unzip -o "$theme" -d "$parent_dir/.cache/" &> /dev/null 2>&1 | tee -a "$log"
 if [[ -d "$parent_dir/.cache/themes" ]]; then
     cp -r "$parent_dir/.cache/themes"/* "$HOME/.themes/"
 fi

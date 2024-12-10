@@ -66,7 +66,7 @@ browsers=$(gum choose --no-limit "Chromium" "Firefox" "Zen Browser")
 IFS=$'\n' read -r -d '' -a browser_array <<< "$browsers"
 
 # Loop through the selected browsers
-for browser in "${browser_array[@]}"; d
+for browser in "${browser_array[@]}"; do
     case $browser in
         "Chromium")
             install_package chromium

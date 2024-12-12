@@ -79,6 +79,7 @@ main_packages=(
   pavucontrol
   pipewire-alsa
   pipewire-utils
+  pulseaudio-utils
   python3-requests
   python3-devel
   python3-pip

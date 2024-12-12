@@ -70,7 +70,7 @@ for browser in "${browser_array[@]}"; do
     case $browser in
         "Brave")
             printf "${action}\n==> Installing Brave\n"
-            install_package_opi brave-browser
+            curl -fsS https://dl.brave.com/install.sh | sh
             sleep 1
             printf "${attention}\n! After completting the installation, please make sure to open the browser and follow the steps.\n" && sleep 2 && echo
 
@@ -79,7 +79,6 @@ for browser in "${browser_array[@]}"; do
             printf "[ 3 ] - Choose 'Wayland' from default and restart the browser.\n"
 
             sleep 3
-
             ;;
         "Chromium")
             printf "${action}\n==> Installing Chromium\n"
@@ -92,7 +91,6 @@ for browser in "${browser_array[@]}"; do
             printf "[ 3 ] - Choose 'Wayland' from default and restart the browser.\n"
 
             sleep 3
-            
             ;;
         "Firefox")
             install_package firefox
@@ -108,7 +106,6 @@ for browser in "${browser_array[@]}"; do
             printf "[ 3 ] - Choose 'Wayland' from default and restart the browser.\n"
 
             sleep 3
-
             ;;
         "Zen Browser")
             printf "${action}\n==> Installing Zen-Browser\n"

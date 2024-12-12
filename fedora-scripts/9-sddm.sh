@@ -93,8 +93,20 @@ printf "${action}\n==> Activating sddm service.\n"
 sudo systemctl set-default graphical.target 2>&1 | tee -a "$log"
 sudo systemctl enable sddm.service 2>&1 | tee -a "$log"
 
-printf "${attention}\n! For now, we cannot set a theme for the sddm. Soon we will fix the issue.\n"
 sleep 1 && clear
 
-# run sddm theme script
-# "$common_scripts/sddm_theme.sh"
+printf "${action}\n==> Cloning sddm theme for fedora.\n"
+git clone --depth=1 https://github.com/me-js-bro/sddm "$parent_dir/.cache/sddm"
+
+if [[ -d "$parent_dir/.cache/sddm" ]]; then
+  sudo cp -r "$parent_dir/.cache/sddm/fedora-sddm" "/usr/share/sddm/themes/"
+fi
+
+if [[ -d "/usr/share/sddm/themes/fedora-sddm" ]]; then
+  printf "${action}\n==> Setting up the Login Screen.\n"
+  sddm_conf_dir=/etc/sddm.conf.d
+  [ ! -d "$sddm_conf_dir" ] && { printf "$sddm_conf_dir not found, creating...\n"; sudo mkdir -p "$sddm_conf_dir"; }
+  echo -e "[Theme]\nCurrent=fedora-sddm" | sudo tee "$sddm_conf_dir/theme.conf.user" &> /dev/null
+else
+  printf "${error}\n!! Sorry, could not set the login theme.\n"
+fi

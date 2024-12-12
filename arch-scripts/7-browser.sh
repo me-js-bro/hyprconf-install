@@ -72,7 +72,7 @@ IFS=$'\n' read -r -d '' -a browser_array <<< "$browsers"
 for browser in "${browser_array[@]}"; do
     case $browser in
         "Brave")
-            install_from_aur brave-bin
+            curl -fsS https://dl.brave.com/install.sh | sh
             sleep 1
             printf "${attention}\n! After completting the installation, please make sure to open the browser and follow the steps.\n" && sleep 2 && echo
 

@@ -218,8 +218,9 @@ if [[ "$configure_your_default_Bash" =~ ^[Yy]$ ]]; then
 fi
 
 # only for opensuse ( hyprsunset )
-chmod +x "$scripts_dir/2.1-hyprsunset.sh"
-"$scripts_dir/2.1-hyprsunset.sh"
+if [[ "$distro" == "opensuse" ]]; then
+    "$scripts_dir/2.1-hyprsunset.sh"
+fi
 
 
 "$common_scripts/themes.sh" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
@@ -243,6 +244,7 @@ else
 fi
 
 sleep 1 && clear
+
 
 # =========  system reboot  ========= #
 

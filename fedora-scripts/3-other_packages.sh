@@ -69,6 +69,7 @@ main_packages=(
   libX11-devel
   libXext-devel
   lxappearance
+  mate-polkit
   make
   network-manager-applet
   NetworkManager-tui
@@ -78,7 +79,7 @@ main_packages=(
   pavucontrol
   pipewire-alsa
   pipewire-utils
-  polkit-gnome
+  pulseaudio-utils
   python3-requests
   python3-devel
   python3-pip
@@ -144,7 +145,7 @@ if [ -f '/usr/local/bin/grimblast' ]; then
   printf "${done}\n:: Grimblast is already installed.\n" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
 else
 
-  printf "${action}\n==> Installing Grumblast"
+  printf "${action}\n==> Installing Grumblast.\n"
   git clone --depth=1 "$grimblast_url" "$parent_dir"/.cache/grimblast/ 2>&1 | tee -a "$log"
   cd "$parent_dir/.cache/grimblast/grimblast"
   make 2>&1 | tee -a "$log"

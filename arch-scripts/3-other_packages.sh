@@ -102,7 +102,7 @@ thunar=(
     thunar-archive-plugin
 )
 
-printf "${action}\n==> Installing necessary packages"
+printf "${action}\n==> Installing necessary packages\n"
 for other_pkgs in "${other_packages[@]}"; do
     install_package "$other_pkgs"
     if sudo pacman -Qe "$other_pkgs" &> /dev/null; then

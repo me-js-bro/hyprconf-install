@@ -68,7 +68,7 @@ sddm_pkgs=(
 )
 
 # Install SDDM 
-printf "${action}\n==> Installing packages for sddm"
+printf "${action}\n==> Installing packages for sddm\n"
 for sddm in "${sddm_pkgs[@]}" ; do
   install_package_no_recommands "$sddm"
     if sudo zypper se -i "$sddm" &>> /dev/null ; then
@@ -87,7 +87,7 @@ for login_manager in lightdm gdm lxdm lxdm-gtk3; do
 done
 
 # activation of sddm service
-printf "${action}\n==> Activating login manager (sddm)"
+printf "${action}\n==> Activating login manager (sddm)\n"
 sudo systemctl set-default graphical.target 2>&1 | tee -a "$log"
 sudo update-alternatives --set default-displaymanager /usr/lib/X11/displaymanagers/sddm 2>&1 | tee -a "$log"
 sudo systemctl enable sddm.service 2>&1 | tee -a "$log"

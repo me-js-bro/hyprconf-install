@@ -50,14 +50,14 @@ for xdgs in "${xdg[@]}"; do
   install_package "$xdgs" "$log"
 done
 
-printf "${action}\n==> Checking for other XDG-Desktop-Portal-Implementations."
+printf "${action}\n==> Checking for other XDG-Desktop-Portal-Implementations.\n"
 
 while true; do
     fn_ask "Would you like to remove other XDG-Desktop-Portal-Implementations?"
 
     if [[ $? -eq 0 ]]; then
         # Clean out other portals
-        printf "${action}\n==> Clearing other xdg-desktop-portal implementations."
+        printf "${action}\n==> Clearing other xdg-desktop-portal implementations.\n"
         # Check if packages are installed and uninstall if present
         if pacman -Qs xdg-desktop-portal-wlr > /dev/null ; then
             echo "Removing xdg-desktop-portal-wlr..."

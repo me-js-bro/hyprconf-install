@@ -58,41 +58,51 @@ touch "$log"
 brave="$parent_dir/assets/BraveSoftware.zip"
 chromium="$parent_dir/assets/chromium.zip"
 
-# asking which browser wants to install
-fn_choose "Which browser would you like to install? You can install multiple" "Firefox" "Brave" "Chromium"
-browsers=(${choice[@]})
+# Ask user for browser selection
+printf "${ask}\n? Choose which browser would you like to install. You can choose multiple.\n"
+browsers=$(gum choose --no-limit "Brave" "Chromium" "Firefox" "Zen Browser")
 
-# Split the choices into an array
-IFS=$'\n' read -r -d '' -a browsers <<<"$choice"
+# Fix: Convert gum choice string into an array
+IFS=$'\n' read -r -d '' -a browser_array <<< "$browsers"
 
 # Loop through the selected browsers
-for browser in "${browsers[@]}"; do
+for browser in "${browser_array[@]}"; do
     case $browser in
-        "Firefox")
-            install_package firefox
-            ;;
         "Brave")
-            sudo dnf install -y dnf-plugins-core 2>&1 | tee -a "$log"
-            sudo dnf config-manager --add-repo https://brave-browser-rpm-release.s3.brave.com/brave-browser.repo 2>&1 | tee -a "$log"
-            sudo rpm --import https://brave-browser-rpm-release.s3.brave.com/brave-core.asc 2>&1 | tee -a "$log"
-            install_package brave-browser
-
+            curl -fsS https://dl.brave.com/install.sh | sh
             sleep 1
-            if [[ -d "$HOME/.config/BraveSoftware" ]]; then
-                mkdir -p "$HOME/.config/browser-backup"
-                mv "$HOME/.config/BraveSoftware" "$HOME/.config/browser-backup/" &> /dev/null
-            fi
-            unzip "$brave" -d "$HOME/.config/" &> /dev/null
+            printf "${attention}\n! After completting the installation, please make sure to open the browser and follow the steps.\n" && sleep 2 && echo
+
+            printf "[ 1 ] - Open the browser and in the search bar, typr 'chrome://flags' and press enter\n"
+            printf "[ 2 ] - Now search for 'Ozone platform'\n"
+            printf "[ 3 ] - Choose 'Wayland' from default and restart the browser.\n"
+
+            sleep 3
             ;;
         "Chromium")
             install_package chromium
-
             sleep 1
-            if [[ -d "$HOME/.config/chromium" ]];
-                mkdir -p "$HOME/.config/browser-backup"
-                mv "$HOME/.config/chromium" "$HOME/.config/browser-backup" &> /dev/null
-            fi
-            unzip "$chromium" -d "$HOME/.config/" &> /dev/null
+            printf "${attention}\n! After completting the installation, please make sure to open the browser and follow the steps.\n" && sleep 2 && echo
+
+            printf "[ 1 ] - Open the browser and in the search bar, typr 'chrome://flags' and press enter\n"
+            printf "[ 2 ] - Now search for 'Ozone platform'\n"
+            printf "[ 3 ] - Choose 'Wayland' from default and restart the browser.\n"
+
+            sleep 3
+            ;;
+        "Firefox")
+            install_package firefox
+            ;;
+        "Zen Browser")
+            printf "${action}\n==> Installing the zen-browser\n" && sleep 0.5
+            printf "${attention}\n! Enabling the copr repo for it.\n"
+            sudo dnf copr enable sneexy/zen-browser
+            sudo wget "https://copr.fedorainfracloud.org/coprs/sneexy/zen-browser/repo/fedora-$(rpm -E %fedora)/sneexy-zen-browsder-fedora-$(rpm -E %fedora).repo" -O "/etc/yum.repos.d/_copr_sneexy-zen-browser.repo"
+            sleep 1
+            sudo dnf install -y zen-browser-avx2
+            ;;
+            *)
+              printf "${error}\n! Invalid choice: $browser\n"
             ;;
     esac
 done

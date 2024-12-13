@@ -61,38 +61,57 @@ touch "$log"
 # finding the aur helper
 aur_helper=$(command -v yay || command -v paru)
 
-# asking which browser wants to install
-fn_choose "Which browser would you like to install? You can install multiple" "Firefox" "Brave" "Chromium"
-browsers=(${choice[@]})
+# Ask user for browser selection
+printf "${ask}\n? Choose which browser would you like to install. You can choose multiple.\n"
+browsers=$(gum choose --no-limit "Brave" "Chromium" "Firefox" "Vivaldi" "Zen Browser")
 
-# Split the choices into an array
-IFS=$'\n' read -r -d '' -a browsers <<<"$choice"
+# Fix: Convert gum choice string into an array
+IFS=$'\n' read -r -d '' -a browser_array <<< "$browsers"
 
 # Loop through the selected browsers
-for browser in "${browsers[@]}"; do
+for browser in "${browser_array[@]}"; do
     case $browser in
-        "Firefox")
-            install_package firefox
-            ;;
         "Brave")
-            install_from_aur brave-bin
-
+            curl -fsS https://dl.brave.com/install.sh | sh
             sleep 1
-            if [[ -d "$HOME/.config/BraveSoftware" ]]; then
-                mkdir -p "$HOME/.config/browser-backup"
-                mv "$HOME/.config/BraveSoftware" "$HOME/.config/browser-backup/" &> /dev/null
-            fi
-            unzip "$brave" -d "$HOME/.config/" &> /dev/null
+            printf "${attention}\n! After completting the installation, please make sure to open the browser and follow the steps.\n" && sleep 2 && echo
+
+            printf "[ 1 ] - Open the browser and in the search bar, typr 'chrome://flags' and press enter\n"
+            printf "[ 2 ] - Now search for 'Ozone platform'\n"
+            printf "[ 3 ] - Choose 'Wayland' from default and restart the browser.\n"
+
+            sleep 3
             ;;
         "Chromium")
             install_from_aur ungoogled-chromium-bin
-
             sleep 1
-            if [[ -d "$HOME/.config/chromium" ]];
-                mkdir -p "$HOME/.config/browser-backup"
-                mv "$HOME/.config/chromium" "$HOME/.config/browser-backup" &> /dev/null
-            fi
-            unzip "$chromium" -d "$HOME/.config/" &> /dev/null
+            printf "${attention}\n! After completting the installation, please make sure to open the browser and follow the steps.\n" && sleep 2 && echo
+
+            printf "[ 1 ] - Open the browser and in the search bar, typr 'chrome://flags' and press enter\n"
+            printf "[ 2 ] - Now search for 'Ozone platform'\n"
+            printf "[ 3 ] - Choose 'Wayland' from default and restart the browser.\n"
+
+            sleep 3
+            ;;
+        "Firefox")
+            install_package firefox
+            ;;
+        "Vivaldi")
+            install_package vivaldi
+            sleep 1
+            printf "${attention}\n! After completting the installation, please make sure to open the browser and follow the steps.\n" && sleep 2 && echo
+
+            printf "[ 1 ] - Open the browser and in the search bar, typr 'chrome://flags' and press enter\n"
+            printf "[ 2 ] - Now search for 'Ozone platform'\n"
+            printf "[ 3 ] - Choose 'Wayland' from default and restart the browser.\n"
+
+            sleep 3
+            ;;
+        "Zen Browser")
+            install_from_aur zen-browser-avx2-bin
+            ;;
+        *)
+            printf "${error}\n! Invalid choice: $browser\n"
             ;;
     esac
 done

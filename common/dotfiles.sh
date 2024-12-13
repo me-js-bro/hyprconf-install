@@ -61,20 +61,20 @@ touch "$log"
 
 # _______ Testing _______ #
 
-printf "${action}\n==> Clonning the dotfiles repository and setting it to your system." "1"
+printf "${action}\n==> Clonning the dotfiles repository and setting it to your system.\n"
 # Create the cache directory if it doesn't exist
 mkdir -p "$cache_dir"
 
 # Clone the repository and log the output
-if [[ ! -d "$cache_dir/hyprconf" ]]; then
-  git clone --depth=1 https://github.com/me-js-bro/hyprconf.git "$cache_dir/hyprconf" 2>&1 | tee -a "$log"
+if [[ ! -d "$parent_dir/.cache/hyprconf" ]]; then
+  git clone --depth=1 https://github.com/me-js-bro/hyprconf.git "$parent_dir/.cache/hyprconf" 2>&1 | tee -a "$log"
 fi
 
 sleep 1
 
 # if repo clonned successfully, then setting up the config
-if [[ -d "$cache_dir/hyprconf" ]]; then
-  cd "$cache_dir/hyprconf" || { printf "${error}\n! Could not changed directory to $cache_dir/hyprconf (╥﹏╥)\n" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log"); exit 1; }
+if [[ -d "$parent_dir/.cache/hyprconf" ]]; then
+  cd "$parent_dir/.cache/hyprconf" || { printf "${error}\n! Could not changed directory to $parent_dir/.cache/hyprconf (╥﹏╥)\n" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log"); exit 1; }
 
   chmod +x setup.sh
   

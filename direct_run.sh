@@ -28,33 +28,64 @@ error="[${red} ERROR ${end}]"
 
 printf "${orange}[ * ] Starting the script.. Please have patience..${end} (•‿•)\n" && sleep 2
 
-install_git() {
+packages=(
+    git
+    gum
+)
 
-    if [ -n "$(command -v pacman)" ]; then  # Arch Linux
+for pkg in "${packages[@]}"; do
 
-        if ! pacman -Qe git &> /dev/null; then
-            sudo pacman -S --noconfirm git
+    if command -v pacman &> /dev/null; then
+        if sudo pacman -Qe "$pkg" &> /dev/null ; then
+            printf "${done}\n:: $pkg was installed already...\n\n"
+        else
+            printf "${action}\n==>  Installing $pkg\n"
+            if sudo pacman -S --noconfirm "$pkg"; then
+                printf "${done}\n:: $pkg was installed successfully!\n\n"
+            fi
         fi
+    elif command -v zypper &> /dev/null; then
 
-    elif [ -n "$(command -v dnf)" ]; then  # Fedora
-
-        if sudo dnf list installed git &> /dev/null; then
-            sudo dnf install -y git
+        if sudo zypper se -i "$pkg" &> /dev/null; then
+            printf "${done}\n:: $pkg was installed already...\n\n"
+        else
+            printf "${action}\n==> Installing $pkg\n"
+            if sudo zypper in -y "$pkg"; then
+                printf "${done}\n:: $pkg was installed sucessfully!\n\n"
+            fi
         fi
-
-    elif [ -n "$(command -v zypper)" ]; then  # openSUSE
-
-        if sudo zypper se -i git &> /dev/null; then
-            sudo zypper in --no-recommends -y git
-        fi
-
-    else
-        printf "! Unsupported distribution for now..Sorry.\n"
-        exit 1
     fi
-}
 
-install_git && printf "${cyan}[ * ] Git was installed..${end}\n"
+done
+
+# only for fedora
+if command -v dnf &> /dev/null; then
+        
+    if rpm -q git &> /dev/null ; then
+        printf "${done}\n:: git was installed already...\n\n"
+    else
+        printf "${action}\n==> Installing git\n"
+        if sudo dnf install -y git; then
+            printf "${done}\n:: git was installed successfully!\n\n"
+        fi
+    fi
+
+    sleep 1
+
+    printf "${action}\n==> Installing gum\n"
+echo '[charm]
+name=Charm
+baseurl=https://repo.charm.sh/yum/
+enabled=1
+gpgcheck=1
+gpgkey=https://repo.charm.sh/yum/gpg.key' | sudo tee /etc/yum.repos.d/charm.repo &> /dev/null
+
+    sudo yum install --assumeyes gum
+
+    if command -v gum &> /dev/null; then
+        printf "${done}\n:: Gum was installed successfully!\n"
+    fi
+fi
 
 sleep 1
 

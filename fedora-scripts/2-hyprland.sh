@@ -61,6 +61,7 @@ hypr=(
     hyprpaper
     hypridle
     hyprcursor
+    hyprsunset
 )
 
 # Installation of Hyprland and Hyprlock

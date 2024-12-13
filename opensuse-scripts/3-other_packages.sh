@@ -71,12 +71,12 @@ hypr_package=(
   kvantum-manager
   libnotify-tools
   lxappearance
+  mate-polkit
   make
   neovim
   pamixer
   pavucontrol
   pipewire-alsa
-  polkit-gnome
   python312-requests
   python312-pip
   python312-pipx
@@ -131,9 +131,7 @@ thunar-plugin-archive
 grimblast_url=https://github.com/hyprwm/contrib.git
 
 
-# Installation of main components
-fn_check "Installing other packages..." "2"
-
+# installing necessary packages
 for packages in "${hypr_package[@]}" "${other_packages[@]}"; do
   install_package "$packages"
     if sudo zypper se -i "$packages" &> /dev/null ; then
@@ -159,7 +157,7 @@ if [ -f '/usr/local/bin/grimblast' ]; then
   echo "[ DONE ] - Grimblast is already installed" 2>&1 | tee -a  "$log" &> /dev/null
 else
 
-  printf "${action}\n==> Installing grimblast"
+  printf "${action}\n==> Installing grimblast\n"
   git clone --depth=1 "$grimblast_url" ~/grimblast
   cd "$HOME/grimblast/grimblast"
   make
@@ -175,7 +173,7 @@ sleep 2 && clear
 
 # Install cliphist using go
 if command -v go &> /dev/null; then
-  printf "${action}\n==> Installing cliphist"
+  printf "${action}\n==> Installing cliphist\n"
   export PATH=$PATH:/usr/local/bin
 
   if go install go.senan.xyz/cliphist@latest 2>&1 | tee -a "$log" &> /dev/null; then

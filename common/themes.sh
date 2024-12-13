@@ -58,8 +58,7 @@ log="$log_dir/themes-$(date +%d-%m-%y).log"
 mkdir -p "$log_dir"
 touch "$log"
 
-# Install THEME
-CONFIG_DIR="$HOME/.config"
+# Install theme
 theme="$parent_dir/assets/themes.zip"
 icon="$parent_dir/assets/Icon_TelaDracula.tar.gz"
 cursor="$parent_dir/assets/catppuccin-mocha-light-cursors.zip"
@@ -72,7 +71,7 @@ mkdir -p ~/.icons
 Download_URL="https://github.com/ljmill/tokyo-night-icons/releases/latest/download/TokyoNight-SE.tar.bz2"
 
 if [ ! -d "$HOME/.icons/TokyoNight-SE" ]; then
-    printf "${action}\n==> Installing Tokyo Night icons."
+    printf "${action}\n==> Installing Tokyo Night icons.\n"
 
     # if the tokyo night icon directory was not downloaded, it will download if first
     if [ ! -d "TokyoNight-SE.tar.bz2" ]; then
@@ -99,6 +98,10 @@ if [ ! -d "$HOME/.icons/TokyoNight-SE" ]; then
 fi
 
 # installing the cursor
+if [[ -d "$HOME/.icons/catppuccin-mocha-light-cursors" ]]; then
+    rm -rf "$HOME/.icons/catppuccin-mocha-light-cursors"
+fi
+
 unzip "$cursor" -d ~/.icons/ &> /dev/null 2>&1 | tee -a "$log"
 
 # clear
@@ -108,8 +111,11 @@ env_file=/etc/environment
 sudo sh -c "echo \"QT_QPA_PLATFORMTHEME='qt5ct'\" >> $env_file" 2>&1 | tee -a "$log"
 
 # extracting themes to ~/.themes/
-printf "${action}\n==> Copying themes."
-unzip "$theme" -d ~/.themes/ &> /dev/null 2>&1 | tee -a "$log"
+printf "${action}\n==> Copying themes.\n"
+unzip -o "$theme" -d "$parent_dir/.cache/" &> /dev/null 2>&1 | tee -a "$log"
+if [[ -d "$parent_dir/.cache/themes" ]]; then
+    cp -r "$parent_dir/.cache/themes"/* "$HOME/.themes/"
+fi
 
 fn_done "Themes copied successfully."
 

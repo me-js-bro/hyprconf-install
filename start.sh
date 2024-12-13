@@ -3,6 +3,9 @@
 #### Advanced Hyprland Installation Script by ####
 #### Js Bro ( https://github.com/me-js-bro ) ####
 
+# exit the script if there's any error
+set -e
+
 # color defination
 red="\e[1;31m"
 green="\e[1;32m"
@@ -32,6 +35,7 @@ orange_hex="#FFAF00"    # Approximation for color code 214 in ANSI (orange)
 
 # log directory
 dir="$(dirname "$(realpath "$0")")"
+source "$dir/interaction_fn.sh"
 log_dir="$dir/Logs"
 log="$log_dir"/1-install-$(date +%d-%m-%y).log
 mkdir -p "$log_dir"
@@ -43,7 +47,7 @@ cache_file="$cache_dir/user-cache"
 distro_cache="$cache_dir/distro"
 
 # sourcing the interaction prompts
-if [[ -f "$dir/interaction_fn.sh" ]]; then
+if [[  "$dir/interaction_fn.sh" ]]; then
     source "$dir/interaction_fn.sh"
 fi
 
@@ -96,82 +100,13 @@ check_distro() {
 check_distro
 clear && fn_welcome && sleep 1
 
-printf "${attention}\n:: Need to install some packages first...\n"
-echo
-
-first_packages=(
-    git
-    gum
-)
-
-for pkg in "${first_packages[@]}"; do
-
-    if [[ "$distro" == "arch" ]]; then
-
-        if sudo pacman -Qe "$pkg" &> /dev/null ; then
-            fn_done "$pkg was installed already..." 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
-        else
-            printf "${action}\n==>  Installing $pkg"
-            if sudo pacman -S --noconfirm "$pkg"; then
-                fn_done "$pkg was installed successfully!" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
-            fi
-        fi
-
-    elif [[ "$distro" == "fedora" ]]; then
-        
-        if sudo dnf list installed git &> /dev/null ; then
-            fn_done "git was installed already..." 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
-        else
-            printf "${action}\n==> Installing git"
-            if sudo dnf install -y git; then
-                fn_done "git was installed successfully!" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
-            fi
-        fi
-
-        sleep 1
-
-        printf "${action}\n==> Installing gum"
-        chmod +x "$dir/fedora-scripts/gum_install.sh"
-        "$dir/fedora-scripts/gum_install.sh"
-
-        if command -v gum &> /dev/null; then
-            fn_done "Gum was installed successfully!" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
-        fi
-
-    elif [[ "$distro" == "opensuse" ]]; then
-
-        if sudo zypper se -i "$pkg" &> /dev/null; then
-            fn_done "$pkg was installed already..." 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
-        else
-            printf "${action}\n==> Installing $pkg"
-            if sudo zypper in -y "$pkg"; then
-                fn_done "$pkg was installed sucessfully!" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
-            fi
-        fi
-
-    fi
-done
-
-sleep 1 && clear
-
 # starting the main script prompt...
 gum spin --spinner line \
          --spinner.foreground "#dddddd" \
-         --title "Starting the main script now..." \
+         --title "Starting the main script for $distro..." \
          --title.foreground "#dddddd" -- \
          sleep 3
 clear
-
-
-# =========  asking for confirmation  ========= #
-
-fn_ask "Would you like to continue with the script?"
-if [[ $? -eq 1 ]]; then
-    fn_exit "Exiting the script here..."
-fi
-
-clear && display_text && sleep 1
-echo
 
 # =========  functions to ask user prompts  ========= #
 
@@ -184,7 +119,7 @@ if [[ -f "$cache_file" ]]; then
 
         fn_ask "Would you like to run the script again?"
         if [[ $? -eq 0 ]]; then
-            printf "${action}\n==> Starting the script again."
+            printf "${action}\n==> Starting the script again.\n"
             rm -f "$cache_file"
             "$dir/start.sh"
         else
@@ -282,6 +217,11 @@ if [[ "$configure_your_default_Bash" =~ ^[Yy]$ ]]; then
     "$common_scripts/bash.sh" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
 fi
 
+# only for opensuse ( hyprsunset )
+if [[ "$distro" == "opensuse" ]]; then
+    "$scripts_dir/2.1-hyprsunset.sh"
+fi
+
 
 "$common_scripts/themes.sh" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
 "$common_scripts/dotfiles.sh" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
@@ -305,6 +245,7 @@ fi
 
 sleep 1 && clear
 
+
 # =========  system reboot  ========= #
 
 fn_done "Congratulations! The script completes here." && sleep 2
@@ -314,7 +255,7 @@ fn_ask "Need to reboot the system. Would you like to reboot now?"
 if [[ $? -eq 0 ]]; then
     clear
     for second in 3 2 1; do
-        printf "${action}\n==> Rebooting the system in ${second}s" && sleep 1 && clear
+        printf "${action}\n==> Rebooting the system in ${second}s\n" && sleep 1 && clear
     done
         systemctl reboot --now
 else

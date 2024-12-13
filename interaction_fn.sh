@@ -95,19 +95,6 @@ fn_choose_prompts() {
     done
 }
 
-fn_choose() {
-    printf "${attention}\n:: %s\n" "$1"
-    choice=$(gum choose --no-limit --selected.foreground "$cyan_hex" "${@:2}")
-}
-
-fn_check() {
-    gum spin --spinner line \
-    --spinner.foreground "#dddddd" \
-    --title " $1" \
-    --title.foreground "#dddddd" \
-    sleep "$2"
-}
-
 fn_done() {
     printf "${done}\n:: $1\n\n"
 }

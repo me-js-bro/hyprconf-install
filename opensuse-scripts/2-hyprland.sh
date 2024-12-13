@@ -79,6 +79,3 @@ for packages in "${hypr_pkgs[@]}"; do
 done
 
 sleep 1 && clear
-
-chmod +x "$dir/2.1-hyprsunset.sh"
-"$dir/2.1-hyprsunset.sh"

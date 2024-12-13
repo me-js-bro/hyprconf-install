@@ -61,6 +61,8 @@ common_scripts="$parent_dir/common"
 
 # packages for sddm
 sddm=(
+    qt5-qtgraphicaleffects
+    qt5-qtquickcontrols
     sddm
     qt6-qt5compat 
     qt6-qtdeclarative 
@@ -68,7 +70,7 @@ sddm=(
 )
 
 # Installation of additional sddm stuff
-printf "${action}\n==> Installing sddm and dependencies."
+printf "${action}\n==> Installing sddm and dependencies.\n"
 for sddm_pkgs in "${sddm[@]}"; do
   install_package "$sddm_pkgs"
   if sudo dnf list installed "$sddm_pkgs" &> /dev/null; then
@@ -87,9 +89,24 @@ for login_manager in lightdm gdm lxdm lxdm-gtk3; do
   fi
 done
 
-printf "${action}\n==> Activating sddm service."
+printf "${action}\n==> Activating sddm service.\n"
 sudo systemctl set-default graphical.target 2>&1 | tee -a "$log"
 sudo systemctl enable sddm.service 2>&1 | tee -a "$log"
 
-# run sddm theme script
-"$common_scripts/sddm_theme.sh"
+sleep 1 && clear
+
+printf "${action}\n==> Cloning sddm theme for fedora.\n"
+git clone --depth=1 https://github.com/me-js-bro/sddm "$parent_dir/.cache/sddm"
+
+if [[ -d "$parent_dir/.cache/sddm" ]]; then
+  sudo cp -r "$parent_dir/.cache/sddm/fedora-sddm" "/usr/share/sddm/themes/"
+fi
+
+if [[ -d "/usr/share/sddm/themes/fedora-sddm" ]]; then
+  printf "${action}\n==> Setting up the Login Screen.\n"
+  sddm_conf_dir=/etc/sddm.conf.d
+  [ ! -d "$sddm_conf_dir" ] && { printf "$sddm_conf_dir not found, creating...\n"; sudo mkdir -p "$sddm_conf_dir"; }
+  echo -e "[Theme]\nCurrent=fedora-sddm" | sudo tee "$sddm_conf_dir/theme.conf.user" &> /dev/null
+else
+  printf "${error}\n!! Sorry, could not set the login theme.\n"
+fi

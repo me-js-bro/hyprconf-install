@@ -63,7 +63,7 @@ if sudo dnf list installed code &>> /dev/null; then
     fn_done "Visual Studio Code is already installed, proceeding to next step"
 # insalling vs code
 else
-    printf "${action}\n==> Processing to install Visual Studio Code."
+    printf "${action}\n==> Processing to install Visual Studio Code.\n"
 
     # adding vs code repo
     sudo rpm --import https://packages.microsoft.com/keys/microsoft.asc 2>&1 | tee -a "$log" &>> /dev/null

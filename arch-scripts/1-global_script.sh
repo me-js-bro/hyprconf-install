@@ -34,14 +34,14 @@ aur_helper=$(command -v yay || command -v paru) # find the aur helper
 # package installation from main repo function..
 install_package() {
 
-    if sudo "$package_manager" -Qs "$1" &>/dev/null; then
+    if sudo "$package_manager" -Q "$1" &>/dev/null; then
         fn_done "$1 is already installed. Skipping..."
     else
 
         printf "${action}\n==> Installing $1...\n"
         sudo pacman -S --noconfirm "$1"
 
-        if sudo "$package_manager" -Qs "$1" &>/dev/null; then
+        if sudo "$package_manager" -Q "$1" &>/dev/null; then
             fn_done "$1 was installed successfully!"
         else
 
@@ -53,14 +53,14 @@ install_package() {
 # package installation from aur helper function..
 install_from_aur() {
 
-    if sudo "$package_manager" -Qs "$1" &>/dev/null; then
+    if sudo "$package_manager" -Q "$1" &>/dev/null; then
         fn_done "$1 is already installed. Skipping..."
     else
 
         printf "${action}\n==> Installing $1...\n"
         "$aur_helper" -S --noconfirm "$1"
 
-        if sudo "$package_manager" -Qs "$1" &>/dev/null; then
+        if sudo "$package_manager" -Q "$1" &>/dev/null; then
             fn_done "$1 was installed successfully!"
         else
 

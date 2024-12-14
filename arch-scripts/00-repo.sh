@@ -25,7 +25,7 @@ ask="[${orange} QUESTION ${end}]"
 error="[${red} ERROR ${end}]"
 
 display_text() {
-    cat << "EOF"
+    cat <<"EOF"
    ___             __ __    __            
   / _ |__ ______  / // /__ / /__  ___ ____
  / __ / // / __/ / _  / -_) / _ \/ -_) __/
@@ -41,7 +41,6 @@ printf " \n\n"
 ###------ Startup ------###
 
 # Finding the present directory and log file
-
 
 # install script dir
 dir="$(dirname "$(realpath "$0")")"
@@ -65,9 +64,9 @@ if [[ -f "$cache_file" ]]; then
 fi
 
 # install git before installing the aur helper.
-if ! pacman -Qe git &> /dev/null; then
+if ! pacman -Qe git &>/dev/null; then
     printf "${action}\n==> Installing git.\n"
-    sudo pacman -S --noconfirm git 2>&1 | tee -a "$log" &> /dev/null
+    sudo pacman -S --needed base-devel git 2>&1 | tee -a "$log" &>/dev/null
     fn_done "Git was installed successfully!"
 fi
 
@@ -78,16 +77,16 @@ if [[ -z "$aur_helper" ]]; then
     sudo rm -rf /var/lib/pacman/db.lck
 
     if [[ "$aur" == "paru" ]]; then
-        echo "aur='paru'" >> "$cache_file"
+        echo "aur='paru'" >>"$cache_file"
         git clone "https://aur.archlinux.org/paru.git"
         cd paru
         makepkg -si --noconfirm
         sleep 1
         cd "$parent_dir"
         sudo rm -rf paru
-        
+
     elif [[ "$aur" == "yay" ]]; then
-        echo "aur='yay'" >> "$cache_file"
+        echo "aur='yay'" >>"$cache_file"
         git clone "https://aur.archlinux.org/yay.git"
         cd yay
         makepkg -si --noconfirm
@@ -99,9 +98,9 @@ fi
 
 if [[ -n "$aur_helper" ]]; then
     fn_done "Aur helper $aur was installed successfully!"
-    echo "[ DONE ] - Aur helper $aur was installed successfully!" 2>&1 | tee -a "$log" &> /dev/null
+    echo "[ DONE ] - Aur helper $aur was installed successfully!" 2>&1 | tee -a "$log" &>/dev/null
 else
     fn_error "$aur could not be installed. Maybe there was an issue. (╥﹏╥)"
-    echo "[ ERROR ] - $aur could not be installed. Maybe there was an isseu.(╥﹏╥)" 2>&1 | tee -a "$log" &> /dev/null
+    echo "[ ERROR ] - $aur could not be installed. Maybe there was an isseu.(╥﹏╥)" 2>&1 | tee -a "$log" &>/dev/null
     exit 1
 fi

@@ -51,23 +51,21 @@ done
 
 printf "${action}\n==> Checking for other XDG-Desktop-Portal-Implementations.\n"
 
-while true; do
-    fn_ask "Would you like to remove other XDG-Desktop-Portal-Implementations?"
+fn_ask "Would you like to remove other XDG-Desktop-Portal-Implementations?"
 
-    if [[ $? -eq 0 ]]; then
-        # Clean out other portals
-        printf "${action}\n==> Clearing other xdg-desktop-portal implementations.\n"
-        # Check if packages are installed and uninstall if present
-        if pacman -Qs xdg-desktop-portal-wlr >/dev/null; then
-            echo "Removing xdg-desktop-portal-wlr..."
-            sudo pacman -R --noconfirm xdg-desktop-portal-wlr 2>&1 | tee -a "$log"
-        fi
-
-        if pacman -Qs xdg-desktop-portal-lxqt >/dev/null; then
-            echo "Removing xdg-desktop-portal-lxqt..."
-            sudo pacman -R --noconfirm xdg-desktop-portal-lxqt 2>&1 | tee -a "$log"
-        fi
-    else
-        echo "no other XDG-implementations will be removed." >>"$log"
+if [[ $? -eq 0 ]]; then
+    # Clean out other portals
+    printf "${action}\n==> Clearing other xdg-desktop-portal implementations.\n"
+    # Check if packages are installed and uninstall if present
+    if pacman -Qs xdg-desktop-portal-wlr >/dev/null; then
+        echo "Removing xdg-desktop-portal-wlr..."
+        sudo pacman -R --noconfirm xdg-desktop-portal-wlr 2>&1 | tee -a "$log"
     fi
-done
+
+    if pacman -Qs xdg-desktop-portal-lxqt >/dev/null; then
+        echo "Removing xdg-desktop-portal-lxqt..."
+        sudo pacman -R --noconfirm xdg-desktop-portal-lxqt 2>&1 | tee -a "$log"
+    fi
+else
+    echo "no other XDG-implementations will be removed." >>"$log"
+fi

@@ -82,7 +82,7 @@ if [[ -z "$aur_helper" ]]; then
     cd "$parent_dir" || exit 1
 fi
 
-if [[ -n "$aur_helper" ]]; then
+if [[ -n "$(command -v yay)" ]]; then
     fn_done "Aur helper yay was installed successfully!"
     echo "[ DONE ] - Aur helper yay was installed successfully!" 2>&1 | tee -a "$log" &>/dev/null
 else

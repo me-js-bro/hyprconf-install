@@ -72,6 +72,8 @@ other_packages=(
     lxappearance
     network-manager-applet
     networkmanager
+    nodejs
+    npm
     ntfs-3g
     nvtop
     os-prober

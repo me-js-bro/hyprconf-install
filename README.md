@@ -5,6 +5,9 @@
 
 <h3>This Hyprland configuration is kind of minila looking, but also little bit gorgeous I guess. Why don't you check it out? </h3>
 
+## [ WARNING ]
+Please note that this script if fully ready now. But for `openSUSE`, there is a little issue in installing `Hypridle` && `xdg-desktop-portal-hyprland` because a little dependency is missing in the repo of this OS. After it's being added, then the script for `openSUSE` will be totally ready.
+
 ## Screenshots
 
 <details close>

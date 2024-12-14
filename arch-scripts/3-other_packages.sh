@@ -4,7 +4,7 @@
 #### Js Bro ( https://github.com/me-js-bro ) ####
 
 # exit the script if there is any error
-set -e
+# set -e
 
 # color defination
 red="\e[1;31m"
@@ -31,7 +31,7 @@ display_text() {
         --width 40 \
         --margin "1" \
         --padding "1" \
-'
+        '
   ____  __  __             
  / __ \/ /_/ /  ___ _______
 / /_/ / __/ _ \/ -_) __(_-<
@@ -80,6 +80,7 @@ other_packages=(
     pavucontrol
     python-pillow
     python-pywal
+    unzip
     wget
     yad
     yazi
@@ -95,20 +96,20 @@ thunar=(
     ffmpegthumbnailer
     file-roller
     gvfs
-    gvfs-mtp 
-    thunar 
-    thunar-volman 
-    tumbler 
+    gvfs-mtp
+    thunar
+    thunar-volman
+    tumbler
     thunar-archive-plugin
 )
 
 printf "${action}\n==> Installing necessary packages\n"
 for other_pkgs in "${other_packages[@]}"; do
     install_package "$other_pkgs"
-    if sudo pacman -Qe "$other_pkgs" &> /dev/null; then
-        echo "[ DONE ] - $other_pkgs was installed successfully!\n" 2>&1 | tee -a "$log" &> /dev/null
+    if sudo pacman -Qe "$other_pkgs" &>/dev/null; then
+        echo "[ DONE ] - $other_pkgs was installed successfully!\n" 2>&1 | tee -a "$log" &>/dev/null
     else
-        echo "[ ERROR ] - Sorry, could not install $other_pkgs!\n" 2>&1 | tee -a "$log" &> /dev/null
+        echo "[ ERROR ] - Sorry, could not install $other_pkgs!\n" 2>&1 | tee -a "$log" &>/dev/null
     fi
 done
 
@@ -117,22 +118,22 @@ sleep 1 && clear
 # Installing from the AUR Helper
 for aur_pkgs in "${aur_packages[@]}"; do
     install_from_aur "$aur_pkgs"
-    if sudo "$aur_helper" -Qe "$aur_pkgs" &> /dev/null; then
-        echo "[ DONE ] - $aur_pkgs was installed successfully!\n" 2>&1 | tee -a "$log" &> /dev/null
+    if sudo "$aur_helper" -Qe "$aur_pkgs" &>/dev/null; then
+        echo "[ DONE ] - $aur_pkgs was installed successfully!\n" 2>&1 | tee -a "$log" &>/dev/null
     else
-        echo "[ ERROR ] - Sorry, could not install $aur_pkgs!\n" 2>&1 | tee -a "$log" &> /dev/null
+        echo "[ ERROR ] - Sorry, could not install $aur_pkgs!\n" 2>&1 | tee -a "$log" &>/dev/null
     fi
 done
 
 sleep 1 && clear
 
-# installing thunar file manager 
+# installing thunar file manager
 for file_man in "${thunar[@]}"; do
     install_package "$file_man"
-    if sudo pacman -Qe "$file_man" &> /dev/null; then
-        echo "[ DONE ] - $file_man was installed successfully!\n" 2>&1 | tee -a "$log" &> /dev/null
+    if sudo pacman -Qe "$file_man" &>/dev/null; then
+        echo "[ DONE ] - $file_man was installed successfully!\n" 2>&1 | tee -a "$log" &>/dev/null
     else
-        echo "[ ERROR ] - Sorry, could not install $file_man!\n" 2>&1 | tee -a "$log" &> /dev/null
+        echo "[ ERROR ] - Sorry, could not install $file_man!\n" 2>&1 | tee -a "$log" &>/dev/null
     fi
 done
 

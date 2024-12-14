@@ -26,7 +26,6 @@ dir="$(dirname "$(realpath "$0")")"
 parent_dir="$(dirname "$dir")"
 source "$parent_dir/interaction_fn.sh"
 
-
 ###------ Startup ------###
 
 package_manager=$(command -v pacman || command -v yay || command -v paru)
@@ -34,38 +33,38 @@ aur_helper=$(command -v yay || command -v paru) # find the aur helper
 
 # package installation from main repo function..
 install_package() {
- 
-  if sudo "$package_manager" -Qe "$1" &> /dev/null ; then
-    fn_done "$1 is already installed. Skipping..."
-  else
-  
-    printf "${action}\n==> Installing $1...\n"
-    sudo pacman -S --noconfirm "$1"
-    
-    if sudo "$package_manager" -Qe "$1" &> /dev/null ; then
-      fn_done "$1 was installed successfully!"
+
+    if sudo "$package_manager" -Qs "$1" &>/dev/null; then
+        fn_done "$1 is already installed. Skipping..."
     else
-    
-      fn_error "$1 failed to install. Maybe therer is an issue. (╥﹏╥)"
+
+        printf "${action}\n==> Installing $1...\n"
+        sudo pacman -S --noconfirm "$1"
+
+        if sudo "$package_manager" -Qs "$1" &>/dev/null; then
+            fn_done "$1 was installed successfully!"
+        else
+
+            fn_error "$1 failed to install. Maybe therer is an issue. (╥﹏╥)"
+        fi
     fi
-  fi
 }
 
 # package installation from aur helper function..
 install_from_aur() {
 
-  if sudo "$package_manager" -Qe "$1" &> /dev/null ; then
-    fn_done "$1 is already installed. Skipping..."
-  else
-
-    printf "${action}\n==> Installing $1...\n"
-    "$aur_helper" -S --noconfirm "$1"
-    
-    if sudo "$package_manager" -Qe "$1" &> /dev/null ; then
-      fn_done "$1 was installed successfully!"
+    if sudo "$package_manager" -Qs "$1" &>/dev/null; then
+        fn_done "$1 is already installed. Skipping..."
     else
-    
-      fn_error "$1 failed to install. Maybe therer is an issue. (╥﹏╥)"
+
+        printf "${action}\n==> Installing $1...\n"
+        "$aur_helper" -S --noconfirm "$1"
+
+        if sudo "$package_manager" -Qs "$1" &>/dev/null; then
+            fn_done "$1 was installed successfully!"
+        else
+
+            fn_error "$1 failed to install. Maybe therer is an issue. (╥﹏╥)"
+        fi
     fi
-  fi
 }

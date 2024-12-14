@@ -4,7 +4,7 @@
 #### Js Bro ( https://github.com/me-js-bro ) ####
 
 # exit the script if there is any error
-set -e
+# set -e
 
 # color defination
 red="\e[1;31m"
@@ -31,7 +31,7 @@ display_text() {
         --width 40 \
         --margin "1" \
         --padding "1" \
-'
+        '
    ____          __    
   / __/__  ___  / /____
  / _// _ \/ _ \/ __(_-<
@@ -41,7 +41,6 @@ display_text() {
 
 clear && display_text
 printf " \n \n"
-
 
 ###------ Startup ------###
 
@@ -64,7 +63,7 @@ fonts=(
     ttf-cascadia-code
     ttf-jetbrains-mono-nerd
     ttf-meslo-nerd
-    noto-fonts 
+    noto-fonts
     noto-fonts-emoji
 )
 
@@ -72,10 +71,10 @@ printf "${action}\n==> Installing some necessary fonts\n"
 
 for font_pkgs in "${fonts[@]}"; do
     install_package "$font_pkgs"
-    if sudo pacman -Qe "$font_pkgs" &> /dev/null; then
-        echo "[ DONE ] - $font_pkgs was installed successfully!\n" 2>&1 | tee -a "$log" &> /dev/null
+    if sudo pacman -Qe "$font_pkgs" &>/dev/null; then
+        echo "[ DONE ] - $font_pkgs was installed successfully!\n" 2>&1 | tee -a "$log" &>/dev/null
     else
-        echo "[ ERROR ] - Sorry, could not install $font_pkgs!\n" 2>&1 | tee -a "$log" &> /dev/null
+        echo "[ ERROR ] - Sorry, could not install $font_pkgs!\n" 2>&1 | tee -a "$log" &>/dev/null
     fi
 done
 

@@ -35,8 +35,8 @@ packages=(
 
 for pkg in "${packages[@]}"; do
 
-    if command -v pacman &> /dev/null; then
-        if sudo pacman -Qe "$pkg" &> /dev/null ; then
+    if command -v pacman &>/dev/null; then
+        if sudo pacman -Q "$pkg" &>/dev/null; then
             printf "${done}\n:: $pkg was installed already...\n\n"
         else
             printf "${action}\n==>  Installing $pkg\n"
@@ -44,9 +44,9 @@ for pkg in "${packages[@]}"; do
                 printf "${done}\n:: $pkg was installed successfully!\n\n"
             fi
         fi
-    elif command -v zypper &> /dev/null; then
+    elif command -v zypper &>/dev/null; then
 
-        if sudo zypper se -i "$pkg" &> /dev/null; then
+        if sudo zypper se -i "$pkg" &>/dev/null; then
             printf "${done}\n:: $pkg was installed already...\n\n"
         else
             printf "${action}\n==> Installing $pkg\n"
@@ -59,9 +59,9 @@ for pkg in "${packages[@]}"; do
 done
 
 # only for fedora
-if command -v dnf &> /dev/null; then
-        
-    if rpm -q git &> /dev/null ; then
+if command -v dnf &>/dev/null; then
+
+    if rpm -q git &>/dev/null; then
         printf "${done}\n:: git was installed already...\n\n"
     else
         printf "${action}\n==> Installing git\n"
@@ -73,16 +73,16 @@ if command -v dnf &> /dev/null; then
     sleep 1
 
     printf "${action}\n==> Installing gum\n"
-echo '[charm]
+    echo '[charm]
 name=Charm
 baseurl=https://repo.charm.sh/yum/
 enabled=1
 gpgcheck=1
-gpgkey=https://repo.charm.sh/yum/gpg.key' | sudo tee /etc/yum.repos.d/charm.repo &> /dev/null
+gpgkey=https://repo.charm.sh/yum/gpg.key' | sudo tee /etc/yum.repos.d/charm.repo &>/dev/null
 
     sudo yum install --assumeyes gum
 
-    if command -v gum &> /dev/null; then
+    if command -v gum &>/dev/null; then
         printf "${done}\n:: Gum was installed successfully!\n"
     fi
 fi
@@ -93,7 +93,7 @@ printf "\n${green}[ * ] Cloning the installation repository... Please have patie
 
 [[ "$(pwd)" != "$HOME" ]] && cd "$HOME"
 
-git clone --depth=1 https://github.com/me-js-bro/hyprconf-install.git &> /dev/null
+git clone --depth=1 https://github.com/me-js-bro/hyprconf-install.git &>/dev/null
 
 if [[ -d "hyprconf-install" ]]; then
     printf "\n${cyan}[ * ] Repository was clonned successfully!${end} \n${green}[ * ] Now starting the main script... ${end}\n" && sleep 1 && clear

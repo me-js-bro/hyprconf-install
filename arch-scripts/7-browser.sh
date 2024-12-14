@@ -4,7 +4,7 @@
 #### Js Bro ( https://github.com/me-js-bro ) ####
 
 # exit the script if there is any error
-set -e
+# set -e
 
 # color defination
 red="\e[1;31m"
@@ -31,7 +31,7 @@ display_text() {
         --width 40 \
         --margin "1" \
         --padding "1" \
-'
+        '
    ___                            
   / _ )_______ _    _____ ___ ____
  / _  / __/ _ \ |/|/ (_-</ -_) __/
@@ -66,53 +66,53 @@ printf "${ask}\n? Choose which browser would you like to install. You can choose
 browsers=$(gum choose --no-limit "Brave" "Chromium" "Firefox" "Vivaldi" "Zen Browser")
 
 # Fix: Convert gum choice string into an array
-IFS=$'\n' read -r -d '' -a browser_array <<< "$browsers"
+IFS=$'\n' read -r -d '' -a browser_array <<<"$browsers"
 
 # Loop through the selected browsers
 for browser in "${browser_array[@]}"; do
     case $browser in
-        "Brave")
-            curl -fsS https://dl.brave.com/install.sh | sh
-            sleep 1
-            printf "${attention}\n! After completting the installation, please make sure to open the browser and follow the steps.\n" && sleep 2 && echo
+    "Brave")
+        curl -fsS https://dl.brave.com/install.sh | sh
+        sleep 1
+        printf "${attention}\n! After completting the installation, please make sure to open the browser and follow the steps.\n" && sleep 2 && echo
 
-            printf "[ 1 ] - Open the browser and in the search bar, typr 'chrome://flags' and press enter\n"
-            printf "[ 2 ] - Now search for 'Ozone platform'\n"
-            printf "[ 3 ] - Choose 'Wayland' from default and restart the browser.\n"
+        printf "[ 1 ] - Open the browser and in the search bar, typr 'chrome://flags' and press enter\n"
+        printf "[ 2 ] - Now search for 'Ozone platform'\n"
+        printf "[ 3 ] - Choose 'Wayland' from default and restart the browser.\n"
 
-            sleep 3
-            ;;
-        "Chromium")
-            install_from_aur ungoogled-chromium-bin
-            sleep 1
-            printf "${attention}\n! After completting the installation, please make sure to open the browser and follow the steps.\n" && sleep 2 && echo
+        sleep 3
+        ;;
+    "Chromium")
+        install_from_aur ungoogled-chromium-bin
+        sleep 1
+        printf "${attention}\n! After completting the installation, please make sure to open the browser and follow the steps.\n" && sleep 2 && echo
 
-            printf "[ 1 ] - Open the browser and in the search bar, typr 'chrome://flags' and press enter\n"
-            printf "[ 2 ] - Now search for 'Ozone platform'\n"
-            printf "[ 3 ] - Choose 'Wayland' from default and restart the browser.\n"
+        printf "[ 1 ] - Open the browser and in the search bar, typr 'chrome://flags' and press enter\n"
+        printf "[ 2 ] - Now search for 'Ozone platform'\n"
+        printf "[ 3 ] - Choose 'Wayland' from default and restart the browser.\n"
 
-            sleep 3
-            ;;
-        "Firefox")
-            install_package firefox
-            ;;
-        "Vivaldi")
-            install_package vivaldi
-            sleep 1
-            printf "${attention}\n! After completting the installation, please make sure to open the browser and follow the steps.\n" && sleep 2 && echo
+        sleep 3
+        ;;
+    "Firefox")
+        install_package firefox
+        ;;
+    "Vivaldi")
+        install_package vivaldi
+        sleep 1
+        printf "${attention}\n! After completting the installation, please make sure to open the browser and follow the steps.\n" && sleep 2 && echo
 
-            printf "[ 1 ] - Open the browser and in the search bar, typr 'chrome://flags' and press enter\n"
-            printf "[ 2 ] - Now search for 'Ozone platform'\n"
-            printf "[ 3 ] - Choose 'Wayland' from default and restart the browser.\n"
+        printf "[ 1 ] - Open the browser and in the search bar, typr 'chrome://flags' and press enter\n"
+        printf "[ 2 ] - Now search for 'Ozone platform'\n"
+        printf "[ 3 ] - Choose 'Wayland' from default and restart the browser.\n"
 
-            sleep 3
-            ;;
-        "Zen Browser")
-            install_from_aur zen-browser-avx2-bin
-            ;;
-        *)
-            printf "${error}\n! Invalid choice: $browser\n"
-            ;;
+        sleep 3
+        ;;
+    "Zen Browser")
+        install_from_aur zen-browser-avx2-bin
+        ;;
+    *)
+        printf "${error}\n! Invalid choice: $browser\n"
+        ;;
     esac
 done
 

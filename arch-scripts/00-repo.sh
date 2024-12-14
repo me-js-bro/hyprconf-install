@@ -4,7 +4,7 @@
 #### Js Bro ( https://github.com/me-js-bro ) ####
 
 # exit the script if there is any error
-set -e
+# set -e
 
 # Color definition
 red="\e[1;31m"
@@ -25,7 +25,7 @@ ask="[${orange} QUESTION ${end}]"
 error="[${red} ERROR ${end}]"
 
 display_text() {
-    cat << "EOF"
+    cat <<"EOF"
    ___             __ __    __            
   / _ |__ ______  / // /__ / /__  ___ ____
  / __ / // / __/ / _  / -_) / _ \/ -_) __/
@@ -41,7 +41,6 @@ printf " \n\n"
 ###------ Startup ------###
 
 # Finding the present directory and log file
-
 
 # install script dir
 dir="$(dirname "$(realpath "$0")")"
@@ -65,43 +64,29 @@ if [[ -f "$cache_file" ]]; then
 fi
 
 # install git before installing the aur helper.
-if ! pacman -Qe git &> /dev/null; then
-    printf "${action}\n==> Installing git.\n"
-    sudo pacman -S --noconfirm git 2>&1 | tee -a "$log" &> /dev/null
-    fn_done "Git was installed successfully!"
+if ! pacman -Qs git &>/dev/null; then
+    printf "${action}\n==> Installing git & base-devel.\n"
+    sudo pacman -S --noconfirm base-devel git 2>&1 | tee -a "$log" &>/dev/null
+    fn_done "Git & base-devel was installed successfully!"
 fi
 
 if [[ -z "$aur_helper" ]]; then
-
-    aur=$(gum choose "paru" "yay")
-
+    printf "${action}\n==> Installing yay..\n==> There was a little issue in installing paru.\n==> You can install paru through yay. just run 'yay -S paru'\n"
     sudo rm -rf /var/lib/pacman/db.lck
 
-    if [[ "$aur" == "paru" ]]; then
-        echo "aur='paru'" >> "$cache_file"
-        git clone "https://aur.archlinux.org/paru.git"
-        cd paru
-        makepkg -si --noconfirm
-        sleep 1
-        cd "$parent_dir"
-        sudo rm -rf paru
-        
-    elif [[ "$aur" == "yay" ]]; then
-        echo "aur='yay'" >> "$cache_file"
-        git clone "https://aur.archlinux.org/yay.git"
-        cd yay
-        makepkg -si --noconfirm
-        sleep 1
-        cd "$parent_dir"
-        sudo rm -rf yay
-    fi
+    echo "aur='yay'" >>"$cache_file"
+    git clone https://aur.archlinux.org/yay.git "$parent_dir/.cache/yay"
+    cd "$parent_dir/.cache/yay" || exit 1
+    makepkg -si --noconfirm
+    sleep 1
+    cd "$parent_dir" || exit 1
 fi
 
-if [[ -n "$aur_helper" ]]; then
-    fn_done "Aur helper $aur was installed successfully!"
-    echo "[ DONE ] - Aur helper $aur was installed successfully!" 2>&1 | tee -a "$log" &> /dev/null
+if [[ -n "$(command -v yay)" ]]; then
+    fn_done "Aur helper yay was installed successfully!"
+    echo "[ DONE ] - Aur helper yay was installed successfully!" 2>&1 | tee -a "$log" &>/dev/null
 else
-    fn_error "$aur could not be installed. Maybe there was an issue. (╥﹏╥)"
-    echo "[ ERROR ] - $aur could not be installed. Maybe there was an isseu.(╥﹏╥)" 2>&1 | tee -a "$log" &> /dev/null
+    fn_error "yay could not be installed. Maybe there was an issue. (╥﹏╥)"
+    echo "[ ERROR ] - yay could not be installed. Maybe there was an isseu.(╥﹏╥)" 2>&1 | tee -a "$log" &>/dev/null
     exit 1
 fi

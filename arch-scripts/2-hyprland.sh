@@ -4,7 +4,7 @@
 #### Js Bro ( https://github.com/me-js-bro ) ####
 
 # exit the script if there is any error
-set -e
+# set -e
 
 # color defination
 red="\e[1;31m"
@@ -31,7 +31,7 @@ display_text() {
         --width 60 \
         --margin "1" \
         --padding "1" \
-'
+        '
    __ __              __             __
   / // /_ _____  ____/ /__ ____  ___/ /
  / _  / // / _ \/ __/ / _ `/ _ \/ _  / 
@@ -87,16 +87,15 @@ hypr_packages=(
     xdg-desktop-portal-hyprland
 )
 
-
 # Instlling main packages...
 printf "${action}\n==> Installing main packages.\n"
 # Install from official repo
 for hypr_pkgs in "${hypr_packages[@]}"; do
     install_package "$hypr_pkgs"
-    if sudo pacman -Qe "$hypr_pkgs" &> /dev/null; then
-        echo "[ DONE ] - $hypr_pkgs was installed successfully!\n" 2>&1 | tee -a "$log" &> /dev/null
+    if sudo pacman -Qe "$hypr_pkgs" &>/dev/null; then
+        echo "[ DONE ] - $hypr_pkgs was installed successfully!\n" 2>&1 | tee -a "$log" &>/dev/null
     else
-        echo "[ ERROR ] - Sorry, could not install $hypr_pkgs!\n" 2>&1 | tee -a "$log" &> /dev/null
+        echo "[ ERROR ] - Sorry, could not install $hypr_pkgs!\n" 2>&1 | tee -a "$log" &>/dev/null
     fi
 done
 

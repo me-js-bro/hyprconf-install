@@ -4,7 +4,7 @@
 #### Js Bro ( https://github.com/me-js-bro ) ####
 
 # exit the script if there is any error
-set -e
+# set -e
 
 # color defination
 red="\e[1;31m"
@@ -40,14 +40,13 @@ mkdir -p "$log_dir"
 touch "$log"
 
 xdg=(
-xdg-desktop-portal-hyprland
-xdg-desktop-portal-gtk
+    xdg-desktop-portal-hyprland
+    xdg-desktop-portal-gtk
 )
-
 
 # XDG-DESKTOP-PORTAL-HYPRLAND
 for xdgs in "${xdg[@]}"; do
-  install_package "$xdgs" "$log"
+    install_package "$xdgs" "$log"
 done
 
 printf "${action}\n==> Checking for other XDG-Desktop-Portal-Implementations.\n"
@@ -59,16 +58,16 @@ while true; do
         # Clean out other portals
         printf "${action}\n==> Clearing other xdg-desktop-portal implementations.\n"
         # Check if packages are installed and uninstall if present
-        if pacman -Qs xdg-desktop-portal-wlr > /dev/null ; then
+        if pacman -Qs xdg-desktop-portal-wlr >/dev/null; then
             echo "Removing xdg-desktop-portal-wlr..."
             sudo pacman -R --noconfirm xdg-desktop-portal-wlr 2>&1 | tee -a "$log"
         fi
 
-        if pacman -Qs xdg-desktop-portal-lxqt > /dev/null ; then
+        if pacman -Qs xdg-desktop-portal-lxqt >/dev/null; then
             echo "Removing xdg-desktop-portal-lxqt..."
             sudo pacman -R --noconfirm xdg-desktop-portal-lxqt 2>&1 | tee -a "$log"
         fi
     else
-        echo "no other XDG-implementations will be removed." >> "$log"
+        echo "no other XDG-implementations will be removed." >>"$log"
     fi
 done

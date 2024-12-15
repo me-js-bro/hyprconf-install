@@ -71,22 +71,41 @@ if ! pacman -Qs git &>/dev/null; then
 fi
 
 if [[ -z "$aur_helper" ]]; then
-    printf "${action}\n==> Installing yay..\n==> There was a little issue in installing paru.\n==> You can install paru through yay. just run 'yay -S paru'\n"
-    sudo rm -rf /var/lib/pacman/db.lck
+    printf "${ask}\n?? Which aur helper would you like to install?\n"
+    choice=$(gum choose --limit=1 "yay" "paru")
 
-    echo "aur='yay'" >>"$cache_file"
-    git clone https://aur.archlinux.org/yay.git "$parent_dir/.cache/yay"
-    cd "$parent_dir/.cache/yay" || exit 1
-    makepkg -si --noconfirm
-    sleep 1
-    cd "$parent_dir" || exit 1
+    if [[ "$choice" == "yay" ]]; then
+        printf "${action}\n==> Installing yay.\n"
+        sudo rm -rf /var/lib/pacman/db.lck
+        echo "aur='yay'" >>"$cache_file"
+        git clone https://aur.archlinux.org/yay.git "$parent_dir/.cache/yay"
+        cd "$parent_dir/.cache/yay" || exit 1
+        makepkg -si --noconfirm
+        sleep 1
+        cd "$parent_dir" || exit 1
+        sudo rm -rf "$parent_dir/.cache/yay"
+    elif [[ "$choice" == "paru" ]]; then
+        printf "${action}\n==> Installing paru.\n"
+        sudo rm -rf /var/lib/pacman/db.lck
+        echo "aur='paru'" >> "$cache_file"
+        git clone https://aur.archlinux.org/paru.git "$parent_dir/.cache/paru"
+        cd "$parent_dir/.cache/paru" || exit 1
+        makepkg -si --noconfirm
+        sleep 1
+        cd "$parent_dir" || exit 1
+        sudo rm -rf "$parent_dir/.cache/paru"
+    fi
+
+elif [[ -n "$aur_helper" ]]; then
+    fn_done "$aur_helper was already installed.."
+    exit 0
 fi
 
-if [[ -n "$(command -v yay)" ]]; then
-    fn_done "Aur helper yay was installed successfully!"
-    echo "[ DONE ] - Aur helper yay was installed successfully!" 2>&1 | tee -a "$log" &>/dev/null
+if [[ -n "$(command -v yay)" || -n "$(command -v paru)" ]]; then
+    fn_done "Aur helper was installed successfully!"
+    echo "[ DONE ] - Aur helper was installed successfully!" 2>&1 | tee -a "$log" &>/dev/null
 else
-    fn_error "yay could not be installed. Maybe there was an issue. (╥﹏╥)"
-    echo "[ ERROR ] - yay could not be installed. Maybe there was an isseu.(╥﹏╥)" 2>&1 | tee -a "$log" &>/dev/null
+    fn_error "Could not install aru helper. Maybe there was an issue. (╥﹏╥)"
+    echo "[ ERROR ] - Could not install aru helper. Maybe there was an issue.(╥﹏╥)" 2>&1 | tee -a "$log" &>/dev/null
     exit 1
 fi

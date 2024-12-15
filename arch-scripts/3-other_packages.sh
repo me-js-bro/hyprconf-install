@@ -84,8 +84,10 @@ other_packages=(
     python-pywal
     unzip
     wget
+    xorg-xrandr
     yad
     yazi
+    zip
 )
 
 aur_packages=(

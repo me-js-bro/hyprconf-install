@@ -47,8 +47,10 @@ for xdgs in "${xdg[@]}"; do
   install_package "$xdgs" "$log"
 done
 
-printf "${action}\n==> Checking for other XDG-Desktop-Portal-Implementations.\n"
-fn_ask "Would you like to remove other XDG-Desktop-Portal-Implementations?"
+printf "${ask}\n?? Would you like to remove other XDG-Desktop-Portal-Implementations?\n"
+gum confirm "Choose..." \
+    --affirmative "Remove" \
+    --negative "Don't remove"
 
 if [[ $? -eq 0 ]]; then
     

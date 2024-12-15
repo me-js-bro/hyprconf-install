@@ -4,7 +4,7 @@
 #### Js Bro ( https://github.com/me-js-bro ) ####
 
 # exit the script if there's any error
-set -e
+#set -e
 
 # color defination
 red="\e[1;31m"

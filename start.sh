@@ -4,7 +4,7 @@
 #### Js Bro ( https://github.com/me-js-bro ) ####
 
 # exit the script if there's any error
-set -e
+#set -e
 
 # color defination
 red="\e[1;31m"
@@ -117,7 +117,10 @@ if [[ -f "$cache_file" ]]; then
     if [[ -z "$setup_for_Nvidia" ]]; then
         printf "${error} - User prompt was not given properly. Please run the script again...\n" && sleep 0.5
 
-        fn_ask "Would you like to run the script again?"
+        gum confirm "Would you like to run the script again?" \
+            --affirmative "Yes, run" \
+            --negative "No, close it"
+
         if [[ $? -eq 0 ]]; then
             printf "${action}\n==> Starting the script again.\n"
             rm -f "$cache_file"
@@ -134,14 +137,13 @@ else
     cat > "$cache_file" << EOF
 install_Bluetooth_service=''
 install_OpenBangla_Keyboard=''
-install_brave_or_chromium=''
-install_zsh=''
+install_and_configure_zsh=''
 configure_your_default_Bash=''
 install_Visual_Studio_Code=''
-setup_for_Nvidia=''
+have_Nvidia_gpu=''
 EOF
 
-    fn_choose_prompts "install_Bluetooth_service" "install_OpenBangla_Keyboard" "install_brave_or_chromium" "install_zsh" "configure_your_default_Bash" "install_Visual_Studio_Code" "setup_for_Nvidia"
+fn_choose_prompts "install_Bluetooth_service" "install_OpenBangla_Keyboard" "install_and_configure_zsh" "configure_your_default_Bash" "install_Visual_Studio_Code" "have_Nvidia_gpu"
 
     source "$cache_file"
 fi
@@ -182,11 +184,7 @@ if [[ "$install_OpenBangla_Keyboard" =~ ^[Yy]$ ]]; then
     "$common_scripts/write_bangla.sh" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
 fi
 
-
-if [[ "$install_brave_or_chromium" =~ ^[Yy]$ ]]; then
-    "$scripts_dir/7-browser.sh" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
-fi
-
+"$scripts_dir/7-browser.sh" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
 
 if [[ "$install_Visual_Studio_Code" =~ ^[Yy]$ ]]; then
     "$scripts_dir/8-vs_code.sh" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
@@ -249,11 +247,15 @@ sleep 1 && clear
 # =========  system reboot  ========= #
 
 fn_done "Congratulations! The script completes here." && sleep 2
-fn_ask "Need to reboot the system. Would you like to reboot now?"
+printf "${attention}\n!! Need to reboot the system.\n"
+gum confirm \
+    "Would you like to.." \
+    --affirmative "Reboot now?" \
+    --negative "Not now!"
 
-# rebooting the system in 5 seconds
 if [[ $? -eq 0 ]]; then
     clear
+    # rebooting the system in 3 seconds
     for second in 3 2 1; do
         printf "${action}\n==> Rebooting the system in ${second}s\n" && sleep 1 && clear
     done

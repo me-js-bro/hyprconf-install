@@ -6,7 +6,7 @@
 # this script will be a curl of wget link. by running this script, it will clone the repository and execute the main script.
 
 # exit the script if there's any error
-set -e
+#set -e
 
 # color defination
 red="\e[1;31m"

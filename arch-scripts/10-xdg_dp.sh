@@ -51,7 +51,10 @@ done
 
 printf "${action}\n==> Checking for other XDG-Desktop-Portal-Implementations.\n"
 
-fn_ask "Would you like to remove other XDG-Desktop-Portal-Implementations?"
+printf "${ask}\n?? Would you like to remove other XDG-Desktop-Portal-Implementations?\n"
+gum configm "Choose..." \
+    --affirmative "Remove" \
+    --negative "Don't remove"
 
 if [[ $? -eq 0 ]]; then
     # Clean out other portals

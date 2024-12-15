@@ -48,7 +48,7 @@ for xdgs in "${xdg[@]}"; do
 done
 
 printf "${ask}\n?? Would you like to remove other XDG-Desktop-Portal-Implementations?\n"
-gum configm "Choose..." \
+gum confirm "Choose..." \
     --affirmative "Remove" \
     --negative "Don't remove"
 

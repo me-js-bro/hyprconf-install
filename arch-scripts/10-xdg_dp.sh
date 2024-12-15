@@ -52,7 +52,7 @@ done
 printf "${action}\n==> Checking for other XDG-Desktop-Portal-Implementations.\n"
 
 printf "${ask}\n?? Would you like to remove other XDG-Desktop-Portal-Implementations?\n"
-gum configm "Choose..." \
+gum confirm "Choose..." \
     --affirmative "Remove" \
     --negative "Don't remove"
 

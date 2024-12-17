@@ -82,6 +82,7 @@ other_packages=(
     pavucontrol
     python-pillow
     python-pywal
+    ripgrep
     unzip
     wget
     xorg-xrandr

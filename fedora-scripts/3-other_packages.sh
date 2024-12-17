@@ -88,6 +88,7 @@ main_packages=(
   qt5ct
   qt6ct
   qt6-qtsvg
+  ripgrep
   rofi-wayland
   slurp
   swappy

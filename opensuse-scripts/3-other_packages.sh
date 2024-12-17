@@ -83,6 +83,7 @@ hypr_package=(
   qt5ct
   qt6ct
   qt6-svg-devel
+  ripgrep
   libqt5-qtquickcontrols
   libqt5-qtquickcontrols2
   libqt5-qtgraphicaleffects

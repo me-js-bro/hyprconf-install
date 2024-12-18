@@ -49,14 +49,27 @@ printf " \n \n"
 dir="$(dirname "$(realpath "$0")")"
 source "$dir/1-global_script.sh"
 
-# log directory
 parent_dir="$(dirname "$dir")"
+
+
 source "$parent_dir/interaction_fn.sh"
 
+# log directory
 log_dir="$parent_dir/Logs"
 log="$log_dir/hyprland-$(date +%d-%m-%y).log"
-mkdir -p "$log_dir"
-touch "$log"
+
+if [[ -f "$log" ]]; then
+    errors=$(grep "ERROR" "$log")
+    last_installed=$(grep "xdg-desktop-portal-hyprland" "$log" | awk {'print $2'})
+    if [[ -z "$errors" && "$last_installed" == "DONE" ]]; then
+        printf "${note}\n;; No need to run this script again\n"
+        sleep 2
+        exit 0
+    fi
+else
+    mkdir -p "$log_dir"
+    touch "$log"
+fi
 
 aur_helper=$(command -v yay || command -v paru) # find the aur helper
 
@@ -92,7 +105,7 @@ printf "${action}\n==> Installing main packages.\n"
 # Install from official repo
 for hypr_pkgs in "${hypr_packages[@]}"; do
     install_package "$hypr_pkgs"
-    if sudo pacman -Qe "$hypr_pkgs" &>/dev/null; then
+    if sudo pacman -Q "$hypr_pkgs" &>/dev/null; then
         echo "[ DONE ] - $hypr_pkgs was installed successfully!\n" 2>&1 | tee -a "$log" &>/dev/null
     else
         echo "[ ERROR ] - Sorry, could not install $hypr_pkgs!\n" 2>&1 | tee -a "$log" &>/dev/null

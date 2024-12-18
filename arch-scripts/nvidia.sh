@@ -57,8 +57,21 @@ source "$parent_dir/interaction_fn.sh"
 
 log_dir="$parent_dir/Logs"
 log="$log_dir/nvdia-$(date +%d-%m-%y).log"
-mkdir -p "$log_dir"
-touch "$log"
+
+if [[ -f "$log" ]]; then
+    errors=$(grep "ERROR" "$log")
+    last_installed=$(grep "libva-nvidia-driver-git" "$log" | awk {'print $2'})
+    if [[ -z "$errors" && "$last_installed" == "DONE" ]]; then
+        printf "${note}\n;; No need to run this script again\n"
+        sleep 2
+        exit 0
+    fi
+
+else
+    mkdir -p "$log_dir"
+    touch "$log"
+fi
+
 
 nvidia_pkg=(
     nvidia-dkms

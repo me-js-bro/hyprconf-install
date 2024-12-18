@@ -49,12 +49,24 @@ source "$dir/1-global_script.sh"
 # log directory
 parent_dir="$(dirname "$dir")"
 cache_file="$parent_dir/.cache/user-cache"
+
 source "$parent_dir/interaction_fn.sh"
 
 log_dir="$parent_dir/Logs"
 log="$log_dir/aur_helper-$(date +%d-%m-%y).log"
-mkdir -p "$log_dir"
-touch "$log"
+
+# checking if the script already ran
+if [[ -f "$log" ]]; then
+    error=$(grep "ERROR" "$log")
+    if [[ -z "$error" ]]; then
+        printf "${note}\n;; No need to run this script again.\n"
+        sleep 2
+        exit 0
+    fi
+else
+    mkdir -p "$log_dir"
+    touch "$log"
+fi
 
 # Check for existing AUR helpers
 aur_helper=$(command -v yay || command -v paru)

@@ -49,15 +49,28 @@ printf " \n \n"
 dir="$(dirname "$(realpath "$0")")"
 source "$dir/1-global_script.sh"
 
-# log directory
 parent_dir="$(dirname "$dir")"
+common_scripts="$parent_dir/common"
 source "$parent_dir/interaction_fn.sh"
 
+# log directory
 log_dir="$parent_dir/Logs"
 log="$log_dir/sddm-$(date +%d-%m-%y).log"
-mkdir -p "$log_dir"
-touch "$log"
-common_scripts="$parent_dir/common"
+
+if [[ -f "$log" ]]; then
+    errors=$(grep "ERROR" "$log")
+    last_installed=$(grep "sddm" "$log" | awk {'print $2'})
+    if [[ -z "$errors" && "$last_installed" == "DONE" ]]; then
+        printf "${note}\n;; No need to run this script again\n"
+        sleep 2
+        exit 0
+    fi
+
+else
+    mkdir -p "$log_dir"
+    touch "$log"
+fi
+
 
 # packages for sddm
 sddm=(
@@ -68,10 +81,10 @@ sddm=(
 )
 
 # Installation of additional sddm stuff
-printf "${action}\n==>Installing sddm and dependencies.\n"
+printf "${action}\n==> Installing sddm and dependencies.\n"
 for sddm_pkgs in "${sddm[@]}"; do
     install_package "$sddm_pkgs"
-    if sudo pacman -Qe "$sddm_pkgs" &>/dev/null; then
+    if sudo pacman -Q "$sddm_pkgs" &>/dev/null; then
         echo "[ DONE ] - $sddm_pkgs was installed successfully!\n" 2>&1 | tee -a "$log" &>/dev/null
     else
         echo "[ ERROR ] - Sorry, could not install $sddm_pkgs!\n" 2>&1 | tee -a "$log" &>/dev/null

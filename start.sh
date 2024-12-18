@@ -114,7 +114,7 @@ if [[ -f "$cache_file" ]]; then
     source "$cache_file"
 
     # Check if Nvidia prompt has no value set
-    if [[ -z "$setup_for_Nvidia" ]]; then
+    if [[ -z "$have_Nvidia_gpu" ]]; then
         printf "${error} - User prompt was not given properly. Please run the script again...\n" && sleep 0.5
 
         gum confirm "Would you like to run the script again?" \
@@ -196,7 +196,7 @@ fi
 "$scripts_dir/11-uninstall.sh" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
 
 
-if [[ "$setup_for_Nvidia" =~ ^[Yy]$ ]]; then
+if [[ "$have_Nvidia_gpu" =~ ^[Yy]$ ]]; then
     "$scripts_dir/nvidia.sh" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
 fi
 

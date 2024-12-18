@@ -49,10 +49,31 @@ printf " \n \n"
 dir="$(dirname "$(realpath "$0")")"
 source "$dir/1-global_script.sh"
 
-# log directory
 parent_dir="$(dirname "$dir")"
+__other_pkgs="$parent_dir/.cache/3-other_packages"
+
+if [[ -f "$__other_pkgs" ]]; then
+    source "$__other_pkgs"
+
+    errors=$(grep "error" "$__other_pkgs")
+    if [[ -z "$errors" ]]; then
+        printf "${note}\n;; No need to run this script again\n"
+        exit 0
+
+    elif [[ -n "$errors" ]]; then
+        error_pkgs=($(grep "error" "$__other_pkgs" | awk {'print $1'}))
+            for __erros in "${error_pkgs[@]}"; do
+                install_package "$__erros"
+            done
+    fi
+
+elif [[ ! -f "$__other_pkgs" ]]; then
+    touch "$__other_pkgs"
+fi
+
 source "$parent_dir/interaction_fn.sh"
 
+# log directory
 log_dir="$parent_dir/Logs"
 log="$log_dir/others-$(date +%d-%m-%y).log"
 mkdir -p "$log_dir"
@@ -115,6 +136,10 @@ for other_pkgs in "${other_packages[@]}"; do
         echo "[ DONE ] - $other_pkgs was installed successfully!\n" 2>&1 | tee -a "$log" &>/dev/null
     else
         echo "[ ERROR ] - Sorry, could not install $other_pkgs!\n" 2>&1 | tee -a "$log" &>/dev/null
+        
+        if ! grep -q "$other_pkgs = 'error'" "$__other_pkgs"; then
+            echo "$other_pkgs = 'error'" >> "$__other_pkgs" &> /dev/null
+        fi
     fi
 done
 
@@ -127,6 +152,10 @@ for aur_pkgs in "${aur_packages[@]}"; do
         echo "[ DONE ] - $aur_pkgs was installed successfully!\n" 2>&1 | tee -a "$log" &>/dev/null
     else
         echo "[ ERROR ] - Sorry, could not install $aur_pkgs!\n" 2>&1 | tee -a "$log" &>/dev/null
+
+        if ! grep -q "$aur_pkgs = 'error'" "$__other_pkgs"; then
+            echo "$aur_pkgs = 'error'" >> "$__other_pkgs" &> /dev/null
+        fi
     fi
 done
 
@@ -139,6 +168,11 @@ for file_man in "${thunar[@]}"; do
         echo "[ DONE ] - $file_man was installed successfully!\n" 2>&1 | tee -a "$log" &>/dev/null
     else
         echo "[ ERROR ] - Sorry, could not install $file_man!\n" 2>&1 | tee -a "$log" &>/dev/null
+        
+        if ! grep -q "$file_man = 'error'" "$__other_pkgs"; then
+            echo "$file_man = 'error'" >> "$__other_pkgs" &> /dev/null
+        fi
+
     fi
 done
 

@@ -49,10 +49,25 @@ printf " \n \n"
 dir="$(dirname "$(realpath "$0")")"
 source "$dir/1-global_script.sh"
 
-# log directory
 parent_dir="$(dirname "$dir")"
+__browser="$parent_dir/.cache/7-browser"
+
+if [[ -f "$__browser" ]]; then
+    source "$__browser"
+
+    errors=$(grep "error" "$__browser")
+    if [[ -z "$errors" ]]; then
+        printf "${note}\n;; No need to run this script again\n"
+        exit 0
+    fi
+
+elif [[ ! -f "$__browser" ]]; then
+    touch "$__browser"
+fi
+
 source "$parent_dir/interaction_fn.sh"
 
+# log directory
 log_dir="$parent_dir/Logs"
 log="$log_dir/browser-$(date +%d-%m-%y).log"
 mkdir -p "$log_dir"
@@ -74,6 +89,9 @@ for browser in "${browser_array[@]}"; do
     "Brave")
         curl -fsS https://dl.brave.com/install.sh | sh
         sleep 1
+
+        [[ -z "$(command -v brave)" ]] && echo "Brave = 'error'" >> "$__browser" && exit 1
+
         printf "${attention}\n! After completting the installation, please make sure to open the browser and follow the steps.\n" && sleep 2 && echo
 
         printf "[ 1 ] - Open the browser and in the search bar, typr 'chrome://flags' and press enter\n"
@@ -85,6 +103,9 @@ for browser in "${browser_array[@]}"; do
     "Chromium")
         install_from_aur ungoogled-chromium-bin
         sleep 1
+
+        [[ -z "$(command -v chromium)" ]] && echo "Chromium = 'error'" >> "$__browser" && exit 1
+
         printf "${attention}\n! After completting the installation, please make sure to open the browser and follow the steps.\n" && sleep 2 && echo
 
         printf "[ 1 ] - Open the browser and in the search bar, typr 'chrome://flags' and press enter\n"
@@ -95,10 +116,16 @@ for browser in "${browser_array[@]}"; do
         ;;
     "Firefox")
         install_package firefox
+        sleep 1
+
+        [[ -z "$(command -v chromium)" ]] && echo "Firefox = 'error'" >> "$__browser" && exit 1
         ;;
     "Vivaldi")
         install_package vivaldi
         sleep 1
+
+        [[ -z "$(command -v chromium)" ]] && echo "Vivaldi = 'error'" >> "$__browser" && exit 1
+
         printf "${attention}\n! After completting the installation, please make sure to open the browser and follow the steps.\n" && sleep 2 && echo
 
         printf "[ 1 ] - Open the browser and in the search bar, typr 'chrome://flags' and press enter\n"
@@ -109,6 +136,10 @@ for browser in "${browser_array[@]}"; do
         ;;
     "Zen Browser")
         install_from_aur zen-browser-avx2-bin
+        sleep 1
+
+        [[ -z "$(command -v chromium)" ]] && echo "Zen = 'error'" >> "$__browser" && exit 1
+
         ;;
     *)
         printf "${error}\n! Invalid choice: $browser\n"

@@ -48,10 +48,31 @@ printf " \n \n"
 dir="$(dirname "$(realpath "$0")")"
 source "$dir/1-global_script.sh"
 
-# log directory
 parent_dir="$(dirname "$dir")"
+__fonts="$parent_dir/.cache/6-fonts"
+
+if [[ -f "$__fonts" ]]; then
+    source "$__fonts"
+
+    errors=$(grep "error" "$__fonts")
+    if [[ -z "$errors" ]]; then
+        printf "${note}\n;; No need to run this script again\n"
+        exit 0
+
+    elif [[ -n "$errors" ]]; then
+        error_pkgs=($(grep "error" "$__fonts" | awk {'print $1'}))
+            for __erros in "${error_pkgs[@]}"; do
+                install_package "$__erros"
+            done
+    fi
+
+elif [[ ! -f "$__fonts" ]]; then
+    touch "$__fonts"
+fi
+
 source "$parent_dir/interaction_fn.sh"
 
+# log directory
 log_dir="$parent_dir/Logs"
 log="$log_dir/fonts-$(date +%d-%m-%y).log"
 mkdir -p "$log_dir"
@@ -75,6 +96,11 @@ for font_pkgs in "${fonts[@]}"; do
         echo "[ DONE ] - $font_pkgs was installed successfully!\n" 2>&1 | tee -a "$log" &>/dev/null
     else
         echo "[ ERROR ] - Sorry, could not install $font_pkgs!\n" 2>&1 | tee -a "$log" &>/dev/null
+
+        if ! grep -q "$font_pkgs = 'error'" "$__fonts"; then
+            echo "$font_pkgs = 'error'" >> "$__fonts" &> /dev/null
+        fi
+
     fi
 done
 

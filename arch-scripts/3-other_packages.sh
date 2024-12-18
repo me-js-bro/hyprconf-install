@@ -50,8 +50,6 @@ dir="$(dirname "$(realpath "$0")")"
 source "$dir/1-global_script.sh"
 
 parent_dir="$(dirname "$dir")"
-
-
 source "$parent_dir/interaction_fn.sh"
 
 # log directory
@@ -62,7 +60,8 @@ if [[ -f "$log" ]]; then
     source "$log"
 
     errors=$(grep "ERROR" "$log")
-    if [[ -z "$errors" ]]; then
+    last_installed=$(grep "thunar-archive-plugin" "$log" | awk {'print $2'})
+    if [[ -z "$errors" && "$last_installed" == "DONE" ]]; then
         printf "${note}\n;; No need to run this script again\n"
         sleep 2
         exit 0
@@ -126,7 +125,7 @@ thunar=(
 printf "${action}\n==> Installing necessary packages\n"
 for other_pkgs in "${other_packages[@]}"; do
     install_package "$other_pkgs"
-    if sudo pacman -Qe "$other_pkgs" &>/dev/null; then
+    if sudo pacman -Q "$other_pkgs" &>/dev/null; then
         echo "[ DONE ] - $other_pkgs was installed successfully!\n" 2>&1 | tee -a "$log" &>/dev/null
     else
         echo "[ ERROR ] - Sorry, could not install $other_pkgs!\n" 2>&1 | tee -a "$log" &>/dev/null
@@ -138,7 +137,7 @@ sleep 1 && clear
 # Installing from the AUR Helper
 for aur_pkgs in "${aur_packages[@]}"; do
     install_from_aur "$aur_pkgs"
-    if sudo "$aur_helper" -Qe "$aur_pkgs" &>/dev/null; then
+    if sudo "$aur_helper" -Q "$aur_pkgs" &>/dev/null; then
         echo "[ DONE ] - $aur_pkgs was installed successfully!\n" 2>&1 | tee -a "$log" &>/dev/null
     else
         echo "[ ERROR ] - Sorry, could not install $aur_pkgs!\n" 2>&1 | tee -a "$log" &>/dev/null
@@ -150,7 +149,7 @@ sleep 1 && clear
 # installing thunar file manager
 for file_man in "${thunar[@]}"; do
     install_package "$file_man"
-    if sudo pacman -Qe "$file_man" &>/dev/null; then
+    if sudo pacman -Q "$file_man" &>/dev/null; then
         echo "[ DONE ] - $file_man was installed successfully!\n" 2>&1 | tee -a "$log" &>/dev/null
     else
         echo "[ ERROR ] - Sorry, could not install $file_man!\n" 2>&1 | tee -a "$log" &>/dev/null

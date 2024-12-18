@@ -60,7 +60,8 @@ if [[ -f "$log" ]]; then
     source "$log"
 
     errors=$(grep "ERROR" "$log")
-    if [[ -z "$errors" ]]; then
+    last_installed=$(grep "visual-studio-code-bin" "$log" | awk {'print $2'})
+    if [[ -z "$errors" && "$last_installed" == "DONE" ]]; then
         printf "${note}\n;; No need to run this script again\n"
         sleep 2
         exit 0
@@ -80,7 +81,7 @@ vs_code=(
 # installing vs code
 for code in "${vs_code[@]}"; do
     install_from_aur "$code"
-    if sudo "$aur_helper" -Qe "$code" &>/dev/null; then
+    if sudo "$aur_helper" -Q "$code" &>/dev/null; then
         echo "[ DONE ] - $code was installed successfully!\n" 2>&1 | tee -a "$log" &>/dev/null
     else
         echo "[ ERROR ] - Sorry, could not install $code!\n" 2>&1 | tee -a "$log" &>/dev/null

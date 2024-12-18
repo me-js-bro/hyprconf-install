@@ -61,7 +61,8 @@ if [[ -f "$log" ]]; then
     source "$log"
 
     errors=$(grep "ERROR" "$log")
-    if [[ -z "$errors" ]]; then
+    last_installed=$(grep "sddm" "$log" | awk {'print $2'})
+    if [[ -z "$errors" && "$last_installed" == "DONE" ]] && [[ -d "/usr/share/sddm/themes/minimal_sddm" ]]; then
         printf "${note}\n;; No need to run this script again\n"
         sleep 2
         exit 0
@@ -85,7 +86,7 @@ sddm=(
 printf "${action}\n==> Installing sddm and dependencies.\n"
 for sddm_pkgs in "${sddm[@]}"; do
     install_package "$sddm_pkgs"
-    if sudo pacman -Qe "$sddm_pkgs" &>/dev/null; then
+    if sudo pacman -Q "$sddm_pkgs" &>/dev/null; then
         echo "[ DONE ] - $sddm_pkgs was installed successfully!\n" 2>&1 | tee -a "$log" &>/dev/null
     else
         echo "[ ERROR ] - Sorry, could not install $sddm_pkgs!\n" 2>&1 | tee -a "$log" &>/dev/null

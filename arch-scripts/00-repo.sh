@@ -49,6 +49,23 @@ source "$dir/1-global_script.sh"
 # log directory
 parent_dir="$(dirname "$dir")"
 cache_file="$parent_dir/.cache/user-cache"
+repo_cache="$parent_dir/.cache/00-repo"
+
+# checking if the script already ran
+if [[ -f "$repo_cache" ]]; then
+
+    source "$repo_cache"
+    if [[ "$aur" == "done" ]]; then
+        printf "${note}\n;; No need to run this script again.\n"
+        exit 0
+    fi
+
+elif [[ ! -f "$repo_cache" ]]; then 
+
+    touch "$repo_cache"
+
+fi
+
 source "$parent_dir/interaction_fn.sh"
 
 log_dir="$parent_dir/Logs"
@@ -104,6 +121,8 @@ fi
 if [[ -n "$(command -v yay)" || -n "$(command -v paru)" ]]; then
     fn_done "Aur helper was installed successfully!"
     echo "[ DONE ] - Aur helper was installed successfully!" 2>&1 | tee -a "$log" &>/dev/null
+    
+    echo "aur='done'" >> "$repo_cache" &> /dev/null
 else
     fn_error "Could not install aru helper. Maybe there was an issue. (╥﹏╥)"
     echo "[ ERROR ] - Could not install aru helper. Maybe there was an issue.(╥﹏╥)" 2>&1 | tee -a "$log" &>/dev/null

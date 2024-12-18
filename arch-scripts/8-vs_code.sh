@@ -51,6 +51,27 @@ source "$dir/1-global_script.sh"
 
 # log directory
 parent_dir="$(dirname "$dir")"
+__vs_code="$parent_dir/.cache/8-vs_code"
+
+if [[ -f "$__vs_code" ]]; then
+    source "$__vs_code"
+
+    errors=$(grep "error" "$__vs_code")
+    if [[ -z "$errors" ]]; then
+        printf "${note}\n;; No need to run this script again\n"
+        exit 0
+
+    elif [[ -n "$errors" ]]; then
+        error_pkgs=($(grep "error" "$__vs_code" | awk {'print $1'}))
+            for __erros in "${error_pkgs[@]}"; do
+                install_from_aur "$__erros"
+            done
+    fi
+
+elif [[ ! -f "$__vs_code" ]]; then
+    touch "$__vs_code"
+fi
+
 source "$parent_dir/interaction_fn.sh"
 
 log_dir="$parent_dir/Logs"
@@ -71,6 +92,11 @@ for code in "${vs_code[@]}"; do
         echo "[ DONE ] - $code was installed successfully!\n" 2>&1 | tee -a "$log" &>/dev/null
     else
         echo "[ ERROR ] - Sorry, could not install $code!\n" 2>&1 | tee -a "$log" &>/dev/null
+
+        if ! grep -q "$code = 'error'" "$__vs_code"; then
+            echo "$code = 'error'" >> "$__vs_code" &> /dev/null
+        fi
+
     fi
 done
 

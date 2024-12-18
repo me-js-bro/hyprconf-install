@@ -57,8 +57,6 @@ log_dir="$parent_dir/Logs"
 log="$log_dir/browser-$(date +%d-%m-%y).log"
 
 if [[ -f "$log" ]]; then
-    source "$log"
-
     errors=$(grep "error" "$log")
     if [[ -z "$errors" ]]; then
         printf "${note}\n;; No need to run this script again\n"

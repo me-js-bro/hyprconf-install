@@ -58,11 +58,11 @@ removable=(
 )
 
 for pkg in "${removable[@]}"; do
-    if sudo pacman -Qe "$pkg" &> /dev/null; then
+    if sudo pacman -Q "$pkg" &> /dev/null; then
         printf "${action}\n==> $pkg was found, removing it\n"
         sudo pacman -Rns --noconfirm "$pkg" 2>&1 | tee -a "$log"
 
-        if ! sudo pacman -Qe "$pkg" &> /dev/null; then
+        if ! sudo pacman -Q "$pkg" &> /dev/null; then
             fn_done "$pkg was removed successfully!"
         else
             fn_error "Could not remove $pkg (╥﹏╥)"

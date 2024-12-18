@@ -55,10 +55,9 @@ source "$parent_dir/interaction_fn.sh"
 log_dir="$parent_dir/Logs"
 log="$log_dir/fonts-$(date +%d-%m-%y).log"
 if [[ -f "$log" ]]; then
-    source "$log"
-
     errors=$(grep "ERROR" "$log")
-    if [[ -z "$errors" ]]; then
+    last_installed=$(grep "noto-fonts-emoji" "$log" | awk {'print $2'})
+    if [[ -z "$errors" && "$last_installed" == "DONE" ]]; then
         printf "${note}\n;; No need to run this script again\n"
         sleep 2
         exit 0
@@ -83,7 +82,7 @@ printf "${action}\n==> Installing some necessary fonts\n"
 
 for font_pkgs in "${fonts[@]}"; do
     install_package "$font_pkgs"
-    if sudo pacman -Qe "$font_pkgs" &>/dev/null; then
+    if sudo pacman -Q "$font_pkgs" &>/dev/null; then
         echo "[ DONE ] - $font_pkgs was installed successfully!\n" 2>&1 | tee -a "$log" &>/dev/null
     else
         echo "[ ERROR ] - Sorry, could not install $font_pkgs!\n" 2>&1 | tee -a "$log" &>/dev/null

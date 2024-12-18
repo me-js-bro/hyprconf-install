@@ -57,8 +57,6 @@ log="$log_dir/aur_helper-$(date +%d-%m-%y).log"
 
 # checking if the script already ran
 if [[ -f "$log" ]]; then
-    source "$log"
-
     error=$(grep "ERROR" "$log")
     if [[ -z "$error" ]]; then
         printf "${note}\n;; No need to run this script again.\n"

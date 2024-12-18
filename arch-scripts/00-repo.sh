@@ -62,6 +62,7 @@ if [[ -f "$log" ]]; then
     error=$(grep "ERROR" "$log")
     if [[ -z "$error" ]]; then
         printf "${note}\n;; No need to run this script again.\n"
+        sleep 2
         exit 0
     fi
 else

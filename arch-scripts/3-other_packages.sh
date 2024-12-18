@@ -57,8 +57,6 @@ log_dir="$parent_dir/Logs"
 log="$log_dir/others-$(date +%d-%m-%y).log"
 
 if [[ -f "$log" ]]; then
-    source "$log"
-
     errors=$(grep "ERROR" "$log")
     last_installed=$(grep "thunar-archive-plugin" "$log" | awk {'print $2'})
     if [[ -z "$errors" && "$last_installed" == "DONE" ]]; then

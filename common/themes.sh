@@ -91,6 +91,7 @@ if [ ! -d "$HOME/.icons/TokyoNight-SE" ]; then
     if [[ -d "$HOME/.icons/TokyoNight-SE" ]]; then
         fn_done "Successfully Installed Tokyo Night icons."
         echo "[ DONE ] - Successfully Installed Tokyo Night icons. \n" 2>&1 | tee -a "$log" &> /dev/null
+        rm -rf "TokyoNight-SE.tar.bz2"
     else
         fn_error "Could not install Tokyo Night icons. (╥﹏╥)"
         echo "[ ERROR ] - Could not install Tokyo Night icons. (╥﹏╥)\n" 2>&1 | tee -a "$log" &> /dev/null

@@ -206,7 +206,7 @@ if [[ "$install_Bluetooth_service" =~ ^[Yy]$ ]]; then
 fi
 
 
-if [[ "$install_zsh" =~ ^[Yy]$ ]]; then
+if [[ "$install_and_configure_zsh" =~ ^[Yy]$ ]]; then
     "$common_scripts/zsh.sh" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
 fi
 

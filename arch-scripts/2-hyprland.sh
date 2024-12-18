@@ -59,8 +59,6 @@ log_dir="$parent_dir/Logs"
 log="$log_dir/hyprland-$(date +%d-%m-%y).log"
 
 if [[ -f "$log" ]]; then
-    source "$log"
-
     errors=$(grep "ERROR" "$log")
     last_installed=$(grep "xdg-desktop-portal-hyprland" "$log" | awk {'print $2'})
     if [[ -z "$errors" && "$last_installed" == "DONE" ]]; then

@@ -57,8 +57,6 @@ log_dir="$parent_dir/Logs"
 log="$log_dir/vs_code-$(date +%d-%m-%y).log"
 
 if [[ -f "$log" ]]; then
-    source "$log"
-
     errors=$(grep "ERROR" "$log")
     last_installed=$(grep "visual-studio-code-bin" "$log" | awk {'print $2'})
     if [[ -z "$errors" && "$last_installed" == "DONE" ]]; then

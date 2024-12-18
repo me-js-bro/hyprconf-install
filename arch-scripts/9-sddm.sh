@@ -58,11 +58,9 @@ log_dir="$parent_dir/Logs"
 log="$log_dir/sddm-$(date +%d-%m-%y).log"
 
 if [[ -f "$log" ]]; then
-    source "$log"
-
     errors=$(grep "ERROR" "$log")
     last_installed=$(grep "sddm" "$log" | awk {'print $2'})
-    if [[ -z "$errors" && "$last_installed" == "DONE" ]] && [[ -d "/usr/share/sddm/themes/minimal_sddm" ]]; then
+    if [[ -z "$errors" && "$last_installed" == "DONE" ]]; then
         printf "${note}\n;; No need to run this script again\n"
         sleep 2
         exit 0

@@ -55,8 +55,6 @@ source "$parent_dir/interaction_fn.sh"
 log_dir="$parent_dir/Logs"
 log="$log_dir/fonts-$(date +%d-%m-%y).log"
 if [[ -f "$log" ]]; then
-    source "$log"
-
     errors=$(grep "ERROR" "$log")
     last_installed=$(grep "noto-fonts-emoji" "$log" | awk {'print $2'})
     if [[ -z "$errors" && "$last_installed" == "DONE" ]]; then

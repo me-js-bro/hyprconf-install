@@ -50,28 +50,26 @@ dir="$(dirname "$(realpath "$0")")"
 source "$dir/1-global_script.sh"
 
 parent_dir="$(dirname "$dir")"
-__browser="$parent_dir/.cache/7-browser"
-
-if [[ -f "$__browser" ]]; then
-    source "$__browser"
-
-    errors=$(grep "error" "$__browser")
-    if [[ -z "$errors" ]]; then
-        printf "${note}\n;; No need to run this script again\n"
-        exit 0
-    fi
-
-elif [[ ! -f "$__browser" ]]; then
-    touch "$__browser"
-fi
-
 source "$parent_dir/interaction_fn.sh"
 
 # log directory
 log_dir="$parent_dir/Logs"
 log="$log_dir/browser-$(date +%d-%m-%y).log"
-mkdir -p "$log_dir"
-touch "$log"
+
+if [[ -f "$log" ]]; then
+    source "$log"
+
+    errors=$(grep "error" "$log")
+    if [[ -z "$errors" ]]; then
+        printf "${note}\n;; No need to run this script again\n"
+        sleep 2
+        exit 0
+    fi
+
+else
+    mkdir -p "$log_dir"
+    touch "$log"
+fi
 
 # finding the aur helper
 aur_helper=$(command -v yay || command -v paru)
@@ -90,7 +88,7 @@ for browser in "${browser_array[@]}"; do
         curl -fsS https://dl.brave.com/install.sh | sh
         sleep 1
 
-        [[ -z "$(command -v brave)" ]] && echo "Brave = 'error'" >> "$__browser" && exit 1
+        [[ -z "$(command -v brave)" ]] && echo "Brave = 'error'" | tee -a "$log" && exit 1
 
         printf "${attention}\n! After completting the installation, please make sure to open the browser and follow the steps.\n" && sleep 2 && echo
 
@@ -104,7 +102,7 @@ for browser in "${browser_array[@]}"; do
         install_from_aur ungoogled-chromium-bin
         sleep 1
 
-        [[ -z "$(command -v chromium)" ]] && echo "Chromium = 'error'" >> "$__browser" && exit 1
+        [[ -z "$(command -v chromium)" ]] && echo "Chromium = 'error'" | tee -a "$log" && exit 1
 
         printf "${attention}\n! After completting the installation, please make sure to open the browser and follow the steps.\n" && sleep 2 && echo
 
@@ -118,13 +116,13 @@ for browser in "${browser_array[@]}"; do
         install_package firefox
         sleep 1
 
-        [[ -z "$(command -v chromium)" ]] && echo "Firefox = 'error'" >> "$__browser" && exit 1
+        [[ -z "$(command -v chromium)" ]] && echo "Firefox = 'error'" | tee -a "$log" && exit 1
         ;;
     "Vivaldi")
         install_package vivaldi
         sleep 1
 
-        [[ -z "$(command -v chromium)" ]] && echo "Vivaldi = 'error'" >> "$__browser" && exit 1
+        [[ -z "$(command -v chromium)" ]] && echo "Vivaldi = 'error'" | tee -a "$log" && exit 1
 
         printf "${attention}\n! After completting the installation, please make sure to open the browser and follow the steps.\n" && sleep 2 && echo
 
@@ -138,7 +136,7 @@ for browser in "${browser_array[@]}"; do
         install_from_aur zen-browser-avx2-bin
         sleep 1
 
-        [[ -z "$(command -v chromium)" ]] && echo "Zen = 'error'" >> "$__browser" && exit 1
+        [[ -z "$(command -v chromium)" ]] && echo "Zen = 'error'" | tee -a "$log" && exit 1
 
         ;;
     *)

@@ -50,34 +50,27 @@ dir="$(dirname "$(realpath "$0")")"
 source "$dir/1-global_script.sh"
 
 parent_dir="$(dirname "$dir")"
-__hypr_cache="$parent_dir/.cache/2-hyprland"
 
-if [[ -f "$__hypr_cache" ]]; then
-    source "$__hypr_cache"
-
-    errors=$(grep "error" "$__hypr_cache")
-    if [[ -z "$errors" ]]; then
-        printf "${note}\n;; No need to run this script again\n"
-        exit 0
-
-    elif [[ -n "$errors" ]]; then
-        error_pkgs=($(grep "error" "$__hypr_cache" | awk {'print $1'}))
-            for __erros in "${error_pkgs[@]}"; do
-                install_package "$__erros"
-            done
-    fi
-
-elif [[ ! -f "$__hypr_cache" ]]; then
-    touch "$__hypr_cache"
-fi
 
 source "$parent_dir/interaction_fn.sh"
 
 # log directory
 log_dir="$parent_dir/Logs"
 log="$log_dir/hyprland-$(date +%d-%m-%y).log"
-mkdir -p "$log_dir"
-touch "$log"
+
+if [[ -f "$log" ]]; then
+    source "$log"
+
+    errors=$(grep "ERROR" "$log")
+    if [[ -z "$errors" ]]; then
+        printf "${note}\n;; No need to run this script again\n"
+        sleep 2
+        exit 0
+    fi
+else
+    mkdir -p "$log_dir"
+    touch "$log"
+fi
 
 aur_helper=$(command -v yay || command -v paru) # find the aur helper
 
@@ -117,10 +110,6 @@ for hypr_pkgs in "${hypr_packages[@]}"; do
         echo "[ DONE ] - $hypr_pkgs was installed successfully!\n" 2>&1 | tee -a "$log" &>/dev/null
     else
         echo "[ ERROR ] - Sorry, could not install $hypr_pkgs!\n" 2>&1 | tee -a "$log" &>/dev/null
-
-        if ! grep -q "$hypr_pkgs = 'error'" "$__hypr_cache"; then
-            echo "$hypr_pkgs = 'error'" >> "$__hypr_cache" &> /dev/null
-        fi
     fi
 done
 

@@ -50,35 +50,28 @@ dir="$(dirname "$(realpath "$0")")"
 source "$dir/1-global_script.sh"
 
 parent_dir="$(dirname "$dir")"
-__sddm="$parent_dir/.cache/9-sddm"
-
-if [[ -f "$__sddm" ]]; then
-    source "$__sddm"
-
-    errors=$(grep "error" "$__sddm")
-    if [[ -z "$errors" ]]; then
-        printf "${note}\n;; No need to run this script again\n"
-        exit 0
-
-    elif [[ -n "$errors" ]]; then
-        error_pkgs=($(grep "error" "$__sddm" | awk {'print $1'}))
-            for __erros in "${error_pkgs[@]}"; do
-                install_package "$__erros"
-            done
-    fi
-
-elif [[ ! -f "$__sddm" ]]; then
-    touch "$__sddm"
-fi
-
+common_scripts="$parent_dir/common"
 source "$parent_dir/interaction_fn.sh"
 
 # log directory
 log_dir="$parent_dir/Logs"
 log="$log_dir/sddm-$(date +%d-%m-%y).log"
-mkdir -p "$log_dir"
-touch "$log"
-common_scripts="$parent_dir/common"
+
+if [[ -f "$log" ]]; then
+    source "$log"
+
+    errors=$(grep "ERROR" "$log")
+    if [[ -z "$errors" ]]; then
+        printf "${note}\n;; No need to run this script again\n"
+        sleep 2
+        exit 0
+    fi
+
+else
+    mkdir -p "$log_dir"
+    touch "$log"
+fi
+
 
 # packages for sddm
 sddm=(
@@ -96,10 +89,6 @@ for sddm_pkgs in "${sddm[@]}"; do
         echo "[ DONE ] - $sddm_pkgs was installed successfully!\n" 2>&1 | tee -a "$log" &>/dev/null
     else
         echo "[ ERROR ] - Sorry, could not install $sddm_pkgs!\n" 2>&1 | tee -a "$log" &>/dev/null
-
-        if ! grep -q "$sddm_pkgs = 'error'" "$__sddm"; then
-            echo "$sddm_pkgs = 'error'" >> "$__sddm" &> /dev/null
-        fi
     fi
 done
 

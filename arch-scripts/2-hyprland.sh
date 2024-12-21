@@ -50,8 +50,6 @@ dir="$(dirname "$(realpath "$0")")"
 source "$dir/1-global_script.sh"
 
 parent_dir="$(dirname "$dir")"
-
-
 source "$parent_dir/interaction_fn.sh"
 
 # log directory

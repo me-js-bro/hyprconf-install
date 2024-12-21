@@ -55,8 +55,18 @@ source "$parent_dir/interaction_fn.sh"
 
 log_dir="$parent_dir/Logs"
 log="$log_dir/vs_code-$(date +%d-%m-%y).log"
-mkdir -p "$log_dir"
-touch "$log"
+
+if [[ -f "$log" ]]; then
+    errors=$(grep "ERROR" "$log")
+    if [[ -z "$errors" ]]; then
+        printf "${note}\n;; No need to run this script again\n"
+        sleep 2
+        exit 0
+    fi
+else
+    mkdir -p "$log_dir"
+    touch "$log"
+fi
 
 # checking if vs code is installed
 if sudo dnf list installed code &>> /dev/null; then
@@ -70,7 +80,7 @@ else
     sudo sh -c 'echo -e "[code]\nname=Visual Studio Code\nbaseurl=https://packages.microsoft.com/yumrepos/vscode\nenabled=1\ngpgcheck=1\ngpgkey=https://packages.microsoft.com/keys/microsoft.asc" > /etc/yum.repos.d/vscode.repo' 2>&1 | tee -a "$log" &>> /dev/null
     sudo dnf install -y code 2>&1 | tee -a "$log"
 
-    if sudo dnf list installed code &>> /dev/null; then
+    if sudo dnf list installed code &> /dev/null; then
         printf "${done}\n:: Visual Studio Code was installed successfully.\n" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
     else
         printf "${error}\n! Could not installed Visual Studio Code. Please check the $log file Maybe you need to install it manually. (╥﹏╥)\n" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")

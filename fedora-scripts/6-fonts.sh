@@ -46,14 +46,24 @@ printf " \n \n"
 dir="$(dirname "$(realpath "$0")")"
 source "$dir/1-global_script.sh"
 
-# log directory
 parent_dir="$(dirname "$dir")"
 source "$parent_dir/interaction_fn.sh"
 
+# log directory
 log_dir="$parent_dir/Logs"
 log="$log_dir/fonts-$(date +%d-%m-%y).log"
-mkdir -p "$log_dir"
-touch "$log"
+if [[ -f "$log" ]]; then
+    errors=$(grep "ERROR" "$log")
+    last_installed=$(grep "jetbrains-mono-fonts" "$log" | awk {'print $2'})
+    if [[ -z "$errors" && "$last_installed" == "DONE" ]]; then
+        printf "${note}\n;; No need to run this script again\n"
+        sleep 2
+        exit 0
+    fi
+else
+    mkdir -p "$log_dir"
+    touch "$log"
+fi
 
 # installable fonts will be here
 fonts=(
@@ -72,30 +82,29 @@ for font in "${fonts[@]}"; do
   echo " [ DONE ] - $font was installed successfully!" 2>&1 | tee -a "$log"
 done
 
-DOWNLOAD_URL="https://github.com/ryanoasis/nerd-fonts/releases/latest/download/JetBrainsMono.tar.xz"
-# Maximum number of download attempts
-MAX_ATTEMPTS=2
-for ((ATTEMPT = 1; ATTEMPT <= MAX_ATTEMPTS; ATTEMPT++)); do
-    curl -OL "$DOWNLOAD_URL" && break
-    printf "Download attempt $ATTEMPT failed. Retrying in 2 seconds...\n"
-    sleep 2
-done
-
-# Check if the JetBrainsMono folder exists and delete it if it does
-if [ -d ~/.local/share/fonts/JetBrainsMonoNerd ]; then
-    rm -rf ~/.local/share/fonts/JetBrainsMonoNerd
+if [ ! -d ~/.local/share/fonts/JetBrainsMonoNerd ]; then
+    DOWNLOAD_URL="https://github.com/ryanoasis/nerd-fonts/releases/latest/download/JetBrainsMono.tar.xz"
+    # Maximum number of download attempts
+    MAX_ATTEMPTS=2
+    for ((ATTEMPT = 1; ATTEMPT <= MAX_ATTEMPTS; ATTEMPT++)); do
+        curl -OL "$DOWNLOAD_URL" && break
+        printf "Download attempt $ATTEMPT failed. Retrying in 2 seconds...\n"
+        sleep 2
+    done
+    mkdir -p ~/.local/share/fonts/JetBrainsMonoNerd
+    # Extract the new files into the JetBrainsMono folder and log the output
+    tar -xJkf JetBrainsMono.tar.xz -C ~/.local/share/fonts/JetBrainsMonoNerd
+else 
+    printf "${done}\n:: JetBrainsMonoNerd font was already there.\n"
 fi
 
-mkdir -p ~/.local/share/fonts/JetBrainsMonoNerd
-# Extract the new files into the JetBrainsMono folder and log the output
-tar -xJkf JetBrainsMono.tar.xz -C ~/.local/share/fonts/JetBrainsMonoNerd
 
 # Update font cache and log the output
-fc-cache -v &> /dev/null
+sudo fc-cache -fv &> /dev/null
 
 # clean up 
 if [ -d "JetBrainsMono.tar.xz" ]; then
-	rm -r JetBrainsMono.tar.xz
+	rm -rf JetBrainsMono.tar.xz
 fi
 
 sleep 1 && clear

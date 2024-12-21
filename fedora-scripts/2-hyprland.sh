@@ -52,8 +52,19 @@ source "$parent_dir/interaction_fn.sh"
 
 log_dir="$parent_dir/Logs"
 log="$log_dir/hyprland-$(date +%d-%m-%y).log"
-mkdir -p "$log_dir"
-touch "$log"
+
+if [[ -f "$log" ]]; then
+    errors=$(grep "ERROR" "$log")
+    last_installed=$(grep "hyprsunset" "$log" | awk {'print $2'})
+    if [[ -z "$errors" && "$last_installed" == "DONE" ]]; then
+        printf "${note}\n;; No need to run this script again\n"
+        sleep 2
+        exit 0
+    fi
+else
+    mkdir -p "$log_dir"
+    touch "$log"
+fi
 
 hypr=(
     hyprland
@@ -64,7 +75,7 @@ hypr=(
     hyprsunset
 )
 
-# Installation of Hyprland and Hyprlock
+# Installation of Hyprland basics
 for hypr_pkgs in "${hypr[@]}"; do
     install_package "$hypr_pkgs"
     if sudo dnf list installed "$hypr_pkgs" &>> /dev/null; then

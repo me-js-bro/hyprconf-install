@@ -104,6 +104,7 @@ other_packages=(
 )
 
 aur_packages=(
+    hyprland-qtutils-git
     grimblast-git
     hyprsunset
 )

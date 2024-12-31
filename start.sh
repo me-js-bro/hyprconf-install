@@ -73,17 +73,17 @@ check_distro() {
         . /etc/os-release
         case "$ID" in
             arch)
-                printf "${action}\n:: Starting the script for ${cyan}$ID${end} Linux\n\n"
+                msg act "Starting the script for ${cyan}$ID${end} Linux\n\n"
                 distro="arch"
                 echo "distro=$distro" >> "$distro_cache" 2>&1 | tee -a "$log"
                 ;;
             fedora)
-                printf "${action}\n:: Starting the script for ${blue}$ID${end}\n\n"
+                msg act "Starting the script for ${blue}$ID${end}\n\n"
                 distro="fedora"
                 echo "distro=$distro" >> "$distro_cache" 2>&1 | tee -a "$log"
                 ;;
             opensuse*)
-                printf "${action}\n:: Starting the script for ${green}$ID${end}\n\n"
+                msg act "Starting the script for ${green}$ID${end}\n\n"
                 distro="opensuse"
                 echo "distro=$distro" >> "$distro_cache" 2>&1 | tee -a "$log"
                 ;;
@@ -92,7 +92,7 @@ check_distro() {
                 ;;
         esac
     else
-        printf "${error}\n! Sorry, the script won't work in $ID.\n"
+        msg err "Sorry, the script won't work in $ID."
         exit 1
     fi
 }
@@ -115,21 +115,23 @@ if [[ -f "$cache_file" ]]; then
 
     # Check if Nvidia prompt has no value set
     if [[ -z "$have_Nvidia_gpu" ]]; then
-        printf "${error} - User prompt was not given properly. Please run the script again...\n" && sleep 0.5
+        msg err "User prompt was not given properly. Please run the script again..."
 
-        gum confirm "Would you like to run the script again?" \
-            --affirmative "Yes, run" \
-            --negative "No, close it"
+        # gum confirm "Would you like to run the script again?" \
+        #     --affirmative "Yes, run" \
+        #     --negative "No, close it"
+
+        fn_ask "Would you like to run the script agaain?" "Yes, sure." "No, close it."
 
         if [[ $? -eq 0 ]]; then
-            printf "${action}\n==> Starting the script again.\n"
+            gum spin --spinner dot --title "Starting the script again.." -- sleep 3
             rm -f "$cache_file"
             "$dir/start.sh"
         else
             fn_exit "Exiting the script here. Goodbye."
         fi
     else
-        printf "${attention}\n:: Cache file is there. Skipping prompts...\n\n" && sleep 1
+        msg att "Cache file is there. Skipping prompts..."
     fi
 else
     touch "$cache_file"
@@ -164,7 +166,7 @@ clear
 if [[ "$distro" == "arch" ]]; then
     aur=$(command -v yay || command -v paru)
     if [[ -n "$aur" ]]; then
-        printf "${done} - Aur helper $aur was located... Moving on\n" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
+        msg dn "Aur helper $aur was located... Moving on" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
         sleep 1
     else
         "$scripts_dir/00-repo.sh" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
@@ -236,7 +238,7 @@ is_laptop() {
 # Determine if the system is a laptop or desktop
 system_type=$(is_laptop)
 if [ "$system_type" = "Desktop" ]; then
-    printf "${attention}\n:: This system is a Desktop. Some configuration will be skipped\n" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
+    msg nt "This system is a Desktop. Some configuration will be skipped.." 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log") && sleep 2
 else
     "$common_scripts/laptop.sh" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
 fi
@@ -246,23 +248,19 @@ sleep 1 && clear
 
 # =========  system reboot  ========= #
 
-fn_done "Congratulations! The script completes here." && sleep 2
-printf "${attention}\n!! Need to reboot the system.\n"
-gum confirm \
-    "Would you like to.." \
-    --affirmative "Reboot now?" \
-    --negative "Not now!"
+msg dn "Congratulations! The script completes here." && sleep 2
+msg att "Need to reboot the system."
 
+fn_ask "Would you like to reboot now?" "Reboot" "No, skip"
 if [[ $? -eq 0 ]]; then
     clear
     # rebooting the system in 3 seconds
     for second in 3 2 1; do
-        printf "${action}\n==> Rebooting the system in ${second}s\n" && sleep 1 && clear
+        printf ":: Rebooting the system in ${second}s\n" && sleep 1 && clear
     done
         systemctl reboot --now
 else
-    printf "${orange}[ * ] - Ok, but it's good to reboot the system. Anyway, the script successfully ends here..${end}\n" && sleep 1
-    printf "${orange}[ * ] - Enjoy ${cyan}Hyprland. (◠‿◠)${end}\n"
+    msg nt "Ok, but make sure to reboot the system...\n   See you later.(◠‿◠)" && sleep 1
     exit 0
 fi
 

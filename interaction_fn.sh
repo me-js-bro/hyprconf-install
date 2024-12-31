@@ -61,13 +61,11 @@ fn_welcome() {
 }
 
 fn_ask() {
-    printf "${ask}\n"
-     gum confirm ":: $1" \
-    --prompt.foreground "$orange_hex" \
-    --unselected.background "#dddddd" \
-    --unselected.foreground "#000000" \
-    --selected.foreground "#000000" \
-    --selected.background "$orange_hex"
+    gum confirm "$1" \
+        --affirmative "$2" \
+        --selected.background "$cyan_hex" \
+        --selected.foreground "#000" \
+        --negative "$3"
 }
 
 fn_exit() {
@@ -95,10 +93,32 @@ fn_choose_prompts() {
     done
 }
 
-fn_done() {
-    printf "${done}\n:: $1\n\n"
-}
+msg() {
+    local actn="$1"
+    local msg="$2"
 
-fn_error() {
-    printf "${error}\n! $1\n\n"
+    case $actn in
+        act)
+            printf "${green}=>${end} $msg\n"
+            ;;
+        ask)
+            printf "${orange}??${end} $msg\n"
+            ;;
+        dn)
+            printf "${cyan}::${end} $msg\n"
+            ;;
+        att)
+            printf "${yellow}!!${end} $msg\n"
+            ;;
+        nt)
+            printf "${blue}\$\$${end} $msg\n"
+            ;;
+        err)
+            printf "${red}>< Ohh sheet! an error..${end}\n   $msg\n"
+            sleep 1
+            ;;
+        *)
+            printf "$msg\n"
+            ;;
+    esac
 }

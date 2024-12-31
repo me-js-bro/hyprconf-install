@@ -18,14 +18,6 @@ cyan="\e[1;36m"
 orange="\e[1;38;5;214m"
 end="\e[1;0m"
 
-# initial texts
-attention="[${orange} ATTENTION ${end}]"
-action="[${green} ACTION ${end}]"
-note="[${magenta} NOTE ${end}]"
-done="[${cyan} DONE ${end}]"
-ask="[${orange} QUESTION ${end}]"
-error="[${red} ERROR ${end}]"
-
 display_text() {
     gum style \
         --border rounded \
@@ -58,11 +50,15 @@ source "$parent_dir/interaction_fn.sh"
 log_dir="$parent_dir/Logs"
 log="$log_dir/nvdia-$(date +%d-%m-%y).log"
 
+# skip installed cache
+cache_dir="$parent_dir/.cache"
+installed_cache="$cache_dir/installed_packages"
+
 if [[ -f "$log" ]]; then
     errors=$(grep "ERROR" "$log")
     last_installed=$(grep "libva-nvidia-driver-git" "$log" | awk {'print $2'})
     if [[ -z "$errors" && "$last_installed" == "DONE" ]]; then
-        printf "${note}\n;; No need to run this script again\n"
+        msg nt "No need to run this script again..."
         sleep 2
         exit 0
     fi
@@ -81,18 +77,27 @@ nvidia_pkg=(
     libva-nvidia-driver-git
 )
 
-# nvidia stuff
-printf "${action}\n==> Checking for other hyprland packages and remove if any.\n"
-if pacman -Qs hyprland &>/dev/null; then
-    printf "${action}\n==> Hyprland detected. uninstalling to install Hyprland from official repo.\n"
+# checking already installed packages 
+for skipable in "${nvidia_pkg[@]}"; do
+    skip_installed "$skipable"
+done
 
-    for hyprnvi in hyprland-git hyprland-nvidia hyprland-nvidia-git hyprland-nvidia-hidpi-git; do
-        sudo pacman -Rns --noconfirm "$hyprnvi" 2>&1 | tee -a "$log" &>/dev/null
-    done
-fi
+to_install=($(printf "%s\n" "${nvidia_pkg[@]}" | grep -vxFf "$installed_cache"))
+
+printf "\n\n"
+
+# Instlling nvidia packages...
+for __nvidia in "${to_install[@]}"; do
+    install_package "$__nvidia"
+    if sudo pacman -Q "$__nvidia" &>/dev/null; then
+        echo "[ DONE ] - $__nvidia was installed successfully!\n" 2>&1 | tee -a "$log" &>/dev/null
+    else
+        echo "[ ERROR ] - Sorry, could not install $__nvidia!\n" 2>&1 | tee -a "$log" &>/dev/null
+    fi
+done
 
 # Install additional Nvidia packages
-printf "${action}\n==> Installing addition Nvidia packages.\n"
+msg act "Installing addition Nvidia packages..."
 for krnl in $(cat /usr/lib/modules/*/pkgbase); do
     for NVIDIA in "${krnl}-headers" "${nvidia_pkg[@]}"; do
         install_package "$NVIDIA" 2>&1 | tee -a "$log"
@@ -101,10 +106,10 @@ done
 
 # Check if the Nvidia modules are already added in mkinitcpio.conf and add if not
 if grep -qE '^MODULES=.*nvidia. *nvidia_modeset.*nvidia_uvm.*nvidia_drm' /etc/mkinitcpio.conf; then
-    echo ":: Nvidia modules already included in /etc/mkinitcpio.conf" 2>&1 | tee -a "$log"
+    msg att "Nvidia modules already included in /etc/mkinitcpio.conf" 2>&1 | tee -a "$log"
 else
     sudo sed -Ei 's/^(MODULES=\([^\)]*)\)/\1 nvidia nvidia_modeset nvidia_uvm nvidia_drm)/' /etc/mkinitcpio.conf 2>&1 | tee -a "$log"
-    echo ":: Nvidia modules added in /etc/mkinitcpio.conf"
+    msg dn "Nvidia modules added in /etc/mkinitcpio.conf"
 fi
 
 sudo mkinitcpio -P 2>&1 | tee -a "$log"
@@ -113,9 +118,9 @@ printf "\n\n\n"
 # Additional Nvidia steps
 NVEA="/etc/modprobe.d/nvidia.conf"
 if [ -f "$NVEA" ]; then
-    fn_done "Seems like nvidia-drm modeset=1 is already added in your system..moving on."
+    msg dn "Seems like nvidia-drm modeset=1 is already added in your system..moving on."
 else
-    printf "${action}\n==> Adding options to $NVEA.\n"
+    msg act "Adding options to $NVEA."
     sudo echo -e "options nvidia-drm modeset=1" | sudo tee -a /etc/modprobe.d/nvidia.conf 2>&1 | tee -a "$log"
     echo
 fi
@@ -129,24 +134,24 @@ if [ -f /etc/default/grub ]; then
         sudo sed -i 's/\(GRUB_CMDLINE_LINUX_DEFAULT=".*\)"/\1 nvidia-drm.modeset=1"/' /etc/default/grub
         # Regenerate GRUB configuration
         sudo grub-mkconfig -o /boot/grub/grub.cfg
-        echo ":: nvidia-drm.modeset=1 added to /etc/default/grub" 2>&1 | tee -a "$log"
+        msg att "nvidia-drm.modeset=1 added to /etc/default/grub" 2>&1 | tee -a "$log"
     else
-        echo ":: nvidia-drm.modeset=1 is already present in /etc/default/grub" 2>&1 | tee -a "$log"
+        msg skp "nvidia-drm.modeset=1 is already present in /etc/default/grub" 2>&1 | tee -a "$log"
     fi
 else
     echo "/etc/default/grub does not exist"
 fi
 
 # Blacklist nouveau
-fn_ask "Would you like to blacklist nouveau?"
+fn_ask "Would you like to blacklist nouveau?" "Yes!" "No!"
 if [[ $? -eq 0 ]]; then
     NOUVEAU="/etc/modprobe.d/nouveau.conf"
     if [ -f "$NOUVEAU" ]; then
-        fn_done "Seems like nouveau is already blacklisted..moving on"
+        msg act "Seems like nouveau is already blacklisted..moving on"
     else
         printf "\n"
         echo "blacklist nouveau" | sudo tee -a "$NOUVEAU" 2>&1 | tee -a "$log"
-        fn_done "Has been added to $NOUVEAU"
+        msg dn "Has been added to $NOUVEAU"
 
         # To completely blacklist nouveau (See wiki.archlinux.org/title/Kernel_module#Blacklisting 6.1)
         if [ -f "/etc/modprobe.d/blacklist.conf" ]; then
@@ -156,7 +161,7 @@ if [[ $? -eq 0 ]]; then
         fi
     fi
 else
-    fn_error "Skipping nouveau blacklisting." 2>&1 | tee -a "$log"
+    msg err "Skipping nouveau blacklisting." 2>&1 | tee -a "$log"
 fi
 
-clear
+sleep 1 & clear

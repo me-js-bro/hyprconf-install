@@ -16,14 +16,6 @@ cyan="\e[1;36m"
 orange="\e[1;38;5;214m"
 end="\e[1;0m"
 
-# initial texts
-attention="[${orange} ATTENTION ${end}]"
-action="[${green} ACTION ${end}]"
-note="[${magenta} NOTE ${end}]"
-done="[${cyan} DONE ${end}]"
-ask="[${orange} QUESTION ${end}]"
-error="[${red} ERROR ${end}]"
-
 display_text() {
     gum style \
         --border rounded \
@@ -54,11 +46,16 @@ source "$parent_dir/interaction_fn.sh"
 # log directory
 log_dir="$parent_dir/Logs"
 log="$log_dir/fonts-$(date +%d-%m-%y).log"
+
+# skip installed cache
+cache_dir="$parent_dir/.cache"
+installed_cache="$cache_dir/installed_packages"
+
 if [[ -f "$log" ]]; then
     errors=$(grep "ERROR" "$log")
     last_installed=$(grep "noto-fonts-emoji" "$log" | awk {'print $2'})
     if [[ -z "$errors" && "$last_installed" == "DONE" ]]; then
-        printf "${note}\n;; No need to run this script again\n"
+        msg nt "No need to run this script again..."
         sleep 2
         exit 0
     fi
@@ -78,14 +75,22 @@ fonts=(
     noto-fonts-emoji
 )
 
-printf "${action}\n==> Installing some necessary fonts\n"
+# checking already installed packages 
+for skipable in "${fonts[@]}"; do
+    skip_installed "$skipable"
+done
 
-for font_pkgs in "${fonts[@]}"; do
-    install_package "$font_pkgs"
-    if sudo pacman -Q "$font_pkgs" &>/dev/null; then
-        echo "[ DONE ] - $font_pkgs was installed successfully!\n" 2>&1 | tee -a "$log" &>/dev/null
+to_install=($(printf "%s\n" "${fonts[@]}" | grep -vxFf "$installed_cache"))
+
+printf "\n\n"
+
+# Instlling main packages...
+for font in "${to_install[@]}"; do
+    install_package "$font"
+    if sudo pacman -Q "$font" &>/dev/null; then
+        echo "[ DONE ] - $font was installed successfully!\n" 2>&1 | tee -a "$log" &>/dev/null
     else
-        echo "[ ERROR ] - Sorry, could not install $font_pkgs!\n" 2>&1 | tee -a "$log" &>/dev/null
+        echo "[ ERROR ] - Sorry, could not install $font!\n" 2>&1 | tee -a "$log" &>/dev/null
     fi
 done
 

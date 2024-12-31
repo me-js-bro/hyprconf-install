@@ -24,47 +24,64 @@ error="[${red} ERROR ${end}]"
 # sourcing the intaraction functions
 dir="$(dirname "$(realpath "$0")")"
 parent_dir="$(dirname "$dir")"
+cache_dir="$parent_dir/.cache"
+installed_cache="$cache_dir/installed_packages"
 source "$parent_dir/interaction_fn.sh"
+
+[[ ! -f "$installed_cache" ]] && touch "$installed_cache"
 
 ###------ Startup ------###
 
 package_manager=$(command -v pacman || command -v yay || command -v paru)
 aur_helper=$(command -v yay || command -v paru) # find the aur helper
 
+
+# skip already insalled packages
+skip_installed() {
+
+    [[ ! -f "$installed_cache" ]] && touch "$installed_cache"
+
+    if sudo "$package_manager" -Q "$1" &> /dev/null; then
+        msg skp "$1 is already installed. Skipping..." && sleep 0.1
+        if ! grep -qx "$1" "$installed_cache"; then
+            echo "$1" >> "$installed_cache"
+        fi
+    fi
+}
+
 # package installation from main repo function..
 install_package() {
 
-    if sudo "$package_manager" -Q "$1" &>/dev/null; then
-        fn_done "$1 is already installed. Skipping..."
-    else
+    # if sudo "$package_manager" -Q "$1" &>/dev/null; then
+    #     msg skp "$1 is already installed. Skipping..."
+    # else
 
-        printf "${action}\n==> Installing $1...\n"
-        sudo pacman -S --noconfirm "$1"
+        msg act "Installing $1..."
+        sudo pacman -S --noconfirm "$1" &> /dev/null
 
         if sudo "$package_manager" -Q "$1" &>/dev/null; then
-            fn_done "$1 was installed successfully!"
+            msg dn "$1 was installed successfully!"
         else
 
             fn_error "$1 failed to install. Maybe therer is an issue. (╥﹏╥)"
         fi
-    fi
+    # fi
 }
 
 # package installation from aur helper function..
 install_from_aur() {
 
-    if sudo "$package_manager" -Q "$1" &>/dev/null; then
-        fn_done "$1 is already installed. Skipping..."
-    else
+    # if sudo "$package_manager" -Q "$1" &>/dev/null; then
+    #     msg skp "$1 is already installed. Skipping..."
+    # else
 
-        printf "${action}\n==> Installing $1...\n"
-        "$aur_helper" -S --noconfirm "$1"
+        msg act "Installing $1..."
+        "$aur_helper" -S --noconfirm "$1" &> /dev/nul
 
-        if sudo "$package_manager" -Q "$1" &>/dev/null; then
-            fn_done "$1 was installed successfully!"
+        if sudo "$package_manager" -Q "$1" &> /dev/null; then
+            msg dn "$1 was installed successfully!"
         else
 
             fn_error "$1 failed to install. Maybe therer is an issue. (╥﹏╥)"
         fi
-    fi
 }

@@ -16,20 +16,12 @@ cyan="\e[1;36m"
 orange="\e[1;38;5;214m"
 end="\e[1;0m"
 
-# initial texts
-attention="[${orange} ATTENTION ${end}]"
-action="[${green} ACTION ${end}]"
-note="[${magenta} NOTE ${end}]"
-done="[${cyan} DONE ${end}]"
-ask="[${orange} QUESTION ${end}]"
-error="[${red} ERROR ${end}]"
-
 dir="$(dirname "$(realpath "$0")")"
 start="$dir/start.sh"
 
 clear && sleep 1
 
-printf "${cyan}**${end} Need to install some packages first, installing those...\n" && sleep 2
+printf "${cyan}**${end} Pre install script...\n  Need to install some packages first, installing those...\n" && sleep 2
 
 packages=(
     git

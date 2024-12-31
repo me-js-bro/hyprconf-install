@@ -16,14 +16,6 @@ cyan="\e[1;36m"
 orange="\e[1;38;5;214m"
 end="\e[1;0m"
 
-# initial texts
-attention="[${orange} ATTENTION ${end}]"
-action="[${green} ACTION ${end}]"
-note="[${magenta} NOTE ${end}]"
-done="[${cyan} DONE ${end}]"
-ask="[${orange} QUESTION ${end}]"
-error="[${red} ERROR ${end}]"
-
 # color defination (hex for gum)
 red_hex="#FF0000"       # Bright red
 green_hex="#00FF00"     # Bright green
@@ -103,7 +95,7 @@ clear && fn_welcome && sleep 1
 # starting the main script prompt...
 gum spin --spinner line \
          --spinner.foreground "#dddddd" \
-         --title "Starting the main script for $distro..." \
+         --title "Starting the main script for ${distro} linux..." \
          --title.foreground "#dddddd" -- \
          sleep 3
 clear
@@ -114,12 +106,8 @@ if [[ -f "$cache_file" ]]; then
     source "$cache_file"
 
     # Check if Nvidia prompt has no value set
-    if [[ -z "$have_Nvidia_gpu" ]]; then
+    if [[ -z "$Nvidia" ]]; then
         msg err "User prompt was not given properly. Please run the script again..."
-
-        # gum confirm "Would you like to run the script again?" \
-        #     --affirmative "Yes, run" \
-        #     --negative "No, close it"
 
         fn_ask "Would you like to run the script agaain?" "Yes, sure." "No, close it."
 
@@ -135,17 +123,20 @@ if [[ -f "$cache_file" ]]; then
     fi
 else
     touch "$cache_file"
-
     cat > "$cache_file" << EOF
-install_Bluetooth_service=''
-install_OpenBangla_Keyboard=''
-install_and_configure_zsh=''
-configure_your_default_Bash=''
-install_Visual_Studio_Code=''
-have_Nvidia_gpu=''
+Bluetooth=''
+Shell=''
+Keyb=''
+VS_code=''
+Nvidia=''
 EOF
 
-fn_choose_prompts "install_Bluetooth_service" "install_OpenBangla_Keyboard" "install_and_configure_zsh" "configure_your_default_Bash" "install_Visual_Studio_Code" "have_Nvidia_gpu"
+    # asking prompts
+    fn_ask_prompts "Bluetooth" "Would you like to enable Bluetooth service?" "Yes!" "No!"
+    fn_ask_prompts "Shell" "Would you like to..." "Configure zsh" "Configure Bash"
+    fn_ask_prompts "Keyb" "Would you like to install Openbangla Keyboard?" "Yes!" "No!"
+    fn_ask_prompts "VS_code" "Would you like to install VS Code?" "Yes!" "No!"
+    fn_ask_prompts "Nvidia" "Do you have Nvidia GPU?" "Yes!" "No!"
 
     source "$cache_file"
 fi
@@ -179,41 +170,33 @@ fi
 "$scripts_dir/2-hyprland.sh" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
 "$scripts_dir/3-other_packages.sh" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
 
-
 "$scripts_dir/6-fonts.sh" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
 
-if [[ "$install_OpenBangla_Keyboard" =~ ^[Yy]$ ]]; then
+if [[ "$Keyb" =~ ^[Yy]$ ]]; then
     "$common_scripts/write_bangla.sh" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
 fi
 
 "$scripts_dir/7-browser.sh" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
 
-if [[ "$install_Visual_Studio_Code" =~ ^[Yy]$ ]]; then
+if [[ "$VS_code" =~ ^[Yy]$ ]]; then
     "$scripts_dir/8-vs_code.sh" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
 fi
-
 
 "$scripts_dir/9-sddm.sh" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
 "$scripts_dir/10-xdg_dp.sh" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
 "$scripts_dir/11-uninstall.sh" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
 
-
-if [[ "$have_Nvidia_gpu" =~ ^[Yy]$ ]]; then
+if [[ "$Nvidia" =~ ^[Yy]$ ]]; then
     "$scripts_dir/nvidia.sh" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
 fi
 
-
-if [[ "$install_Bluetooth_service" =~ ^[Yy]$ ]]; then
+if [[ "$Bluetooth" =~ ^[Yy]$ ]]; then
     "$common_scripts/bluetooth.sh" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
 fi
 
-
-if [[ "$install_and_configure_zsh" =~ ^[Yy]$ ]]; then
+if [[ "$Shell" =~ ^[Yy]$ ]]; then
     "$common_scripts/zsh.sh" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
-fi
-
-
-if [[ "$configure_your_default_Bash" =~ ^[Yy]$ ]]; then
+elif [[ "$Shell" =~ ^[Nn]$ ]]; then
     "$common_scripts/bash.sh" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
 fi
 

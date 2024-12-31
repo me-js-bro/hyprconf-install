@@ -59,7 +59,7 @@ log="$log_dir/aur_helper-$(date +%d-%m-%y).log"
 if [[ -f "$log" ]]; then
     error=$(grep "ERROR" "$log")
     if [[ -z "$error" ]]; then
-        printf "${note}\n;; No need to run this script again.\n"
+        msg skp "This script was executed before. Skiping."
         sleep 2
         exit 0
     fi
@@ -77,30 +77,30 @@ fi
 
 # install git before installing the aur helper.
 if ! pacman -Qs git &>/dev/null; then
-    printf "${action}\n==> Installing git & base-devel.\n"
-    sudo pacman -S --noconfirm base-devel git 2>&1 | tee -a "$log" &>/dev/null
-    fn_done "Git & base-devel was installed successfully!"
+    msg act "Installing git and base devel"
+    sudo pacman -S --noconfirm base-devel git &> /dev/null 2>&1 | tee -a "$log" &>/dev/null
+    msg dn "Git & base-devel was installed successfully!"
 fi
 
 if [[ -z "$aur_helper" ]]; then
-    printf "${ask}\n?? Which aur helper would you like to install?\n"
+    msg ask "Which aur helper would you like to install?"
     choice=$(gum choose --limit=1 "yay" "paru")
 
     if [[ "$choice" == "yay" ]]; then
-        printf "${action}\n==> Installing yay.\n"
-        sudo rm -rf /var/lib/pacman/db.lck
+        msg act "Installing yay..."
+        sudo rm -rf /var/lib/pacman/db.lck &> /dev/null
         echo "aur='yay'" >>"$cache_file"
-        git clone https://aur.archlinux.org/yay.git "$parent_dir/.cache/yay"
+        git clone https://aur.archlinux.org/yay.git "$parent_dir/.cache/yay" &> /dev/null
         cd "$parent_dir/.cache/yay" || exit 1
         makepkg -si --noconfirm
         sleep 1
         cd "$parent_dir" || exit 1
         sudo rm -rf "$parent_dir/.cache/yay"
     elif [[ "$choice" == "paru" ]]; then
-        printf "${action}\n==> Installing paru.\n"
-        sudo rm -rf /var/lib/pacman/db.lck
+        msg act "Installing paru..."
+        sudo rm -rf /var/lib/pacman/db.lck &> /dev/null
         echo "aur='paru'" >> "$cache_file"
-        git clone https://aur.archlinux.org/paru.git "$parent_dir/.cache/paru"
+        git clone https://aur.archlinux.org/paru.git "$parent_dir/.cache/paru" &> /dev/null
         cd "$parent_dir/.cache/paru" || exit 1
         makepkg -si --noconfirm
         sleep 1
@@ -109,12 +109,12 @@ if [[ -z "$aur_helper" ]]; then
     fi
 
 elif [[ -n "$aur_helper" ]]; then
-    fn_done "$aur_helper was already installed.."
+    msg dn "$aur_helper was already installed..."
     exit 0
 fi
 
 if [[ -n "$(command -v yay)" || -n "$(command -v paru)" ]]; then
-    fn_done "Aur helper was installed successfully!"
+    msg dn "Aur helper was installed successfully!"
     echo "[ DONE ] - Aur helper was installed successfully!" 2>&1 | tee -a "$log" &>/dev/null
 else
     fn_error "Could not install aru helper. Maybe there was an issue. (╥﹏╥)"

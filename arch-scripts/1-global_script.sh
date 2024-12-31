@@ -51,37 +51,25 @@ skip_installed() {
 
 # package installation from main repo function..
 install_package() {
+    msg act "Installing $1..."
+    sudo pacman -S --noconfirm "$1" &> /dev/null
 
-    # if sudo "$package_manager" -Q "$1" &>/dev/null; then
-    #     msg skp "$1 is already installed. Skipping..."
-    # else
+    if sudo "$package_manager" -Q "$1" &>/dev/null; then
+        msg dn "$1 was installed successfully!"
+    else
 
-        msg act "Installing $1..."
-        sudo pacman -S --noconfirm "$1" &> /dev/null
-
-        if sudo "$package_manager" -Q "$1" &>/dev/null; then
-            msg dn "$1 was installed successfully!"
-        else
-
-            fn_error "$1 failed to install. Maybe therer is an issue. (╥﹏╥)"
-        fi
-    # fi
+        msg err "$1 failed to install. Maybe therer is an issue..."
+    fi
 }
 
 # package installation from aur helper function..
 install_from_aur() {
+    msg act "Installing $1..."
+    "$aur_helper" -S --noconfirm "$1" &> /dev/null
 
-    # if sudo "$package_manager" -Q "$1" &>/dev/null; then
-    #     msg skp "$1 is already installed. Skipping..."
-    # else
-
-        msg act "Installing $1..."
-        "$aur_helper" -S --noconfirm "$1" &> /dev/nul
-
-        if sudo "$package_manager" -Q "$1" &> /dev/null; then
-            msg dn "$1 was installed successfully!"
-        else
-
-            fn_error "$1 failed to install. Maybe therer is an issue. (╥﹏╥)"
-        fi
+    if sudo "$package_manager" -Q "$1" &> /dev/null; then
+        msg dn "$1 was installed successfully!"
+    else
+        msg err "$1 failed to install. Maybe therer is an issue..."
+    fi
 }

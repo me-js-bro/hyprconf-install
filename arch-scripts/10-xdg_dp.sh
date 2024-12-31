@@ -36,6 +36,11 @@ source "$parent_dir/interaction_fn.sh"
 
 log_dir="$parent_dir/Logs"
 log="$log_dir/xdg_dp-$(date +%d-%m-%y).log"
+
+# skip installed cache
+cache_dir="$parent_dir/.cache"
+installed_cache="$cache_dir/installed_packages"
+
 mkdir -p "$log_dir"
 touch "$log"
 
@@ -44,31 +49,42 @@ xdg=(
     xdg-desktop-portal-gtk
 )
 
-# XDG-DESKTOP-PORTAL-HYPRLAND
-for xdgs in "${xdg[@]}"; do
-    install_package "$xdgs" "$log"
+# checking already installed packages 
+for skipable in "${xdg[@]}"; do
+    skip_installed "$skipable"
 done
 
-printf "${action}\n==> Checking for other XDG-Desktop-Portal-Implementations.\n"
+to_install=($(printf "%s\n" "${xdg[@]}" | grep -vxFf "$installed_cache"))
 
-printf "${ask}\n?? Would you like to remove other XDG-Desktop-Portal-Implementations?\n"
-gum confirm "Choose..." \
-    --affirmative "Remove" \
-    --negative "Don't remove"
+printf "\n\n"
+
+# Instlling xdg packages...
+for xdg_pkgs in "${to_install[@]}"; do
+    install_package "$xdg_pkgs"
+    if sudo pacman -Q "$xdg_pkgs" &>/dev/null; then
+        echo "[ DONE ] - $xdg_pkgs was installed successfully!\n" 2>&1 | tee -a "$log" &>/dev/null
+    else
+        echo "[ ERROR ] - Sorry, could not install $xdg_pkgs!\n" 2>&1 | tee -a "$log" &>/dev/null
+    fi
+done
+
+msg att "Checking for other XDG-Desktop-Portal-Implementations..."
+
+fn_ask "Would you like to remove other XDG-Desktop-Portal-Implementations?" "Yes!" "No!"
 
 if [[ $? -eq 0 ]]; then
     # Clean out other portals
-    printf "${action}\n==> Clearing other xdg-desktop-portal implementations.\n"
+    msg att "Clearing other xdg-desktop-portal implementations..."
     # Check if packages are installed and uninstall if present
-    if pacman -Qs xdg-desktop-portal-wlr >/dev/null; then
-        echo "Removing xdg-desktop-portal-wlr..."
+    if pacman -Qs xdg-desktop-portal-wlr &> /dev/null; then
+        msg act "Removing xdg-desktop-portal-wlr..."
         sudo pacman -R --noconfirm xdg-desktop-portal-wlr 2>&1 | tee -a "$log"
     fi
 
-    if pacman -Qs xdg-desktop-portal-lxqt >/dev/null; then
-        echo "Removing xdg-desktop-portal-lxqt..."
+    if pacman -Qs xdg-desktop-portal-lxqt &> /dev/null; then
+        msg act "Removing xdg-desktop-portal-lxqt..."
         sudo pacman -R --noconfirm xdg-desktop-portal-lxqt 2>&1 | tee -a "$log"
     fi
 else
-    echo "no other XDG-implementations will be removed." >>"$log"
+    msg att "No other XDG-implementations will be removed." 2>&1 | tee -a "$log"
 fi

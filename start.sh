@@ -16,14 +16,6 @@ cyan="\e[1;36m"
 orange="\e[1;38;5;214m"
 end="\e[1;0m"
 
-# initial texts
-attention="[${orange} ATTENTION ${end}]"
-action="[${green} ACTION ${end}]"
-note="[${magenta} NOTE ${end}]"
-done="[${cyan} DONE ${end}]"
-ask="[${orange} QUESTION ${end}]"
-error="[${red} ERROR ${end}]"
-
 # color defination (hex for gum)
 red_hex="#FF0000"       # Bright red
 green_hex="#00FF00"     # Bright green
@@ -73,17 +65,17 @@ check_distro() {
         . /etc/os-release
         case "$ID" in
             arch)
-                printf "${action}\n:: Starting the script for ${cyan}$ID${end} Linux\n\n"
+                msg act "Starting the script for ${cyan}$ID${end} Linux\n\n"
                 distro="arch"
                 echo "distro=$distro" >> "$distro_cache" 2>&1 | tee -a "$log"
                 ;;
             fedora)
-                printf "${action}\n:: Starting the script for ${blue}$ID${end}\n\n"
+                msg act "Starting the script for ${blue}$ID${end}\n\n"
                 distro="fedora"
                 echo "distro=$distro" >> "$distro_cache" 2>&1 | tee -a "$log"
                 ;;
             opensuse*)
-                printf "${action}\n:: Starting the script for ${green}$ID${end}\n\n"
+                msg act "Starting the script for ${green}$ID${end}\n\n"
                 distro="opensuse"
                 echo "distro=$distro" >> "$distro_cache" 2>&1 | tee -a "$log"
                 ;;
@@ -92,7 +84,7 @@ check_distro() {
                 ;;
         esac
     else
-        printf "${error}\n! Sorry, the script won't work in $ID.\n"
+        msg err "Sorry, the script won't work in $ID."
         exit 1
     fi
 }
@@ -103,7 +95,7 @@ clear && fn_welcome && sleep 1
 # starting the main script prompt...
 gum spin --spinner line \
          --spinner.foreground "#dddddd" \
-         --title "Starting the main script for $distro..." \
+         --title "Starting the main script for ${distro} linux..." \
          --title.foreground "#dddddd" -- \
          sleep 3
 clear
@@ -114,36 +106,37 @@ if [[ -f "$cache_file" ]]; then
     source "$cache_file"
 
     # Check if Nvidia prompt has no value set
-    if [[ -z "$have_Nvidia_gpu" ]]; then
-        printf "${error} - User prompt was not given properly. Please run the script again...\n" && sleep 0.5
+    if [[ -z "$Nvidia" ]]; then
+        msg err "User prompt was not given properly. Please run the script again..."
 
-        gum confirm "Would you like to run the script again?" \
-            --affirmative "Yes, run" \
-            --negative "No, close it"
+        fn_ask "Would you like to run the script agaain?" "Yes, sure." "No, close it."
 
         if [[ $? -eq 0 ]]; then
-            printf "${action}\n==> Starting the script again.\n"
+            gum spin --spinner dot --title "Starting the script again.." -- sleep 3
             rm -f "$cache_file"
             "$dir/start.sh"
         else
             fn_exit "Exiting the script here. Goodbye."
         fi
     else
-        printf "${attention}\n:: Cache file is there. Skipping prompts...\n\n" && sleep 1
+        msg att "Cache file is there. Skipping prompts..."
     fi
 else
     touch "$cache_file"
-
     cat > "$cache_file" << EOF
-install_Bluetooth_service=''
-install_OpenBangla_Keyboard=''
-install_and_configure_zsh=''
-configure_your_default_Bash=''
-install_Visual_Studio_Code=''
-have_Nvidia_gpu=''
+Bluetooth=''
+Shell=''
+Keyb=''
+VS_code=''
+Nvidia=''
 EOF
 
-fn_choose_prompts "install_Bluetooth_service" "install_OpenBangla_Keyboard" "install_and_configure_zsh" "configure_your_default_Bash" "install_Visual_Studio_Code" "have_Nvidia_gpu"
+    # asking prompts
+    fn_ask_prompts "Bluetooth" "Would you like to enable Bluetooth service?" "Yes!" "No!"
+    fn_ask_prompts "Shell" "Would you like to..." "Configure zsh" "Configure Bash"
+    fn_ask_prompts "Keyb" "Would you like to install Openbangla Keyboard?" "Yes!" "No!"
+    fn_ask_prompts "VS_code" "Would you like to install VS Code?" "Yes!" "No!"
+    fn_ask_prompts "Nvidia" "Do you have Nvidia GPU?" "Yes!" "No!"
 
     source "$cache_file"
 fi
@@ -164,7 +157,7 @@ clear
 if [[ "$distro" == "arch" ]]; then
     aur=$(command -v yay || command -v paru)
     if [[ -n "$aur" ]]; then
-        printf "${done} - Aur helper $aur was located... Moving on\n" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
+        msg dn "Aur helper $aur was located... Moving on" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
         sleep 1
     else
         "$scripts_dir/00-repo.sh" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
@@ -177,41 +170,33 @@ fi
 "$scripts_dir/2-hyprland.sh" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
 "$scripts_dir/3-other_packages.sh" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
 
-
 "$scripts_dir/6-fonts.sh" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
 
-if [[ "$install_OpenBangla_Keyboard" =~ ^[Yy]$ ]]; then
+if [[ "$Keyb" =~ ^[Yy]$ ]]; then
     "$common_scripts/write_bangla.sh" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
 fi
 
 "$scripts_dir/7-browser.sh" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
 
-if [[ "$install_Visual_Studio_Code" =~ ^[Yy]$ ]]; then
+if [[ "$VS_code" =~ ^[Yy]$ ]]; then
     "$scripts_dir/8-vs_code.sh" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
 fi
-
 
 "$scripts_dir/9-sddm.sh" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
 "$scripts_dir/10-xdg_dp.sh" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
 "$scripts_dir/11-uninstall.sh" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
 
-
-if [[ "$have_Nvidia_gpu" =~ ^[Yy]$ ]]; then
+if [[ "$Nvidia" =~ ^[Yy]$ ]]; then
     "$scripts_dir/nvidia.sh" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
 fi
 
-
-if [[ "$install_Bluetooth_service" =~ ^[Yy]$ ]]; then
+if [[ "$Bluetooth" =~ ^[Yy]$ ]]; then
     "$common_scripts/bluetooth.sh" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
 fi
 
-
-if [[ "$install_and_configure_zsh" =~ ^[Yy]$ ]]; then
+if [[ "$Shell" =~ ^[Yy]$ ]]; then
     "$common_scripts/zsh.sh" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
-fi
-
-
-if [[ "$configure_your_default_Bash" =~ ^[Yy]$ ]]; then
+elif [[ "$Shell" =~ ^[Nn]$ ]]; then
     "$common_scripts/bash.sh" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
 fi
 
@@ -236,7 +221,7 @@ is_laptop() {
 # Determine if the system is a laptop or desktop
 system_type=$(is_laptop)
 if [ "$system_type" = "Desktop" ]; then
-    printf "${attention}\n:: This system is a Desktop. Some configuration will be skipped\n" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
+    msg nt "This system is a Desktop. Some configuration will be skipped.." 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log") && sleep 2
 else
     "$common_scripts/laptop.sh" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
 fi
@@ -246,23 +231,19 @@ sleep 1 && clear
 
 # =========  system reboot  ========= #
 
-fn_done "Congratulations! The script completes here." && sleep 2
-printf "${attention}\n!! Need to reboot the system.\n"
-gum confirm \
-    "Would you like to.." \
-    --affirmative "Reboot now?" \
-    --negative "Not now!"
+msg dn "Congratulations! The script completes here." && sleep 2
+msg att "Need to reboot the system."
 
+fn_ask "Would you like to reboot now?" "Reboot" "No, skip"
 if [[ $? -eq 0 ]]; then
     clear
     # rebooting the system in 3 seconds
     for second in 3 2 1; do
-        printf "${action}\n==> Rebooting the system in ${second}s\n" && sleep 1 && clear
+        printf ":: Rebooting the system in ${second}s\n" && sleep 1 && clear
     done
         systemctl reboot --now
 else
-    printf "${orange}[ * ] - Ok, but it's good to reboot the system. Anyway, the script successfully ends here..${end}\n" && sleep 1
-    printf "${orange}[ * ] - Enjoy ${cyan}Hyprland. (◠‿◠)${end}\n"
+    msg nt "Ok, but make sure to reboot the system...\n   See you later.(◠‿◠)" && sleep 1
     exit 0
 fi
 

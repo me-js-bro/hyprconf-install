@@ -13,14 +13,6 @@ cyan="\e[1;36m"
 orange="\e[1;38;5;214m"
 end="\e[1;0m"
 
-# initial texts
-attention="[${orange} ATTENTION ${end}]"
-action="[${green} ACTION ${end}]"
-note="[${magenta} NOTE ${end}]"
-done="[${cyan} DONE ${end}]"
-ask="[${orange} QUESTION ${end}]"
-error="[${red} ERROR ${end}]"
-
 display_text() {
     gum style \
         --border rounded \
@@ -60,10 +52,10 @@ touch "$log"
 
 # check if there is a .bash directory available. if available, then backup it.
 if [ -d ~/.bash ]; then
-    printf "${note}\n:: A ${green}.bash${end} directory is available. Backing it up\n" && sleep 1
+    msg nt "A ${green}.bash${end} directory is available. Backing it up.." && sleep 1
 
-    cp -r ~/.bash ~/.bash-${USER} 2>&1 | tee -a "$log"
-    fn_done "Backe up."
+    mv ~/.bash ~/.bash-${USER} 2>&1 | tee -a "$log" &> /dev/null
+    msg dn ".bash directory was backed up successfully!" 
 fi
 
 bash <(curl https://raw.githubusercontent.com/me-js-bro/Bash/main/direct_install.sh) 2>&1 | tee -a "$log"

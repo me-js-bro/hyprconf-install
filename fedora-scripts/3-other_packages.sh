@@ -13,14 +13,6 @@ cyan="\e[1;36m"
 orange="\e[1;38;5;214m"
 end="\e[1;0m"
 
-# initial texts
-attention="[${orange} ATTENTION ${end}]"
-action="[${green} ACTION ${end}]"
-note="[${magenta} NOTE ${end}]"
-done="[${cyan} DONE ${end}]"
-ask="[${orange} QUESTION ${end}]"
-error="[${red} ERROR ${end}]"
-
 display_text() {
     gum style \
         --border rounded \
@@ -49,6 +41,11 @@ source "$dir/1-global_script.sh"
 parent_dir="$(dirname "$dir")"
 source "$parent_dir/interaction_fn.sh"
 
+# skip installed cache
+cache_dir="$parent_dir/.cache"
+installed_cache="$cache_dir/installed_packages"
+
+# log dir
 log_dir="$parent_dir/Logs"
 log="$log_dir/others-$(date +%d-%m-%y).log"
 
@@ -57,8 +54,8 @@ if [[ -f "$log" ]]; then
     errors=$(grep "ERROR" "$log")
     last_installed=$(grep "thunar-archive-plugin" "$log" | awk {'print $2'})
     if [[ -z "$errors" && "$last_installed" == "DONE" ]]; then
-        printf "${note}\n;; No need to run this script again\n"
-        sleep 2
+        msg skp "Skipping this script. No need to run it again..."
+        sleep 1
         exit 0
     fi
 else
@@ -142,10 +139,21 @@ thunar=(
 # url to install grimblast
 grimblast_url=https://github.com/hyprwm/contrib.git
 
+# checking already installed packages 
+for skipable in "${main_packages[@]}" "${other_packages[@]}" "${thunar[@]}"; do
+    skip_installed "$skipable"
+done
+
+installble_main_pkg=($(printf "%s\n" "${main_packages[@]}" | grep -vxFf "$installed_cache"))
+installble_other_pkg=($(printf "%s\n" "${other_packages[@]}" | grep -vxFf "$installed_cache"))
+installble_thunar_pkg=($(printf "%s\n" "${thunar[@]}" | grep -vxFf "$installed_cache"))
+
+printf "\n\n"
+
 # installing necessary packages
-for packages in "${main_packages[@]}" "${other_packages[@]}" "${thunar[@]}"; do
+for packages in "${installble_main_pkg[@]}" "${installble_other_pkg[@]}" "${installble_thunar_pkg[@]}"; do
   install_package "$packages"
-  if sudo dnf list installed "$packages" &> /dev/null; then
+  if rpm -q "$packages" &> /dev/null; then
     echo "[ DONE ] - $packages was installed successfully!" 2>&1 | tee -a "$log" &> /dev/null
   else
     echo "[ ERROR ] - Sorry, could not install '$packages'" 2>&1 | tee -a "$log" &> /dev/null
@@ -154,25 +162,27 @@ done
 
 # installing grimblast
 if [ -f '/usr/local/bin/grimblast' ]; then
-  printf "${done}\n:: Grimblast is already installed.\n" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
+  msg dn "Grimblast is already installed..." 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
 else
 
-  printf "${action}\n==> Installing Grumblast.\n"
-  git clone --depth=1 "$grimblast_url" "$parent_dir"/.cache/grimblast/ 2>&1 | tee -a "$log"
+  msg act "Installing Grumblast..."
+  git clone --depth=1 "$grimblast_url" "$parent_dir/.cache/grimblast/" 2>&1 | tee -a "$log" &> /dev/null
   cd "$parent_dir/.cache/grimblast/grimblast"
-  make 2>&1 | tee -a "$log"
-  sudo make install 2>&1 | tee -a "$log"
+  make 2>&1 | tee -a "$log" &> /dev/null
+  sudo make install 2>&1 | tee -a "$log" &> /dev/null
 
   sleep 1
-  rm -rf "$parent_dir"/.cache/grimblast 2>&1 | tee -a "$log"
+  rm -rf "$parent_dir/.cache/grimblast" 2>&1 | tee -a "$log"
 fi
 
 if [ -f '/usr/local/bin/grimblast' ]; then
-  fn_done "Grimblast was installed successfully."
+  msg dn "Grimblast was installed successfully..."
   printf "[ DONE ] - Grimblast was installed successfully...\n" 2>&1 | tee -a "$log"
 fi
 
 sleep 1 && clear
 
-# installing pywal
-"$dir/pywal.sh" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
+if [ -z "$(command -v wal)" ]; then
+    # installing pywal
+    "$dir/pywal.sh" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
+fi

@@ -13,14 +13,6 @@ cyan="\e[1;36m"
 orange="\e[1;38;5;214m"
 end="\e[1;0m"
 
-# initial texts
-attention="[${orange} ATTENTION ${end}]"
-action="[${green} ACTION ${end}]"
-note="[${magenta} NOTE ${end}]"
-done="[${cyan} DONE ${end}]"
-ask="[${orange} QUESTION ${end}]"
-error="[${red} ERROR ${end}]"
-
 display_text() {
     gum style \
         --border rounded \
@@ -62,26 +54,26 @@ touch "$log"
 
 # check if there is a .bash directory available. if available, then backup it.
 if [ -d ~/.zsh ]; then
-    printf "${note}\n:: A ${green}.zsh${end} directory is available... Backing it up\n" && sleep 1
+    msg nt "A ${green}.zsh${end} directory is available. Backing it up.." && sleep 1
 
-    cp -r ~/.zsh ~/.zsh-${USER} 2>&1 | tee -a "$log"
-    fn_done "Backup done."
+    mv ~/.zsh ~/.zsh-${USER} 2>&1 | tee -a "$log"
+    msg dn "Successfully backed up .zsh"
 fi
 
 # now install bash
 
 if [[ ! -d "$parent_dir/.cache/Zsh" ]]; then
-    git clone --depth=1 https://github.com/me-js-bro/Zsh.git "$parent_dir/.cache/Zsh" 2>&1 | tee -a "$log" && sleep 1
+    git clone --depth=1 https://github.com/me-js-bro/Zsh.git "$parent_dir/.cache/Zsh" 2>&1 | tee -a "$log" && sleep 1 &> /dev/null
 fi
 
 if [[ -d "$parent_dir/.cache/Zsh" ]]; then
-    cd "$parent_dir/.cache/Zsh" || printf "${error }\n! Could not cd into $parent_dir/.cache/Zsh" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
+    cd "$parent_dir/.cache/Zsh" || msg err "Could not cd into $parent_dir/.cache/Zsh" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
     chmod +x install.sh 2>&1 | tee -a "$log"
     ./install.sh 2>&1 | tee -a "$log"
     exit 0
 else
-    printf "${error}\n! Could not fine $pare nt_dir/.cache/Zsh. exiting \n"
+    msg err "Could not fine $pare nt_dir/.cache/Zsh. exiting.."
     exit 1
 fi
 
-# clear
+clear

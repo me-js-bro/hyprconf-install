@@ -13,15 +13,6 @@ cyan="\e[1;36m"
 orange="\e[1;38;5;214m"
 end="\e[1;0m"
 
-# initial texts
-attention="[${orange} ATTENTION ${end}]"
-action="[${green} ACTION ${end}]"
-note="[${magenta} NOTE ${end}]"
-done="[${cyan} DONE ${end}]"
-ask="[${orange} QUESTION ${end}]"
-error="[${red} ERROR ${end}]"
-
-
 ###------ Startup ------###
 
 # install script dir
@@ -41,18 +32,18 @@ vs_code_plugins_dir="$HOME/.vscode"
 
     # backing up vs code directory "Code"
     if [ -d "$vs_code_dir" ]; then
-        printf "${action}\n==> Backing up .config/Code directory.\n"
+        msg act "Backing up .config/Code directory..."
         mv "$vs_code_dir" "$vs_code_dir"-${USER} 2>&1 | tee -a "$log"
     fi
 
     # backing up vs code directory "Plugins"
     if [ -d "$vs_code_plugins_dir" ]; then
-        printf "${action}\n==> Backing up directory.\n"
+        msg act "Backing up directory..."
         mv "$vs_code_plugins_dir" "$vs_code_plugins_dir"-${USER} 2>&1 | tee -a "$log"
     fi
     
 # copying vs code themes and plugins dir
-printf "${action}\n==> Copying config.\n"
+msg act "Copying config..."
 assets_dir="$parent_dir/assets"
 
 cp -r "$assets_dir/Code" "$HOME/.config/" 2>&1 | tee -a "$log"
@@ -60,6 +51,6 @@ cp -r "$assets_dir/.vscode" "$HOME/" 2>&1 | tee -a "$log"
 
 sleep 1
 
-fn_done "Vs Code themes and some plugins have been copied"
+msg dn "Vs Code themes and some plugins have been copied"
 
 sleep 1 && clear

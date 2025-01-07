@@ -13,14 +13,6 @@ cyan="\e[1;36m"
 orange="\e[1;38;5;214m"
 end="\e[1;0m"
 
-# initial texts
-attention="[${orange} ATTENTION ${end}]"
-action="[${green} ACTION ${end}]"
-note="[${magenta} NOTE ${end}]"
-done="[${cyan} DONE ${end}]"
-ask="[${orange} QUESTION ${end}]"
-error="[${red} ERROR ${end}]"
-
 
 ###------ Startup ------###
 
@@ -36,7 +28,15 @@ mkdir -p "$log_dir"
 touch "$log"
 
 
-printf "${action} - Now installing pywal \n"
-sudo pip3 install pywal 2>&1 | tee -a "$log"
+msg act "Installing pywal.."
+sudo pip3 install pywal 2>&1 | tee -a "$log" &> /dev/null
+
+sleep 1
+if [ -n "$(command -v wal)" ]; then
+    msg dn "pywal was installed successfully!"
+else
+    msg err "Couls not install pywal."
+fi
+
 
 sleep 1 && clear

@@ -51,13 +51,13 @@ skip_installed() {
 
 # package installation from main repo function..
 install_package() {
+
     msg act "Installing $1..."
     sudo pacman -S --noconfirm "$1" &> /dev/null
 
     if sudo "$package_manager" -Q "$1" &>/dev/null; then
         msg dn "$1 was installed successfully!"
     else
-
         msg err "$1 failed to install. Maybe therer is an issue..."
     fi
 }

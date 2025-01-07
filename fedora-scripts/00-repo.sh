@@ -13,14 +13,6 @@ cyan="\e[1;36m"
 orange="\e[1;38;5;214m"
 end="\e[1;0m"
 
-# initial texts
-attention="[${orange} ATTENTION ${end}]"
-action="[${green} ACTION ${end}]"
-note="[${magenta} NOTE ${end}]"
-done="[${cyan} DONE ${end}]"
-ask="[${orange} QUESTION ${end}]"
-error="[${red} ERROR ${end}]"
-
 display_text() {
     gum style \
         --border rounded \
@@ -51,6 +43,7 @@ source "$dir/1-global_script.sh"
 parent_dir="$(dirname "$dir")"
 source "$parent_dir/interaction_fn.sh"
 
+# log dir
 log_dir="$parent_dir/Logs"
 log="$log_dir/copr-$(date +%d-%m-%y).log"
 
@@ -58,7 +51,7 @@ log="$log_dir/copr-$(date +%d-%m-%y).log"
 if [[ -f "$log" ]]; then
     error=$(grep "ERROR" "$log")
     if [[ -z "$error" ]]; then
-        printf "${note}\n;; No need to run this script again.\n"
+        msg skp "Skipping this script. No need to run it again..."
         sleep 0.5
         exit 0
     fi
@@ -82,5 +75,5 @@ install_package https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release
 
 # Enable COPR Repositories 
 for repo in "${copr_repos[@]}";do 
-  sudo dnf copr enable -y "$repo" 2>&1 | tee -a "$log" || { printf "${error}\n! Failed to enable necessary copr repos (╥﹏╥)\n"; exit 1; }
+  sudo dnf copr enable -y "$repo" 2>&1 | tee -a "$log" || { msg err "Failed to enable necessary copr repos."; exit 1; }
 done

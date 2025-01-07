@@ -47,6 +47,7 @@ source "$dir/1-global_script.sh"
 parent_dir="$(dirname "$dir")"
 source "$parent_dir/interaction_fn.sh"
 
+# log dir
 log_dir="$parent_dir/Logs"
 log="$log_dir/nvdia-$(date +%d-%m-%y).log"
 

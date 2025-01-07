@@ -13,14 +13,6 @@ cyan="\e[1;36m"
 orange="\e[1;38;5;214m"
 end="\e[1;0m"
 
-# initial texts
-attention="[${orange} ATTENTION ${end}]"
-action="[${green} ACTION ${end}]"
-note="[${magenta} NOTE ${end}]"
-done="[${cyan} DONE ${end}]"
-ask="[${orange} QUESTION ${end}]"
-error="[${red} ERROR ${end}]"
-
 display_text() {
     gum style \
         --border rounded \
@@ -49,15 +41,20 @@ source "$dir/1-global_script.sh"
 parent_dir="$(dirname "$dir")"
 source "$parent_dir/interaction_fn.sh"
 
+# skip installed cache
+cache_dir="$parent_dir/.cache"
+installed_cache="$cache_dir/installed_packages"
+
 # log directory
 log_dir="$parent_dir/Logs"
 log="$log_dir/fonts-$(date +%d-%m-%y).log"
+
 if [[ -f "$log" ]]; then
     errors=$(grep "ERROR" "$log")
     last_installed=$(grep "jetbrains-mono-fonts" "$log" | awk {'print $2'})
     if [[ -z "$errors" && "$last_installed" == "DONE" ]]; then
-        printf "${note}\n;; No need to run this script again\n"
-        sleep 2
+        msg skp "Skipping this script. No need to run it again..."
+        sleep 1
         exit 0
     fi
 else
@@ -74,12 +71,23 @@ google-noto-emoji-fonts
 jetbrains-mono-fonts
 )
 
-# Installation of main components
-printf "${action}\n==> Installing necessary fonts.\n"
+# checking already installed packages 
+for skipable in "${fonts[@]}"; do
+    skip_installed "$skipable"
+done
 
-for font in "${fonts[@]}"; do
+to_install=($(printf "%s\n" "${fonts[@]}" | grep -vxFf "$installed_cache"))
+
+printf "\n\n"
+
+for font in "${to_install[@]}"; do
   install_package "$font"
-  echo " [ DONE ] - $font was installed successfully!" 2>&1 | tee -a "$log"
+
+    if rpm -q "$font" &> /dev/null; then
+        echo " [ DONE ] - $font was installed successfully!" 2>&1 | tee -a "$log"
+    else
+        echo "[ ERROR ] - Sorry, could not install $font" 2>&1 | tee -a "$log"
+    fi
 done
 
 if [ ! -d ~/.local/share/fonts/JetBrainsMonoNerd ]; then
@@ -95,7 +103,7 @@ if [ ! -d ~/.local/share/fonts/JetBrainsMonoNerd ]; then
     # Extract the new files into the JetBrainsMono folder and log the output
     tar -xJkf JetBrainsMono.tar.xz -C ~/.local/share/fonts/JetBrainsMonoNerd
 else 
-    printf "${done}\n:: JetBrainsMonoNerd font was already there.\n"
+    msg skp "Skipping installing JetBrainsMonoNerd, font was already there..."
 fi
 
 

@@ -13,14 +13,6 @@ cyan="\e[1;36m"
 orange="\e[1;38;5;214m"
 end="\e[1;0m"
 
-# initial texts
-attention="[${orange} ATTENTION ${end}]"
-action="[${green} ACTION ${end}]"
-note="[${magenta} NOTE ${end}]"
-done="[${cyan} DONE ${end}]"
-ask="[${orange} QUESTION ${end}]"
-error="[${red} ERROR ${end}]"
-
 display_text() {
     gum style \
         --border rounded \
@@ -39,8 +31,6 @@ display_text() {
 
 clear && display_text
 printf " \n \n"
-
-printf " \n"
 
 ###------ Startup ------###
 
@@ -63,12 +53,12 @@ theme_dir=/usr/share/sddm/themes
 
 # creating sddm theme dir
 if [ ! -d "$theme_dir" ]; then
-    printf "${action}\n==> Sddm theme dir was not found, creatint it.\n"
+    msg att "Sddm theme dir was not found, creatint it..."
     sudo mkdir -p "$theme_dir"
 fi
 
 # Set up SDDM
-printf "${action}\n==> Setting up the Login Screen.\n"
+msg act "Setting up the Login Screen..."
 sddm_conf_dir=/etc/sddm.conf.d
 [ ! -d "$sddm_conf_dir" ] && { printf "$sddm_conf_dir not found, creating...\n"; sudo mkdir -p "$sddm_conf_dir"; }
 
@@ -77,5 +67,5 @@ sudo tar -xf "$theme" -C "$theme_dir"
 echo -e "[Theme]\nCurrent=minimal_sddm" | sudo tee "$sddm_conf_dir/theme.conf.user" &> /dev/null
 
 if [ -d "$theme_dir/minimal_sddm" ]; then
-    fn_done "Sddm theme was installed successfully!"
+    msg dn "Sddm theme was installed successfully!"
 fi

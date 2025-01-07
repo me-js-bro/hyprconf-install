@@ -13,14 +13,6 @@ cyan="\e[1;36m"
 orange="\e[1;38;5;214m"
 end="\e[1;0m"
 
-# initial texts
-attention="[${orange} ATTENTION ${end}]"
-action="[${green} ACTION ${end}]"
-note="[${magenta} NOTE ${end}]"
-done="[${cyan} DONE ${end}]"
-ask="[${orange} QUESTION ${end}]"
-error="[${red} ERROR ${end}]"
-
 display_text() {
     gum style \
         --border rounded \
@@ -56,14 +48,11 @@ touch "$log"
 
 ###------ Startup ------###
 
-printf "${attention}\n:: This script will creand a Log dir in your ${HOME} directory. Please remove that Log dir after you finish the script.\n"
-sleep 1
-
 # OpenBangla-Building url was forked from ( https://github.com/asifakonjee/openbangla-fcitx5 )
 bash -c "$(wget -q https://raw.githubusercontent.com/me-js-bro/Build-OpenBangla-Keyboard/main/build.sh -O -)"
 
 if [[ -d "/usr/share/openbangla-keyboard" ]]; then
-  fn_done "OpenBangla Keyboard was installed successfully!\n"
+  msg dn "OpenBangla Keyboard was installed successfully!"
   echo "[ DONE ] - OpenBangla Keyboard was installed successfully!" 2>&1 | tee -a "$log"
 fi
 

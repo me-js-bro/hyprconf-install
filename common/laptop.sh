@@ -13,14 +13,6 @@ cyan="\e[1;36m"
 orange="\e[1;38;5;214m"
 end="\e[1;0m"
 
-# initial texts
-attention="[${orange} ATTENTION ${end}]"
-action="[${green} ACTION ${end}]"
-note="[${magenta} NOTE ${end}]"
-done="[${cyan} DONE ${end}]"
-ask="[${orange} QUESTION ${end}]"
-error="[${red} ERROR ${end}]"
-
 display_text() {
     gum style \
         --border rounded \
@@ -66,9 +58,10 @@ packages=(
     wlroots
 )
 
-printf "${action}\n==> This system is a Laptop. Proceeding with some configuration.\n"
+msg att "This system is a Laptop." 
+msg act "Proceeding with some configuration..."
 
 # Install necessary packages
 for pkgs in "${packages[@]}"; do
-    install_package "$pkgs" || { printf "${error} - Could not install $pkgs, exiting. (╥﹏╥)\n"; exit 1; } 2>&1 | tee -a "$log"
+    install_package "$pkgs" || { msg err "Could not install $pkgs, exiting..."; exit 1; } 2>&1 | tee -a "$log"
 done

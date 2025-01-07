@@ -56,8 +56,8 @@ if [[ -f "$log" ]]; then
     errors=$(grep "ERROR" "$log")
     last_installed=$(grep "xdg-desktop-portal-hyprland" "$log" | awk {'print $2'})
     if [[ -z "$errors" && "$last_installed" == "DONE" ]]; then
-        msg nt "No need to run this script again.."
-        sleep 2
+        msg skp "Skipping this script. No need to run it again..."
+        sleep 1
         exit 0
     fi
 else
@@ -107,6 +107,7 @@ printf "\n\n"
 # Instlling main packages...
 for hypr_pkgs in "${to_install[@]}"; do
     install_package "$hypr_pkgs"
+
     if sudo pacman -Q "$hypr_pkgs" &>/dev/null; then
         echo "[ DONE ] - $hypr_pkgs was installed successfully!\n" 2>&1 | tee -a "$log" &>/dev/null
     else

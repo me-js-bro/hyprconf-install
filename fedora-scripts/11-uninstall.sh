@@ -13,14 +13,6 @@ cyan="\e[1;36m"
 orange="\e[1;38;5;214m"
 end="\e[1;0m"
 
-# initial texts
-attention="[${orange} ATTENTION ${end}]"
-action="[${green} ACTION ${end}]"
-note="[${magenta} NOTE ${end}]"
-done="[${cyan} DONE ${end}]"
-ask="[${orange} QUESTION ${end}]"
-error="[${red} ERROR ${end}]"
-
 display_text() {
     gum style \
         --border rounded \
@@ -50,6 +42,7 @@ source "$parent_dir/interaction_fn.sh"
 # log
 log_dir="$parent_dir/Logs"
 log="$log_dir/uninstall-$(date +%d-%m-%y).log"
+
 mkdir -p "$log_dir"
 touch "$log"
 
@@ -58,16 +51,16 @@ removable=(
 )
 
 for pkg in "${removable[@]}"; do
-    if sudo dnf list installed "$pkg" &> /dev/null; then
-        printf "${action}\n==> $pkg was found, removing it\n"
+    if rpm -q "$pkg" &> /dev/null; then
+        msg act "$pkg was found, removing it..."
         sudo dnf remove -y "$pkg" 2>&1 | tee -a "$log"
 
-        if ! sudo dnf list installed "$pkg" &> /dev/null; then
-            fn_done "$pkg was removed successfully!"
+        if ! rpm -q "$pkg" &> /dev/null; then
+            msg dn "$pkg was removed successfully!"
         else
-            fn_error "Could not remove $pkg (╥﹏╥)"
+            msg err "Could not remove $pkg"
         fi
     fi
 done
 
-exit 0
+sleep 1 && clear

@@ -56,8 +56,8 @@ if [[ -f "$log" ]]; then
     errors=$(grep "ERROR" "$log")
     finished=$(grep -c "DONE" "$log")
     if [[ -z "$errors" && "$finished" -gt 0 ]]; then
-        msg nt "No need to run this script again"
-        sleep 2
+        msg skp "Skipping this script. No need to run it again..."
+        sleep 1
         exit 0
     fi
 
@@ -77,7 +77,7 @@ browsers=$(gum choose --no-limit \
         --item.foreground "#00FFFF" \
         --selected.foreground "#00FF00" \
         "Brave" "Chromium" "Firefox" "Vivaldi" "Zen Browser"
-    )
+)
 
 # Fix: Convert gum choice string into an array
 IFS=$'\n' read -r -d '' -a browser_array <<<"$browsers"

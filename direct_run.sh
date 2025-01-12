@@ -18,7 +18,9 @@ cyan="\e[1;36m"
 orange="\e[1;38;5;214m"
 end="\e[1;0m"
 
-printf "${orange}==>${end} Starting the script.. Please have patience..\n" && sleep 2
+clear && sleep 1
+
+printf "${orange}=>${end} Starting the script...\n" && sleep 2
 
 packages=(
     git
@@ -93,19 +95,8 @@ sleep 1
  
 [[ ! "$(pwd)" == "$HOME" ]] && cd "$HOME"
 
-fn_clone_repo() {
-    gum spin \
-        --spinner minidot \
-        --title "Preparing the installation scripts..." -- \
-        $@
-}
-
-if command -v gum &> /dev/null; then
-    fn_clone_repo git clone --depth=1 https://github.com/me-js-bro/hyprconf-install.git &> /dev/null
-else
-    printf "${green}=>${end} Preparing the installation scripts...\n"
-    git clone --depth=1 https://github.com/me-js-bro/hyprconf-install.git &> /dev/null
-fi
+printf "${green}=>${end} Preparing the installation scripts...\n"
+git clone --depth=1 https://github.com/me-js-bro/hyprconf-install.git &> /dev/null
 
 if [[ -d "hyprconf-install" ]]; then
     printf "${cyan}::${end} Starting the main script...\n" && sleep 1 && clear

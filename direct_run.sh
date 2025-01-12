@@ -92,10 +92,7 @@ sleep 1
  
 [[ ! "$(pwd)" == "$HOME" ]] && cd "$HOME"
 
-gum spin \
-    --spinner minidot \
-    --title "Preparing the installation scripts..." -- \
-    git clone --depth=1 https://github.com/me-js-bro/hyprconf-install.git &> /dev/null
+gum spin --spinner minidot --title "Preparing the installation scripts..." -- git clone --depth=1 https://github.com/me-js-bro/hyprconf-install.git &> /dev/null
 
 if [[ -d "hyprconf-install" ]]; then
     printf "${cyan}::${end} Starting the main script...\n" && sleep 1 && clear

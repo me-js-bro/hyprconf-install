@@ -18,15 +18,7 @@ cyan="\e[1;36m"
 orange="\e[1;38;5;214m"
 end="\e[1;0m"
 
-# initial texts
-attention="[${orange} ATTENTION ${end}]"
-action="[${green} ACTION ${end}]"
-note="[${magenta} NOTE ${end}]"
-done="[${cyan} DONE ${end}]"
-ask="[${orange} QUESTION ${end}]"
-error="[${red} ERROR ${end}]"
-
-printf "${orange}[ * ] Starting the script.. Please have patience..${end} (•‿•)\n" && sleep 2
+printf "${orange}==>${end} Starting the script.. Please have patience..\n" && sleep 2
 
 packages=(
     git
@@ -35,44 +27,52 @@ packages=(
 
 for pkg in "${packages[@]}"; do
 
-    if command -v pacman &>/dev/null; then
-        if sudo pacman -Q "$pkg" &>/dev/null; then
-            printf "${done}\n:: $pkg was installed already...\n\n"
+    if command -v pacman &> /dev/null; then
+        if sudo pacman -Q "$pkg" &> /dev/null; then
+            printf "${magenta}[ SKIP ]${end}Skipping $pkg, it was already installed..\n"
         else
-            printf "${action}\n==>  Installing $pkg\n"
-            if sudo pacman -S --noconfirm "$pkg"; then
-                printf "${done}\n:: $pkg was installed successfully!\n\n"
+            printf "${green}=>${end} Installing $pkg...\n"
+            sudo pacman -S --noconfirm "$pkg" &> /dev/null
+
+            if sudo pacman -Q "$pkg" &> /dev/null; then
+                printf "${cyan}::${end} $pkg was installed successfully!\n"
             fi
         fi
-    elif command -v zypper &>/dev/null; then
+    elif command -v zypper &> /dev/null; then
 
         if sudo zypper se -i "$pkg" &>/dev/null; then
-            printf "${done}\n:: $pkg was installed already...\n\n"
+            printf "${magenta}[ SKIP ]${end} Skipping $pkg, it was already installed..\n"
         else
-            printf "${action}\n==> Installing $pkg\n"
-            if sudo zypper in -y "$pkg"; then
-                printf "${done}\n:: $pkg was installed sucessfully!\n\n"
-            fi
+            printf "${green}=>${end} Installing $pkg...\n"
+            sudo zypper in -y "$pkg";
+
+            if sudo zypper se -i "$pkg" &> /dev/null; then
+                printf "${cyan}::${end} $pkg was installed sucessfully!\n" fi
         fi
     fi
 
 done
 
 # only for fedora
-if command -v dnf &>/dev/null; then
+if command -v dnf &> /dev/null; then
 
-    if rpm -q git &>/dev/null; then
-        printf "${done}\n:: git was installed already...\n\n"
+    if rpm -q git &> /dev/null; then
+        printf "${magenta}[ SKIP ]${end} Skipping git, it was already installed..\n"
     else
-        printf "${action}\n==> Installing git\n"
-        if sudo dnf install -y git; then
-            printf "${done}\n:: git was installed successfully!\n\n"
+        printf "${green}=>${end} Installing git...\n"
+        sudo dnf install -y git
+        
+        if rpm -q git; then
+            printf "${cyan}::${end} git was installed successfully!\n"
         fi
     fi
 
     sleep 1
 
-    printf "${action}\n==> Installing gum\n"
+    if rpm -q gum &> /dev/null; then
+        printf "${magenta}[ SKIP ]${end} Skipping gum, it was already installed..\n"
+    else
+        printf "${green}=>${end} Installing gum...\n"
     echo '[charm]
 name=Charm
 baseurl=https://repo.charm.sh/yum/
@@ -82,21 +82,22 @@ gpgkey=https://repo.charm.sh/yum/gpg.key' | sudo tee /etc/yum.repos.d/charm.repo
 
     sudo yum install --assumeyes gum
 
-    if command -v gum &>/dev/null; then
-        printf "${done}\n:: Gum was installed successfully!\n"
+    if rpm -q gum &> /dev/null; then
+        printf "${cyan}::${end} Gum was installed successfully!\n"
     fi
 fi
 
 sleep 1
+ 
+[[ ! "$(pwd)" == "$HOME" ]] && cd "$HOME"
 
-printf "\n${green}[ * ] Cloning the installation repository... Please have patience... ${end}\n"
-
-[[ "$(pwd)" != "$HOME" ]] && cd "$HOME"
-
-git clone --depth=1 https://github.com/me-js-bro/hyprconf-install.git &>/dev/null
+gum spin \
+    --spinner minidot \
+    --title "Preparing the installation scripts..." -- \
+    git clone --depth=1 https://github.com/me-js-bro/hyprconf-install.git &> /dev/null
 
 if [[ -d "hyprconf-install" ]]; then
-    printf "\n${cyan}[ * ] Repository was clonned successfully!${end} \n${green}[ * ] Now starting the main script... ${end}\n" && sleep 1 && clear
+    printf "${cyan}::${end} Starting the main script...\n" && sleep 1 && clear
 
     cd hyprconf-install
     chmod +x start.sh

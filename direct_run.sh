@@ -47,7 +47,7 @@ for pkg in "${packages[@]}"; do
             sudo zypper in -y "$pkg";
 
             if sudo zypper se -i "$pkg" &> /dev/null; then
-                printf "${cyan}::${end} $pkg was installed sucessfully!\n" fi
+                printf "${cyan}::${end} $pkg was installed sucessfully!\n"
             fi
         fi
     fi

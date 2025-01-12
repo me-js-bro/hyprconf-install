@@ -13,14 +13,6 @@ cyan="\e[1;36m"
 orange="\e[1;38;5;214m"
 end="\e[1;0m"
 
-# initial texts
-attention="[${orange} ATTENTION ${end}]"
-action="[${green} ACTION ${end}]"
-note="[${magenta} NOTE ${end}]"
-done="[${cyan} DONE ${end}]"
-ask="[${orange} QUESTION ${end}]"
-error="[${red} ERROR ${end}]"
-
 display_text() {
     gum style \
         --border rounded \
@@ -52,12 +44,13 @@ source "$parent_dir/interaction_fn.sh"
 # log directory
 log_dir="$parent_dir/Logs"
 log="$log_dir/browser-$(date +%d-%m-%y).log"
+
 if [[ -f "$log" ]]; then
     errors=$(grep "ERROR" "$log")
     finished=$(grep -c "DONE" "$log")
     if [[ -z "$errors" && "$finished" -gt 0 ]]; then
-        printf "${note}\n;; No need to run this script again\n"
-        sleep 2
+        msg skp "Skipping this script. No need to run it again..."
+        sleep 1
         exit 0
     fi
 
@@ -67,8 +60,14 @@ else
 fi
 
 # Ask user for browser selection
-printf "${ask}\n? Choose which browser would you like to install. You can choose multiple.\n"
-browsers=$(gum choose --no-limit "Brave" "Chromium" "Firefox" "Zen Browser")
+browsers=$(gum choose --no-limit \
+        --header "You can choose multiple browsers" \
+        --header.foreground "#fff" \
+        --cursor.foreground "#00FFFF" \
+        --item.foreground "#00FFFF" \
+        --selected.foreground "#00FF00" \
+        "Brave" "Chromium" "Firefox" "Zen Browser"
+)
 
 # Fix: Convert gum choice string into an array
 IFS=$'\n' read -r -d '' -a browser_array <<< "$browsers"
@@ -81,17 +80,17 @@ for browser in "${browser_array[@]}"; do
             sleep 1
 
             if [[ -n "$(command -v brave-browser)" ]]; then
-                printf "${done}\n:: Brave was installed successfully!\n"
+                msg dn "Brave was installed successfully!"
                 echo "[ DONE ] - Brave was installed successfully!" 2>&1 | tee -a "$log" &> /dev/null
 
-                printf "${attention}\n! After completting the installation, please make sure to open the browser and follow the steps.\n" && sleep 2 && echo
+                msg att "After completting the installation, please make sure to open the browser and follow the steps..." && sleep 2 && echo
 
                 printf "[ 1 ] - Open the browser and in the search bar, typr 'chrome://flags' and press enter\n"
                 printf "[ 2 ] - Now search for 'Ozone platform'\n"
                 printf "[ 3 ] - Choose 'Wayland' from default and restart the browser.\n"
                 sleep 5
             else 
-                printf "${error}\n! Could not installed Brave\n"
+                msg err "Could not installed Brave.."
                 echo "[ ERROR ] - Could not install Brave" 2>&1 | tee -a "$log" &> /dev/null
             fi
             ;;
@@ -100,17 +99,17 @@ for browser in "${browser_array[@]}"; do
             sleep 1
 
             if [[ -n "$(command -v chromium)" ]]; then
-                printf "${done}\n:: Chromium was installed successfully!\n"
+                msg dn "Chromium was installed successfully!"
                 echo "[ DONE ] - Chromium was installed successfully!" 2>&1 | tee -a "$log" &> /dev/null
 
-                printf "${attention}\n! After completting the installation, please make sure to open the browser and follow the steps.\n" && sleep 2 && echo
+                msg att "After completting the installation, please make sure to open the browser and follow the steps..." && sleep 2 && echo
 
                 printf "[ 1 ] - Open the browser and in the search bar, typr 'chrome://flags' and press enter\n"
                 printf "[ 2 ] - Now search for 'Ozone platform'\n"
                 printf "[ 3 ] - Choose 'Wayland' from default and restart the browser.\n"
                 sleep 5
             else 
-                printf "${error}\n! Could not installed Chromium\n"
+                msg err "Could not installed Chromium.."
                 echo "[ ERROR ] - Could not install Chromium" 2>&1 | tee -a "$log" &> /dev/null
             fi
             ;;
@@ -119,32 +118,32 @@ for browser in "${browser_array[@]}"; do
             sleep 1
 
             if [[ -n "$(command -v firefox)" ]]; then
-                printf "${done}\n:: Firefox was installed successfully!\n"
+                msg dn "Firefox was installed successfully!"
                 echo "[ DONE ] - Firefox was installed successfully!" 2>&1 | tee -a "$log" &> /dev/null
             else 
-                printf "${error}\n! Could not installed firefox\n"
+                msg err "Could not installed firefox.."
                 echo "[ ERROR ] - Could not install firefox" 2>&1 | tee -a "$log" &> /dev/null
             fi
             ;;
         "Zen Browser")
-            printf "${action}\n==> Installing the zen-browser\n" && sleep 0.5
-            printf "${attention}\n! Enabling the copr repo for it.\n"
-            sudo dnf copr enable sneexy/zen-browser
+            msg act "Installing the zen-browser..." && sleep 0.5
+            msg att "Enabling the copr repo for it..."
+            sudo dnf copr enable sneexy/zen-browser -y
             sudo wget "https://copr.fedorainfracloud.org/coprs/sneexy/zen-browser/repo/fedora-$(rpm -E %fedora)/sneexy-zen-browsder-fedora-$(rpm -E %fedora).repo" -O "/etc/yum.repos.d/_copr_sneexy-zen-browser.repo"
             sleep 1
-            sudo dnf install -y zen-browser-avx2
+            sudo dnf install zen-browser-avx2 -y
             sleep 1
 
             if [[ -n "$(command -v zen-browser)" ]]; then
-                printf "${done}\n:: Zen Browser was installed successfully!\n"
+                msg dn "Zen Browser was installed successfully!"
                 echo "[ DONE ] - Zen Browser was installed successfully!" 2>&1 | tee -a "$log" &> /dev/null
             else 
-                printf "${error}\n! Could not installed Zen Browser\n"
+                msg err "Could not installed Zen Browser.."
                 echo "[ ERROR ] - Could not install Zen Browser" 2>&1 | tee -a "$log" &> /dev/null
             fi
             ;;
             *)
-              printf "${error}\n! Invalid choice: $browser\n"
+              msg err "Invalid choice: $browser..."
             ;;
     esac
 done

@@ -16,14 +16,6 @@ cyan="\e[1;36m"
 orange="\e[1;38;5;214m"
 end="\e[1;0m"
 
-# initial texts
-attention="[${orange} ATTENTION ${end}]"
-action="[${green} ACTION ${end}]"
-note="[${magenta} NOTE ${end}]"
-done="[${cyan} DONE ${end}]"
-ask="[${orange} QUESTION ${end}]"
-error="[${red} ERROR ${end}]"
-
 display_text() {
     gum style \
         --border rounded \
@@ -56,12 +48,16 @@ source "$parent_dir/interaction_fn.sh"
 log_dir="$parent_dir/Logs"
 log="$log_dir/vs_code-$(date +%d-%m-%y).log"
 
+# skip installed cache
+cache_dir="$parent_dir/.cache"
+installed_cache="$cache_dir/installed_packages"
+
 if [[ -f "$log" ]]; then
     errors=$(grep "ERROR" "$log")
     last_installed=$(grep "visual-studio-code-bin" "$log" | awk {'print $2'})
     if [[ -z "$errors" && "$last_installed" == "DONE" ]]; then
-        printf "${note}\n;; No need to run this script again\n"
-        sleep 2
+        msg skp "Skipping this script. No need to run it again..."
+        sleep 1
         exit 0
     fi
 
@@ -76,18 +72,29 @@ vs_code=(
     visual-studio-code-bin
 )
 
-# installing vs code
-for code in "${vs_code[@]}"; do
-    install_from_aur "$code"
-    if sudo "$aur_helper" -Q "$code" &>/dev/null; then
-        echo "[ DONE ] - $code was installed successfully!\n" 2>&1 | tee -a "$log" &>/dev/null
-    else
-        echo "[ ERROR ] - Sorry, could not install $code!\n" 2>&1 | tee -a "$log" &>/dev/null
-    fi
+# checking already installed packages 
+for skipable in "${vs_code[@]}"; do
+    skip_installed "$skipable"
 done
+
+to_install=($(printf "%s\n" "${vs_code[@]}" | grep -vxFf "$installed_cache"))
+
+printf "\n\n"
+
+# installing vs code
+if [[ ${#to_install[@]} -gt 0 ]]; then
+    for code in "${to_install[@]}"; do
+        install_from_aur "$code"
+        if sudo "$aur_helper" -Q "$code" &>/dev/null; then
+            echo "[ DONE ] - $code was installed successfully!\n" 2>&1 | tee -a "$log" &>/dev/null
+        else
+            echo "[ ERROR ] - Sorry, could not install $code!\n" 2>&1 | tee -a "$log" &>/dev/null
+        fi
+    done
+fi
 
 # updating vs code themes
 common_scripts="$parent_dir/common"
 "$common_scripts/vs_code_theme.sh"
 
-# clear
+sleep 1 && clear

@@ -16,14 +16,6 @@ cyan="\e[1;36m"
 orange="\e[1;38;5;214m"
 end="\e[1;0m"
 
-# initial texts
-attention="[${orange} ATTENTION ${end}]"
-action="[${green} ACTION ${end}]"
-note="[${magenta} NOTE ${end}]"
-done="[${cyan} DONE ${end}]"
-ask="[${orange} QUESTION ${end}]"
-error="[${red} ERROR ${end}]"
-
 display_text() {
     gum style \
         --border rounded \
@@ -56,12 +48,16 @@ source "$parent_dir/interaction_fn.sh"
 log_dir="$parent_dir/Logs"
 log="$log_dir/hyprland-$(date +%d-%m-%y).log"
 
+# skip installed cache
+cache_dir="$parent_dir/.cache"
+installed_cache="$cache_dir/installed_packages"
+
 if [[ -f "$log" ]]; then
     errors=$(grep "ERROR" "$log")
     last_installed=$(grep "xdg-desktop-portal-hyprland" "$log" | awk {'print $2'})
     if [[ -z "$errors" && "$last_installed" == "DONE" ]]; then
-        printf "${note}\n;; No need to run this script again\n"
-        sleep 2
+        msg skp "Skipping this script. No need to run it again..."
+        sleep 1
         exit 0
     fi
 else
@@ -74,6 +70,7 @@ aur_helper=$(command -v yay || command -v paru) # find the aur helper
 # Main Hyprland packages
 hypr_packages=(
     cliphist
+    dunst
     eog
     hyprland
     hyprlock
@@ -91,18 +88,26 @@ hypr_packages=(
     qt5-quickcontrols2
     rofi-wayland
     swappy
-    swaync
     swww
     waybar
     wl-clipboard
     xdg-desktop-portal-hyprland
 )
 
+
+# checking already installed packages 
+for skipable in "${hypr_packages[@]}"; do
+    skip_installed "$skipable"
+done
+
+to_install=($(printf "%s\n" "${hypr_packages[@]}" | grep -vxFf "$installed_cache"))
+
+printf "\n\n"
+
 # Instlling main packages...
-printf "${action}\n==> Installing main packages.\n"
-# Install from official repo
-for hypr_pkgs in "${hypr_packages[@]}"; do
+for hypr_pkgs in "${to_install[@]}"; do
     install_package "$hypr_pkgs"
+
     if sudo pacman -Q "$hypr_pkgs" &>/dev/null; then
         echo "[ DONE ] - $hypr_pkgs was installed successfully!\n" 2>&1 | tee -a "$log" &>/dev/null
     else

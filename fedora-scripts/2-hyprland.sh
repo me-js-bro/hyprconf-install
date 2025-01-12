@@ -13,14 +13,6 @@ cyan="\e[1;36m"
 orange="\e[1;38;5;214m"
 end="\e[1;0m"
 
-# initial texts
-attention="[${orange} ATTENTION ${end}]"
-action="[${green} ACTION ${end}]"
-note="[${magenta} NOTE ${end}]"
-done="[${cyan} DONE ${end}]"
-ask="[${orange} QUESTION ${end}]"
-error="[${red} ERROR ${end}]"
-
 display_text() {
     gum style \
         --border rounded \
@@ -46,10 +38,14 @@ printf " \n \n"
 dir="$(dirname "$(realpath "$0")")"
 source "$dir/1-global_script.sh"
 
-# log directory
 parent_dir="$(dirname "$dir")"
 source "$parent_dir/interaction_fn.sh"
 
+# skip installed cache
+cache_dir="$parent_dir/.cache"
+installed_cache="$cache_dir/installed_packages"
+
+# log directory
 log_dir="$parent_dir/Logs"
 log="$log_dir/hyprland-$(date +%d-%m-%y).log"
 
@@ -57,8 +53,8 @@ if [[ -f "$log" ]]; then
     errors=$(grep "ERROR" "$log")
     last_installed=$(grep "hyprsunset" "$log" | awk {'print $2'})
     if [[ -z "$errors" && "$last_installed" == "DONE" ]]; then
-        printf "${note}\n;; No need to run this script again\n"
-        sleep 2
+        msg skp "Skipping this script. No need to run it again..."
+        sleep 1
         exit 0
     fi
 else
@@ -75,10 +71,20 @@ hypr=(
     hyprsunset
 )
 
+# checking already installed packages 
+for skipable in "${hypr[@]}"; do
+    skip_installed "$skipable"
+done
+
+to_install=($(printf "%s\n" "${hypr[@]}" | grep -vxFf "$installed_cache"))
+
+printf "\n\n"
+
 # Installation of Hyprland basics
-for hypr_pkgs in "${hypr[@]}"; do
+for hypr_pkgs in "${to_install[@]}"; do
     install_package "$hypr_pkgs"
-    if sudo dnf list installed "$hypr_pkgs" &>> /dev/null; then
+
+    if sudo dnf list installed "$hypr_pkgs" &> /dev/null; then
         echo "[ DONE ] - '$hypr_pkgs' was installed successfully!" 2>&1 | tee -a "$log" &> /dev/null
     else
         echo "[ ERROR ] - Sorry, could not install '$hypr_pkgs'" 2>&1 | tee -a "$log" &> /dev/null

@@ -16,14 +16,6 @@ cyan="\e[1;36m"
 orange="\e[1;38;5;214m"
 end="\e[1;0m"
 
-# initial texts
-attention="[${orange} ATTENTION ${end}]"
-action="[${green} ACTION ${end}]"
-note="[${magenta} NOTE ${end}]"
-done="[${cyan} DONE ${end}]"
-ask="[${orange} QUESTION ${end}]"
-error="[${red} ERROR ${end}]"
-
 display_text() {
     gum style \
         --border rounded \
@@ -56,12 +48,16 @@ source "$parent_dir/interaction_fn.sh"
 log_dir="$parent_dir/Logs"
 log="$log_dir/others-$(date +%d-%m-%y).log"
 
+# skip installed cache
+cache_dir="$parent_dir/.cache"
+installed_cache="$cache_dir/installed_packages"
+
 if [[ -f "$log" ]]; then
     errors=$(grep "ERROR" "$log")
     last_installed=$(grep "thunar-archive-plugin" "$log" | awk {'print $2'})
     if [[ -z "$errors" && "$last_installed" == "DONE" ]]; then
-        printf "${note}\n;; No need to run this script again\n"
-        sleep 2
+        msg skp "Skipping this script. No need to run it again..."
+        sleep 1
         exit 0
     fi
 
@@ -104,9 +100,11 @@ other_packages=(
 )
 
 aur_packages=(
-    hyprland-qtutils-git
+    cava
     grimblast-git
     hyprsunset
+    hyprland-qtutils
+    tty-clock
 )
 
 # thunar file manager
@@ -121,8 +119,18 @@ thunar=(
     thunar-archive-plugin
 )
 
-printf "${action}\n==> Installing necessary packages\n"
-for other_pkgs in "${other_packages[@]}"; do
+# checking already installed packages 
+for skipable in "${other_packages[@]}" "${aur_packages[@]}" "${thunar[@]}"; do
+    skip_installed "$skipable"
+done
+
+installble_pkg=($(printf "%s\n" "${other_packages[@]}" | grep -vxFf "$installed_cache"))
+installble_aur_pkg=($(printf "%s\n" "${aur_packages[@]}" | grep -vxFf "$installed_cache"))
+installble_thunar_pkg=($(printf "%s\n" "${thunar[@]}" | grep -vxFf "$installed_cache"))
+
+printf "\n\n"
+
+for other_pkgs in "${installble_pkg[@]}"; do
     install_package "$other_pkgs"
     if sudo pacman -Q "$other_pkgs" &>/dev/null; then
         echo "[ DONE ] - $other_pkgs was installed successfully!\n" 2>&1 | tee -a "$log" &>/dev/null
@@ -134,7 +142,7 @@ done
 sleep 1 && clear
 
 # Installing from the AUR Helper
-for aur_pkgs in "${aur_packages[@]}"; do
+for aur_pkgs in "${installble_aur_pkg[@]}"; do
     install_from_aur "$aur_pkgs"
     if sudo "$aur_helper" -Q "$aur_pkgs" &>/dev/null; then
         echo "[ DONE ] - $aur_pkgs was installed successfully!\n" 2>&1 | tee -a "$log" &>/dev/null
@@ -146,7 +154,7 @@ done
 sleep 1 && clear
 
 # installing thunar file manager
-for file_man in "${thunar[@]}"; do
+for file_man in "${installble_thunar_pkg[@]}"; do
     install_package "$file_man"
     if sudo pacman -Q "$file_man" &>/dev/null; then
         echo "[ DONE ] - $file_man was installed successfully!\n" 2>&1 | tee -a "$log" &>/dev/null

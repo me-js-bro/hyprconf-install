@@ -13,14 +13,6 @@ cyan="\e[1;36m"
 orange="\e[1;38;5;214m"
 end="\e[1;0m"
 
-# initial texts
-attention="[${orange} ATTENTION ${end}]"
-action="[${green} ACTION ${end}]"
-note="[${magenta} NOTE ${end}]"
-done="[${cyan} DONE ${end}]"
-ask="[${orange} QUESTION ${end}]"
-error="[${red} ERROR ${end}]"
-
 display_text() {
     gum style \
         --border rounded \
@@ -81,12 +73,12 @@ elif [[ "$distro" == "opensuse" ]]; then
 
 # Bluetooth
 
-printf "${action}\n==> Installing Bluetooth Packages\n"
+msg act "Installing Bluetooth Packages..."
  for bluetooth_pkgs in "${bluetooth[@]}"; do
    install_package "$bluetooth_pkgs"
   done
 
-printf "${action}\n==> Activating Bluetooth Services.\n"
+msg act "Activating Bluetooth Services..."
 sudo systemctl enable --now bluetooth.service 2>&1 | tee -a "$log"
 
 clear

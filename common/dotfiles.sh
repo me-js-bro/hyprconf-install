@@ -13,14 +13,6 @@ cyan="\e[1;36m"
 orange="\e[1;38;5;214m"
 end="\e[1;0m"
 
-# initial texts
-attention="[${orange} ATTENTION ${end}]"
-action="[${green} ACTION ${end}]"
-note="[${magenta} NOTE ${end}]"
-done="[${cyan} DONE ${end}]"
-ask="[${orange} QUESTION ${end}]"
-error="[${red} ERROR ${end}]"
-
 display_text() {
     gum style \
         --border rounded \
@@ -61,30 +53,30 @@ touch "$log"
 
 # _______ Testing _______ #
 
-printf "${action}\n==> Clonning the dotfiles repository and setting it to your system.\n"
+msg act "Clonning the dotfiles repository and setting it to your system..."
 # Create the cache directory if it doesn't exist
 mkdir -p "$cache_dir"
 
 # Clone the repository and log the output
 if [[ ! -d "$parent_dir/.cache/hyprconf" ]]; then
-  git clone --depth=1 https://github.com/me-js-bro/hyprconf.git "$parent_dir/.cache/hyprconf" 2>&1 | tee -a "$log"
+  git clone --depth=1 https://github.com/me-js-bro/hyprconf.git "$parent_dir/.cache/hyprconf" 2>&1 | tee -a "$log" &> /dev/null
 fi
 
 sleep 1
 
 # if repo clonned successfully, then setting up the config
 if [[ -d "$parent_dir/.cache/hyprconf" ]]; then
-  cd "$parent_dir/.cache/hyprconf" || { printf "${error}\n! Could not changed directory to $parent_dir/.cache/hyprconf (╥﹏╥)\n" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log"); exit 1; }
+  cd "$parent_dir/.cache/hyprconf" || { msg err "Could not changed directory to $parent_dir/.cache/hyprconf" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log"); exit 1; }
 
   chmod +x setup.sh
   
-  ./setup.sh || { printf "${error}\n! Could not run the setup script for hyprconf (╥﹏╥)\n" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log"); exit 1; }
+  ./setup.sh || { msg err "Could not run the setup script for hyprconf." 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log"); exit 1; }
 fi
 
 if [[ -f "$HOME/.config/hypr/scripts/startup.sh" ]]; then
-  printf "${done}\n:: Dotfiles setup was successful.!\n" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
+  msg dn "Dotfiles setup was successful..." 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
 else
-  printf "${error}\n! Could not setup dotfiles. Maybe there was an error. Please check the ${green}'$log'${end} file. (╥﹏╥)\n" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
+  msg err "Could not setup dotfiles.." 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
   exit 1
 fi
 

@@ -16,14 +16,6 @@ cyan="\e[1;36m"
 orange="\e[1;38;5;214m"
 end="\e[1;0m"
 
-# initial texts
-attention="[${orange} ATTENTION ${end}]"
-action="[${green} ACTION ${end}]"
-note="[${magenta} NOTE ${end}]"
-done="[${cyan} DONE ${end}]"
-ask="[${orange} QUESTION ${end}]"
-error="[${red} ERROR ${end}]"
-
 display_text() {
     gum style \
         --border rounded \
@@ -57,12 +49,16 @@ source "$parent_dir/interaction_fn.sh"
 log_dir="$parent_dir/Logs"
 log="$log_dir/sddm-$(date +%d-%m-%y).log"
 
+# skip installed cache
+cache_dir="$parent_dir/.cache"
+installed_cache="$cache_dir/installed_packages"
+
 if [[ -f "$log" ]]; then
     errors=$(grep "ERROR" "$log")
     last_installed=$(grep "sddm" "$log" | awk {'print $2'})
     if [[ -z "$errors" && "$last_installed" == "DONE" ]]; then
-        printf "${note}\n;; No need to run this script again\n"
-        sleep 2
+        msg skp "Skipping this script. No need to run it again..."
+        sleep 1
         exit 0
     fi
 
@@ -80,9 +76,18 @@ sddm=(
     sddm
 )
 
-# Installation of additional sddm stuff
-printf "${action}\n==> Installing sddm and dependencies.\n"
-for sddm_pkgs in "${sddm[@]}"; do
+
+# checking already installed packages 
+for skipable in "${sddm[@]}"; do
+    skip_installed "$skipable"
+done
+
+to_install=($(printf "%s\n" "${sddm[@]}" | grep -vxFf "$installed_cache"))
+
+printf "\n\n"
+
+# Instlling main packages...
+for sddm_pkgs in "${to_install[@]}"; do
     install_package "$sddm_pkgs"
     if sudo pacman -Q "$sddm_pkgs" &>/dev/null; then
         echo "[ DONE ] - $sddm_pkgs was installed successfully!\n" 2>&1 | tee -a "$log" &>/dev/null
@@ -93,13 +98,13 @@ done
 
 # Check if other login managers are installed and disabling their service before enabling sddm
 for login_manager in lightdm gdm lxdm lxdm-gtk3; do
-    if sudo pacman -Qs "$login_manager" 2>&1 | tee -a "$log" &>/dev/null; then
-        echo "Disabling $login_manager..."
+    if sudo pacman -Q "$login_manager" &> /dev/null 2>&1 | tee -a "$log" &>/dev/null; then
+        msg att "Disabling $login_manager..."
         sudo systemctl disable "$login_manager" 2>&1 | tee -a "$log"
     fi
 done
 
-printf "${action}\n==> Activating sddm service.\n"
+msg act "Activating sddm service..."
 sudo systemctl enable sddm.service 2>&1 | tee -a "$log"
 
 # run sddm theme script

@@ -47,7 +47,7 @@ for pkg in "${packages[@]}"; do
             sudo zypper in -y "$pkg";
 
             if sudo zypper se -i "$pkg" &> /dev/null; then
-                printf "${cyan}::${end} $pkg was installed sucessfully!\n" fi
+                printf "${cyan}::${end} $pkg was installed sucessfully!\n"
             fi
         fi
     fi
@@ -81,7 +81,8 @@ enabled=1
 gpgcheck=1
 gpgkey=https://repo.charm.sh/yum/gpg.key' | sudo tee /etc/yum.repos.d/charm.repo &>/dev/null
 
-    sudo yum install --assumeyes gum
+        sudo yum install --assumeyes gum
+    fi
 
     if rpm -q gum &> /dev/null; then
         printf "${cyan}::${end} Gum was installed successfully!\n"
@@ -92,10 +93,7 @@ sleep 1
  
 [[ ! "$(pwd)" == "$HOME" ]] && cd "$HOME"
 
-gum spin \
-    --spinner minidot \
-    --title "Preparing the installation scripts..." -- \
-    git clone --depth=1 https://github.com/me-js-bro/hyprconf-install.git &> /dev/null
+gum spin --spinner minidot --title "Preparing the installation scripts..." -- git clone --depth=1 https://github.com/me-js-bro/hyprconf-install.git &> /dev/null
 
 if [[ -d "hyprconf-install" ]]; then
     printf "${cyan}::${end} Starting the main script...\n" && sleep 1 && clear

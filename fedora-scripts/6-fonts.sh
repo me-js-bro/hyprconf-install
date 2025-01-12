@@ -84,9 +84,9 @@ for font in "${to_install[@]}"; do
   install_package "$font"
 
     if rpm -q "$font" &> /dev/null; then
-        echo " [ DONE ] - $font was installed successfully!" 2>&1 | tee -a "$log"
+        echo " [ DONE ] - $font was installed successfully!" 2>&1 | tee -a "$log" &> /dev/null
     else
-        echo "[ ERROR ] - Sorry, could not install $font" 2>&1 | tee -a "$log"
+        echo "[ ERROR ] - Sorry, could not install $font" 2>&1 | tee -a "$log" &> /dev/null
     fi
 done
 
@@ -96,7 +96,7 @@ if [ ! -d ~/.local/share/fonts/JetBrainsMonoNerd ]; then
     MAX_ATTEMPTS=2
     for ((ATTEMPT = 1; ATTEMPT <= MAX_ATTEMPTS; ATTEMPT++)); do
         curl -OL "$DOWNLOAD_URL" && break
-        printf "Download attempt $ATTEMPT failed. Retrying in 2 seconds...\n"
+        msg att "Download attempt $ATTEMPT failed. Retrying in 2 seconds..."
         sleep 2
     done
     mkdir -p ~/.local/share/fonts/JetBrainsMonoNerd

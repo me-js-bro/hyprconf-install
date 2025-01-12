@@ -103,7 +103,7 @@ aur_packages=(
     cava
     grimblast-git
     hyprsunset
-    hyprland-qtutils-git
+    hyprland-qtutils
     tty-clock
 )
 

@@ -65,6 +65,7 @@ fi
 
 main_packages=(
   curl
+  dunst
   eog
   fastfetch
   ffmpeg-free
@@ -84,6 +85,7 @@ main_packages=(
   neovim
   nvtop
   pamixer
+  pciutils
   pavucontrol
   pipewire-alsa
   pipewire-utils
@@ -120,7 +122,6 @@ other_packages=(
   mpv-mpris
   nwg-look
   pamixer
-  SwayNotificationCenter
   swww
 )
 

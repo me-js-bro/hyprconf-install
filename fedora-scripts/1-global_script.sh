@@ -45,6 +45,6 @@ install_package() {
     if rpm -q "$1" &> /dev/null ; then
         msg dn "$1 was installed successfully!"
     else
-        msg err "$1 failed to install. Maybe therer is an issue..."
+        msg err "$1 failed to install. Maybe there was an issue..."
     fi
 }

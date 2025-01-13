@@ -15,14 +15,6 @@ cyan="\e[1;36m"
 orange="\e[1;38;5;214m"
 end="\e[1;0m"
 
-# initial texts
-attention="[${orange} ATTENTION ${end}]"
-action="[${green} ACTION ${end}]"
-note="[${magenta} NOTE ${end}]"
-done="[${cyan} DONE ${end}]"
-ask="[${orange} QUESTION ${end}]"
-error="[${red} ERROR ${end}]"
-
 display_text() {
     gum style \
         --border rounded \
@@ -50,8 +42,16 @@ source "$dir/1-global_script.sh"
 
 # log directory
 parent_dir="$(dirname "$dir")"
+source "$parent_dir/interaction_fn.sh"
+
+# skip installed cache
+cache_dir="$parent_dir/.cache"
+installed_cache="$cache_dir/installed_packages"
+
+# log dir
 log_dir="$parent_dir/Logs"
 log="$log_dir/nvidia-$(date +%d-%m-%y).log"
+
 mkdir -p "$log_dir"
 touch "$log"
 
@@ -73,6 +73,15 @@ nvidia_drivers=(
   nvidia-compute-utils-G06
 )
 
+# checking already installed packages 
+for skipable in "${nvidia_pkg[@]}" "${nvidia_drivers[@]}"; do
+    skip_installed "$skipable"
+done
+
+to_install_nvidia_pkg=($(printf "%s\n" "${nvidia_pkg[@]}" | grep -vxFf "$installed_cache"))
+to_install_nvidia_drivers=($(printf "%s\n" "${nvidia_drivers[@]}" | grep -vxFf "$installed_cache"))
+
+printf "\n\n"
 
 # adding NVIDIA repo
 sudo zypper -n --quiet ar --refresh -p 90 https://download.nvidia.com/opensuse/tumbleweed NVIDIA 2>&1 | tee -a "$log" || true
@@ -83,18 +92,27 @@ sudo zypper --gpg-auto-import-keys refresh 2>&1 | tee -a "$log"
 sudo zypper install-new-recommends --repo NVIDIA 2>&1 | tee -a "$log"
 
 # Install additional Nvidia packages
-printf "${action}\n==> Installing nvidia drivers\n"
- for NVIDIA in "${nvidia_pkg[@]}" "${nvidia_drivers[@]}"; do
-   sudo zypper in --auto-agree-with-licenses -y "$NVIDIA"
-    if sudo zypper se -i "$NVIDIA" &> /dev/null ; then
-        echo "[ DONE ] - $NVIDIA was installed successfully!" 2>&1 | tee -a "$log" &> /dev/null
+ for nvidia_packages in "${to_install_nvidia_pkg[@]}"; do
+   sudo zypper in --auto-agree-with-licenses -y "$nvidia_packages"
+    if sudo zypper se -i "$nvidia_packages" &> /dev/null ; then
+        echo "[ DONE ] - $nvidia_packages was installed successfully!" 2>&1 | tee -a "$log" &> /dev/null
+    else
+        echo "[ ERROR ] - Could not install $NVIDIA..." 2>&1 | tee -a "$log" &> /dev/null
+    fi
+ done
+
+# Install additional Nvidia drivers
+ for nvidia_packages in "${to_install_nvidia_drivers[@]}"; do
+   sudo zypper in --auto-agree-with-licenses -y "$nvidia_packages"
+    if sudo zypper se -i "$nvidia_packages" &> /dev/null ; then
+        echo "[ DONE ] - $nvidia_packages was installed successfully!" 2>&1 | tee -a "$log" &> /dev/null
     else
         echo "[ ERROR ] - Could not install $NVIDIA..." 2>&1 | tee -a "$log" &> /dev/null
     fi
  done
 
 # adding additional nvidia-stuff
-printf "${action}\n==> Adding nvidia-stuff to /etc/default/grub\n"
+msg act "Adding nvidia-stuff to /etc/default/grub"
 
 # Additional options to add to GRUB_CMDLINE_LINUX
 additional_options="rd.driver.blacklist=nouveau modprobe.blacklist=nouveau nvidia-drm.modeset=1"
@@ -111,6 +129,6 @@ fi
 # Update GRUB configuration
 sudo grub2-mkconfig -o /boot/grub2/grub.cfg
 
-echo "Nvidia DRM modeset and additional options have been added to /etc/default/grub. Please reboot for changes to take effect." 2>&1 | tee -a "$log"
+msg dn "Nvidia DRM modeset and additional options have been added to /etc/default/grub.\n   Please reboot for changes to take effect." 2>&1 | tee -a "$log"
 
-clear
+sleep 1 && clear

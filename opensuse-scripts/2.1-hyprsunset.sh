@@ -13,14 +13,6 @@ cyan="\e[1;36m"
 orange="\e[1;38;5;214m"
 end="\e[1;0m"
 
-# initial texts
-attention="[${orange} ATTENTION ${end}]"
-action="[${green} ACTION ${end}]"
-note="[${magenta} NOTE ${end}]"
-done="[${cyan} DONE ${end}]"
-ask="[${orange} QUESTION ${end}]"
-error="[${red} ERROR ${end}]"
-
 display_text() {
     gum style \
         --border rounded \
@@ -46,16 +38,20 @@ printf " \n"
 dir="$(dirname "$(realpath "$0")")"
 source "$dir/1-global_script.sh"
 
-# log directory
 parent_dir="$(dirname "$dir")"
 source "$parent_dir/interaction_fn.sh"
 
+# log directory
 log_dir="$parent_dir/Logs"
-log="$log_dir/hyprsunset-$(date +%d-%m-%y).log"
+log="$log_dir/hyprland-$(date +%d-%m-%y).log"
+
+# skip installed cache
+cache_dir="$parent_dir/.cache"
+installed_cache="$cache_dir/installed_packages"
+
 mkdir -p "$log_dir"
 touch "$log"
 
-printf "${action}\n==>  Installing Hyprsunset.\n"
 
 if ! sudo zypper se -i git &> /dev/null; then
     install_package git
@@ -69,7 +65,7 @@ if ! sudo zypper se -i make &> /dev/null; then
     install_package make
 fi
 
-if git clone --depth=1 https://github.com/hyprwm/hyprsunset "$parent_dir/.cache/hyprsunset"; then
+if git clone --depth=1 https://github.com/hyprwm/hyprsunset "$parent_dir/.cache/hyprsunset" &> /dev/null; then
     cd "$parent_dir/.cache/hyprsunset"
     mkdir build
     cd build
@@ -81,11 +77,11 @@ if git clone --depth=1 https://github.com/hyprwm/hyprsunset "$parent_dir/.cache/
     sleep 1
 
     if command -v hyprsunset &> /dev/null; then
-        fn_done "Hyprsunset was installed successfully!"
+        msg dn "Hyprsunset was installed successfully!"
         echo "[ DONE ] - Hyprsunset was installed successfully!" 2>&1 | tee -a "$log" &> /dev/null
     else
-        fn_error "Sorry, could not install Hyprsunset. (╥﹏╥)"
-        echo "[ ERROR ] - Sorry, could not install Hyprsunset. (╥﹏╥)\n" 2>&1 | tee -a "$log" &> /dev/null
+        msg err "$1 failed to install. Maybe there was an issue..."
+        echo "[ ERROR ] - Sorry, could not install Hyprsunset.\n" 2>&1 | tee -a "$log" &> /dev/null
     fi 
 fi
 

@@ -75,6 +75,7 @@ hypr_package=(
   neovim
   pamixer
   pavucontrol
+  pciutils
   pipewire-alsa
   python312-requests
   python312-pip

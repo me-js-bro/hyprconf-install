@@ -88,6 +88,7 @@ other_packages=(
     pacman-contrib
     pamixer
     pavucontrol
+    pciutils
     python-pillow
     python-pywal
     ripgrep

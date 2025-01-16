@@ -13,14 +13,6 @@ cyan="\e[1;36m"
 orange="\e[1;38;5;214m"
 end="\e[1;0m"
 
-# initial texts
-attention="[${orange} ATTENTION ${end}]"
-action="[${green} ACTION ${end}]"
-note="[${magenta} NOTE ${end}]"
-done="[${cyan} DONE ${end}]"
-ask="[${orange} QUESTION ${end}]"
-error="[${red} ERROR ${end}]"
-
 display_text() {
     gum style \
         --border rounded \
@@ -60,13 +52,13 @@ removable=(
 
 for pkg in "${removable[@]}"; do
     if sudo zypper se -i "$pkg" &> /dev/null; then
-        printf "${action}\n==> $pkg was found, removing it\n"
+        msg att "$pkg was found, removing it.."
         sudo zypper rm -y "$pkg" 2>&1 | tee -a "$log"
 
         if ! sudo zypper se -i "$pkg" &> /dev/null; then
-            fn_done "$pkg was removed successfully!"
+            msg dn "$pkg was removed successfully!"
         else
-            fn_error "Could not remove $pkg (╥﹏╥)"
+            msg err "Could not remove $pkg. Maybe there was an issue."
         fi
     fi
 done

@@ -13,14 +13,6 @@ cyan="\e[1;36m"
 orange="\e[1;38;5;214m"
 end="\e[1;0m"
 
-# initial texts
-attention="[${orange} ATTENTION ${end}]"
-action="[${green} ACTION ${end}]"
-note="[${magenta} NOTE ${end}]"
-done="[${cyan} DONE ${end}]"
-ask="[${orange} QUESTION ${end}]"
-error="[${red} ERROR ${end}]"
-
 display_text() {
     gum style \
         --border rounded \
@@ -65,7 +57,7 @@ dependencies=(
 
 
 # Adding Packman repository and switching over to Packman
-printf "${attention}\n:: Adding Packman repository (Globally).... \n"
+msg act "Adding Packman repository (Globally)...."
 
 sudo zypper -n --quiet ar --refresh -p 90 "$packman_repo" packman 2>&1 | tee -a "$log"
 sudo zypper --gpg-auto-import-keys refresh 2>&1 | tee -a "$log"

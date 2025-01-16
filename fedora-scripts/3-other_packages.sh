@@ -75,6 +75,7 @@ main_packages=(
   jq
   kitty
   kvantum
+  kvantum-qt5
   libX11-devel
   libXext-devel
   lxappearance

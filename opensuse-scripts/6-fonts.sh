@@ -13,14 +13,6 @@ cyan="\e[1;36m"
 orange="\e[1;38;5;214m"
 end="\e[1;0m"
 
-# initial texts
-attention="[${orange} ATTENTION ${end}]"
-action="[${green} ACTION ${end}]"
-note="[${magenta} NOTE ${end}]"
-done="[${cyan} DONE ${end}]"
-ask="[${orange} QUESTION ${end}]"
-error="[${red} ERROR ${end}]"
-
 display_text() {
     gum style \
         --border rounded \
@@ -46,12 +38,17 @@ printf " \n \n"
 dir="$(dirname "$(realpath "$0")")"
 source "$dir/1-global_script.sh"
 
-# log directory
 parent_dir="$(dirname "$dir")"
 source "$parent_dir/interaction_fn.sh"
 
+# log directory
 log_dir="$parent_dir/Logs"
-log="$log_dir/fonts-$(date +%d-%m-%y).log"
+log="$log_dir/hyprland-$(date +%d-%m-%y).log"
+
+# skip installed cache
+cache_dir="$parent_dir/.cache"
+installed_cache="$cache_dir/installed_packages"
+
 mkdir -p "$log_dir"
 touch "$log"
 
@@ -67,12 +64,19 @@ symbols-only-nerd-fonts
 xorg-x11-fonts-core
 )
 
-# Installation of main components
-printf "${action}\n==> Installing necessary fonts\n"
+# checking already installed packages 
+for skipable in "${fonts[@]}"; do
+    skip_installed "$skipable"
+done
 
-for font in "${fonts[@]}"; do
+to_install=($(printf "%s\n" "${fonts[@]}" | grep -vxFf "$installed_cache"))
+
+printf "\n\n"
+
+for font in "${to_install[@]}"; do
   install_package "$font"
-    if sudo zypper se -i "$font" &>> /dev/null ; then
+
+    if sudo zypper se -i "$font" &> /dev/null ; then
         echo "[ DONE ] - $font was installed successfully!" 2>&1 | tee -a "$log" &>> /dev/null
     else
         echo "[ ERROR ] - Could not install $font..." 2>&1 | tee -a "$log" &>> /dev/null
@@ -84,7 +88,7 @@ DOWNLOAD_URL="https://github.com/ryanoasis/nerd-fonts/releases/latest/download/J
 MAX_ATTEMPTS=2
 for ((ATTEMPT = 1; ATTEMPT <= MAX_ATTEMPTS; ATTEMPT++)); do
     curl -OL "$DOWNLOAD_URL" && break
-    printf "Download attempt $ATTEMPT failed. (╥﹏╥) Retrying in 2 seconds...\n"
+    printf "Download attempt $ATTEMPT failed. Retrying in 2 seconds...\n"
     sleep 2
 done
 
@@ -98,7 +102,7 @@ mkdir -p ~/.local/share/fonts/JetBrainsMonoNerd
 tar -xJkf JetBrainsMono.tar.xz -C ~/.local/share/fonts/JetBrainsMonoNerd 2>&1 | tee -a "$log"
 
 # Update font cache and log the output
-printf "${action} - Updating font cache"
+msg act "Updating font cache"
 fc-cache -v 2>&1 | tee -a "$log" &> /dev/null
 
 # clean up 

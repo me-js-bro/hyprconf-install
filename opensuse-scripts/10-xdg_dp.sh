@@ -13,14 +13,6 @@ cyan="\e[1;36m"
 orange="\e[1;38;5;214m"
 end="\e[1;0m"
 
-# initial texts
-attention="[${orange} ATTENTION ${end}]"
-action="[${green} ACTION ${end}]"
-note="[${magenta} NOTE ${end}]"
-done="[${cyan} DONE ${end}]"
-ask="[${orange} QUESTION ${end}]"
-error="[${red} ERROR ${end}]"
-
 ###------ Startup ------###
 
 # install script dir
@@ -31,8 +23,14 @@ source "$dir/1-global_script.sh"
 parent_dir="$(dirname "$dir")"
 source "$parent_dir/interaction_fn.sh"
 
+# skip installed cache
+cache_dir="$parent_dir/.cache"
+installed_cache="$cache_dir/installed_packages"
+
+# log dir
 log_dir="$parent_dir/Logs"
 log="$log_dir/xdg_dp-$(date +%d-%m-%y).log"
+
 mkdir -p "$log_dir"
 touch "$log"
 
@@ -42,19 +40,28 @@ xdg-desktop-portal-gtk
 )
 
 
+# checking already installed packages 
+for skipable in "${xdg[@]}"; do
+    skip_installed "$skipable"
+done
+
+to_install=($(printf "%s\n" "${xdg[@]}" | grep -vxFf "$installed_cache"))
+
+printf "\n\n"
+
 # XDG-DESKTOP-PORTALS
-for xdgs in "${xdg[@]}"; do
+for xdgs in "${to_install[@]}"; do
   install_package_no_recommands "$xdgs" 2>&1 | tee -a "$log"
 done
 
-printf "${ask}\n?? Would you like to remove other XDG-Desktop-Portal-Implementations?\n"
-gum confirm "Choose..." \
-    --affirmative "Remove" \
-    --negative "Don't remove"
+msg att "Checking for other XDG-Desktop-Portal-Implementations..."
+
+fn_ask "Would you like to remove other XDG-Desktop-Portal-Implementations?" "Yes!" "No!"
+
 
 if [[ $? -eq 0 ]]; then
     # Clean out other portals
-    printf "${action}\n==> Clearing any other xdg-desktop-portal implementations\n"
+    msg act "Clearing any other xdg-desktop-portal implementations..."
     #Check if packages are installed and uninstall if present
     if sudo zypper se -i xdg-desktop-portal-wlr &> /dev/null; then
       printf "Removing xdg-desktop-portal-wlr...\n"
@@ -67,7 +74,7 @@ if [[ $? -eq 0 ]]; then
     fi
 
 else
-    printf "no other XDG-implementations will be removed.\n" 2>&1 | tee -a "$log"
+    msg skp "No other XDG-implementations will be removed.\n" 2>&1 | tee -a "$log"
 fi
 
-clear
+sleep 1 && clear

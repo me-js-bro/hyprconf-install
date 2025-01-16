@@ -13,14 +13,6 @@ cyan="\e[1;36m"
 orange="\e[1;38;5;214m"
 end="\e[1;0m"
 
-# initial texts
-attention="[${orange} ATTENTION ${end}]"
-action="[${green} ACTION ${end}]"
-note="[${magenta} NOTE ${end}]"
-done="[${cyan} DONE ${end}]"
-ask="[${orange} QUESTION ${end}]"
-error="[${red} ERROR ${end}]"
-
 display_text() {
     gum style \
         --border rounded \
@@ -46,12 +38,17 @@ printf " \n"
 dir="$(dirname "$(realpath "$0")")"
 source "$dir/1-global_script.sh"
 
-# log directory
 parent_dir="$(dirname "$dir")"
 source "$parent_dir/interaction_fn.sh"
 
+# log directory
 log_dir="$parent_dir/Logs"
 log="$log_dir/hyprland-$(date +%d-%m-%y).log"
+
+# skip installed cache
+cache_dir="$parent_dir/.cache"
+installed_cache="$cache_dir/installed_packages"
+
 mkdir -p "$log_dir"
 touch "$log"
 
@@ -67,10 +64,20 @@ hypr_pkgs=(
     hyprwayland-scanner
 )
 
+
+# checking already installed packages 
+for skipable in "${hypr_pkgs[@]}"; do
+    skip_installed "$skipable"
+done
+
+to_install=($(printf "%s\n" "${hypr_pkgs[@]}" | grep -vxFf "$installed_cache"))
+
+printf "\n\n"
+
 # Hyprland
-printf "${action} - Installing Hyprland packages...\n"
-for packages in "${hypr_pkgs[@]}"; do
+for packages in "${to_install[@]}"; do
   install_package "$packages"
+
     if sudo zypper se -i "$packages" &> /dev/null ; then
         echo "[ DONE ] - $packages was installed successfully!" 2>&1 | tee -a "$log" &> /dev/null
     else

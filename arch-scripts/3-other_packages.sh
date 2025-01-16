@@ -77,6 +77,7 @@ other_packages=(
     imagemagick
     jq
     kvantum
+    kvantum-qt5
     lxappearance
     network-manager-applet
     networkmanager
@@ -88,6 +89,7 @@ other_packages=(
     pacman-contrib
     pamixer
     pavucontrol
+    pciutils
     python-pillow
     python-pywal
     ripgrep

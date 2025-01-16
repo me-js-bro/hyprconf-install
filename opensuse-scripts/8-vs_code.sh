@@ -13,14 +13,6 @@ cyan="\e[1;36m"
 orange="\e[1;38;5;214m"
 end="\e[1;0m"
 
-# initial texts
-attention="[${orange} ATTENTION ${end}]"
-action="[${green} ACTION ${end}]"
-note="[${magenta} NOTE ${end}]"
-done="[${cyan} DONE ${end}]"
-ask="[${orange} QUESTION ${end}]"
-error="[${red} ERROR ${end}]"
-
 display_text() {
     gum style \
         --border rounded \
@@ -46,22 +38,42 @@ printf " \n \n"
 dir="$(dirname "$(realpath "$0")")"
 source "$dir/1-global_script.sh"
 
-
-# log directory
+# present dir
 parent_dir="$(dirname "$dir")"
 source "$parent_dir/interaction_fn.sh"
 
+# skip installed cache
+cache_dir="$parent_dir/.cache"
+installed_cache="$cache_dir/installed_packages"
+
+# log dir
 log_dir="$parent_dir/Logs"
 log="$log_dir/vs_code-$(date +%d-%m-%y).log"
+
 mkdir -p "$log_dir"
 touch "$log"
 
-printf "${action}\n==> Installing Visual Studio Code\n"
+if [[ -f "$log" ]]; then
+    errors=$(grep "ERROR" "$log")
+    if [[ -z "$errors" ]]; then
+        msg skp "Skipping this script. No need to run it again..."
+        sleep 1
+        exit 0
+    fi
+else
+    mkdir -p "$log_dir"
+    touch "$log"
+fi
 
-sudo rpm --import https://packages.microsoft.com/keys/microsoft.asc 2>&1 | tee -a "$log"
-sudo zypper addrepo https://packages.microsoft.com/yumrepos/vscode vscode 2>&1 | tee -a "$log"
-sudo zypper refresh 2>&1 | tee -a "$log"
-sudo zypper in -y code 2>&1 | tee -a "$log"
+if [[ -n $(command -v code) ]]; then
+    msg skp "Skipping vs-code. It's already installed."
+else
+    msg act "Installing Vs-Code..."
+    sudo rpm --import https://packages.microsoft.com/keys/microsoft.asc 2>&1 | tee -a "$log" &> /dev/null
+    sudo zypper addrepo https://packages.microsoft.com/yumrepos/vscode vscode 2>&1 | tee -a "$log" &> /dev/null
+    sudo zypper refresh 2>&1 | tee -a "$log" &> /dev/null
+    sudo zypper in -y code 2>&1 | tee -a "$log"
+fi
 
 common_scripts="$parent_dir/common"
 "$common_scripts/vs_code_theme.sh"

@@ -13,98 +13,76 @@ cyan="\e[1;36m"
 orange="\e[1;38;5;214m"
 end="\e[1;0m"
 
-# initial texts
-attention="[${orange} ATTENTION ${end}]"
-action="[${green} ACTION ${end}]"
-note="[${magenta} NOTE ${end}]"
-done="[${cyan} DONE ${end}]"
-ask="[${orange} QUESTION ${end}]"
-error="[${red} ERROR ${end}]"
-
-# sourcing the intaraction functions
 dir="$(dirname "$(realpath "$0")")"
 parent_dir="$(dirname "$dir")"
+cache_dir="$parent_dir/.cache"
+installed_cache="$cache_dir/installed_packages"
 source "$parent_dir/interaction_fn.sh"
 
 
 ###------ Startup ------###
 
+# skip already insalled packages
+skip_installed() {
+
+    [[ ! -f "$installed_cache" ]] && touch "$installed_cache"
+
+    if sudo zypper se -i "$1" &> /dev/null; then
+        msg skp "$1 is already installed. Skipping..." && sleep 0.1
+        if ! grep -qx "$1" "$installed_cache"; then
+            echo "$1" >> "$installed_cache"
+        fi
+    fi
+}
+
 # package installation function..
 install_package() {
 
-  # Checking if package is already installed
-  if sudo zypper se -i "$1" &> /dev/null ; then
-    fn_done "$1 is already installed. Skipping.."
-  else
-    # Package not installed
-    printf "${action}\n==> Installing $1\n"
+    msg act "Installing $1..."
     sudo zypper in -y "$1"
-    # Making sure package is installed
+
     if sudo zypper se -i "$1" &> /dev/null ; then
-      fn_done "$1 was installed successfully!"
+        msg dn "$1 was installed successfully!"
     else
-      # Something is missing,
-      fn_error "$1 failed to install. Maybe there was an issue. (╥﹏╥)"
+        msg err "$1 failed to install. Maybe there was an issue..."
     fi
-  fi
 }
 
 # package installation function for devel_basis..
 install_package_base() {
 
-  # Checking if package is already installed
-  if sudo zypper se -i "$1" &> /dev/null ; then
-    fn_done "$1 is already installed. Skipping.."
-  else
-    # Package not installed
-    printf "${action}\n==> Installing $1\n"
+    msg act "Installing $1..."
     sudo zypper in -y -t pattern "$1"
-    # Making sure package is installed
+
     if sudo zypper se -i "$1" &> /dev/null ; then
-      fn_done "$1 was installed successfully!"
+        msg dn "$1 was installed successfully!"
     else
-      # Something is missing,
-      fn_error "$1 failed to install. Maybe there was an issue. (╥﹏╥)"
+        msg err "$1 failed to install. Maybe there was an issue..."
     fi
-  fi
 }
 
 # package installation function no recommends..
 install_package_no_recommands() {
 
-  # Checking if package is already installed
-  if sudo zypper se -i "$1" &> /dev/null ; then
-    fn_done "$1 is already installed. Skipping.."
-  else
-    # Package not installed
-    printf "${action}\n==> Installing $1\n"
+    msg act "Installing $1..."
     sudo zypper in -y --no-recommends "$1"
-    # Making sure package is installed
+    
     if sudo zypper se -i "$1" &> /dev/null ; then
-      fn_done "$1 was installed successfully!"
+        msg dn "$1 was installed successfully!"
     else
-      # Something is missing, exiting to review log
-      fn_error "$1 failed to install. Maybe there was an issue. (╥﹏╥)"
+        msg err "$1 failed to install. Maybe there was an issue..."
     fi
-  fi
 }
 
 # package installation via opi
 install_package_opi() {
 
-  # Checking if package is already installed
-  if sudo zypper se -i "$1" &> /dev/null ; then
-    fn_done "$1 is already installed. Skipping.."
-  else
-    # Package not installed
-    printf "${action}\n==> Installing $1\n"
+    msg act "Installing $1..."
     sudo opi "$1" -n
-    # Making sure package is installed
+
     if sudo zypper se -i "$1" &> /dev/null ; then
-      fn_done "$1 was installed successfully!"
+        msg dn "$1 was installed successfully!"
     else
-      # Something is missing, exiting to review log
-      fn_error "$1 failed to install. Maybe there was an issue. (╥﹏╥)"
+        msg err "$1 failed to install. Maybe there was an issue..."
     fi
-  fi
 }

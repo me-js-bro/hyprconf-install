@@ -13,14 +13,6 @@ cyan="\e[1;36m"
 orange="\e[1;38;5;214m"
 end="\e[1;0m"
 
-# initial texts
-attention="[${orange} ATTENTION ${end}]"
-action="[${green} ACTION ${end}]"
-note="[${magenta} NOTE ${end}]"
-done="[${cyan} DONE ${end}]"
-ask="[${orange} QUESTION ${end}]"
-error="[${red} ERROR ${end}]"
-
 display_text() {
     gum style \
         --border rounded \
@@ -46,10 +38,17 @@ printf " \n \n"
 dir="$(dirname "$(realpath "$0")")"
 source "$dir/1-global_script.sh"
 
-# log directory
 parent_dir="$(dirname "$dir")"
+source "$parent_dir/interaction_fn.sh"
+
+# log directory
 log_dir="$parent_dir/Logs"
-log="$log_dir/others-$(date +%d-%m-%y).log"
+log="$log_dir/hyprland-$(date +%d-%m-%y).log"
+
+# skip installed cache
+cache_dir="$parent_dir/.cache"
+installed_cache="$cache_dir/installed_packages"
+
 mkdir -p "$log_dir"
 touch "$log"
 
@@ -76,6 +75,7 @@ hypr_package=(
   neovim
   pamixer
   pavucontrol
+  pciutils
   pipewire-alsa
   python312-requests
   python312-pip
@@ -132,8 +132,20 @@ thunar-plugin-archive
 grimblast_url=https://github.com/hyprwm/contrib.git
 
 
+# checking already installed packages 
+for skipable in "${hypr_package[@]}" "${other_packages[@]}" "${no_recommands[@]}" "${thunar[@]}"; do
+    skip_installed "$skipable"
+done
+
+to_install_hypr=($(printf "%s\n" "${hypr_package[@]}" | grep -vxFf "$installed_cache"))
+to_install_others=($(printf "%s\n" "${other_packages[@]}" | grep -vxFf "$installed_cache"))
+to_install_no_recommands=($(printf "%s\n" "${no_recommands[@]}" | grep -vxFf "$installed_cache"))
+to_install_thunar=($(printf "%s\n" "${thunar[@]}" | grep -vxFf "$installed_cache"))
+
+printf "\n\n"
+
 # installing necessary packages
-for packages in "${hypr_package[@]}" "${other_packages[@]}"; do
+for packages in "${to_install_hypr[@]}" "${to_install_others[@]}"; do
   install_package "$packages"
     if sudo zypper se -i "$packages" &> /dev/null ; then
         echo "[ DONE ] - $packages was installed successfully!" 2>&1 | tee -a "$log" &> /dev/null
@@ -143,7 +155,7 @@ for packages in "${hypr_package[@]}" "${other_packages[@]}"; do
 done
 
 # installing thunar
-for pkgs in "${no_recommands[@]}" "${thunar[@]}"; do
+for pkgs in "${to_install_no_recommands[@]}" "${to_install_thunar[@]}"; do
   install_package_no_recommands "$pkgs"
     if sudo zypper se -i "$pkgs" &> /dev/null ; then
         echo "[ DONE ] - $pkgs was installed successfully!" 2>&1 | tee -a "$log" &> /dev/null
@@ -154,19 +166,19 @@ done
 
 # installing grimblast
 if [ -f '/usr/local/bin/grimblast' ]; then
-  fn_done "Grimblast is already installed.."
+  msg skp "Skipping grimblast, it was already installed.."
   echo "[ DONE ] - Grimblast is already installed" 2>&1 | tee -a  "$log" &> /dev/null
 else
 
-  printf "${action}\n==> Installing grimblast\n"
-  git clone --depth=1 "$grimblast_url" ~/grimblast
+  msg act "Installing grimblast..."
+  git clone --depth=1 "$grimblast_url" ~/grimblast &> /dev/null
   cd "$HOME/grimblast/grimblast"
-  make
-  sudo make install
+  make &> /dev/null
+  sudo make install &> /dev/null
 
   sleep 1
   rm -rf ~/grimblast
-  fn_done "Grimblast was installed successfully!"
+  msg dn "Grimblast was installed successfully!"
   echo "[ DONE ] - Grimblast was installed successfully!" 2>&1 | tee -a  "$log" &> /dev/null
 fi
 
@@ -174,18 +186,18 @@ sleep 2 && clear
 
 # Install cliphist using go
 if command -v go &> /dev/null; then
-  printf "${action}\n==> Installing cliphist\n"
+  msg act "Installing cliphist..."
   export PATH=$PATH:/usr/local/bin
 
   if go install go.senan.xyz/cliphist@latest 2>&1 | tee -a "$log" &> /dev/null; then
     # copy cliphist into /usr/local/bin for some reason it is installing in ~/go/bin
     sudo cp -r "$HOME/go/bin/cliphist" "/usr/local/bin/" 2>&1 | tee -a "$log" &> /dev/null
-    fn_done "Cliphist was installed successfully!"
+    msg dn "Cliphist was installed successfully!"
     echo "[ DONE ] - Cliphist was installed successfully!" 2>&1 | tee -a  "$log" &> /dev/null
 
     sudo rm -rf "$HOME/go"
   else
-    fn_error "Could not install cliphist. (╥﹏╥)"
+    msg err "Cliphist failed to install. Maybe there was an issue..."
     echo "[ ERROR ] - Could not install cliphist. (╥﹏╥)" 2>&1 | tee -a "$log" &> /dev/null
   fi
 fi

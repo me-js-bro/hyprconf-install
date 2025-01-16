@@ -54,6 +54,7 @@ touch "$log"
 theme="$parent_dir/assets/themes.zip"
 icon="$parent_dir/assets/Icon_TelaDracula.tar.gz"
 cursor="$parent_dir/assets/Bibata-Modern-Ice.tar.xz"
+nwg="$parent_dir/assets/nwg-look"
 
 # creating icons and theme directory
 mkdir -p ~/.themes
@@ -101,6 +102,9 @@ unzip -o "$theme" -d "$parent_dir/.cache/" &> /dev/null 2>&1 | tee -a "$log"
 if [[ -d "$parent_dir/.cache/themes" ]]; then
     cp -r "$parent_dir/.cache/themes"/* "$HOME/.themes/"
 fi
+
+[[ -d "$HOME/.local/share/nwg-look" ]] && rm -rf "$HOME/.local/share/nwg-look"
+cp -r "$nwg" "$HOME/.local/share/"
 
 msg dn "Themes copied successfully."
 

@@ -77,6 +77,7 @@ other_packages=(
     imagemagick
     jq
     kvantum
+    kvantum-qt5
     lxappearance
     network-manager-applet
     networkmanager

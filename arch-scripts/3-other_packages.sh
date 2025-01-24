@@ -96,7 +96,6 @@ other_packages=(
     unzip
     wget
     xorg-xrandr
-    yad
     yazi
     zip
 )

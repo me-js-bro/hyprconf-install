@@ -109,7 +109,6 @@ main_packages=(
   wget2
   wl-clipboard
   xdg-utils
-  yad
   yazi
 )
 

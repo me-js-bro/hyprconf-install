@@ -133,7 +133,7 @@ EOF
 
     # asking prompts
     fn_ask_prompts "Bluetooth" "Would you like to enable Bluetooth service?" "Yes!" "No!"
-    fn_ask_prompts "Shell" "Would you like to..." "Configure zsh" "Configure Bash"
+    fn_ask_prompts "Shell" "Would you like to..." "Configure Zsh" "Configure Bash"
     fn_ask_prompts "Keyb" "Would you like to install Openbangla Keyboard?" "Yes!" "No!"
     fn_ask_prompts "VS_code" "Would you like to install VS Code?" "Yes!" "No!"
     fn_ask_prompts "Nvidia" "Do you have Nvidia GPU?" "Yes!" "No!"

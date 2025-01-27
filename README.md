@@ -6,6 +6,7 @@
 <h3>This Hyprland configuration is kind of minila looking, but also little bit gorgeous I guess. Why don't you check it out? </h3>
 
 ## [ WARNING ]
+
 Please note that this script if fully ready now. But for `openSUSE`, there is a little issue in installing `Hypridle` && `xdg-desktop-portal-hyprland` because a little dependency is missing in the repo of this OS. After it's being added, then the script for `openSUSE` will be totally ready.
 
 ## Screenshots
@@ -126,66 +127,7 @@ bash <(curl -s https://raw.githubusercontent.com/me-js-bro/hyprconf-install/main
 
 ## Keyboard Shortcuts
 
-### Hyprland Keybinds
-
-The `SUPER` button is the `Windows` button in your keyboard.
-
-| Function                          | Keybind                         | Action                                          |
-| --------------------------------- | ------------------------------- | ----------------------------------------------- |
-| Change Wallpaper                  | `SUPER` + `W`                   | Change desktop wallpaper                        |
-|                                   | `SUPER` + `SHIFT` + `W`         | Select wallpaper, style 1                       |
-|                                   | `SUPER` + `ALT` + `SHIFT` + `W` | Select wallpaper, style 2                       |
-| Change Wallpaper Engine           | `SUPER` + `ALT` + `E`           | Switch engine between swww and hyprpaper        |
-| Screenshot                        | `PRINT`                         | Take a screenshot                               |
-| Key Binds Help                    | `SUPER` + `SHIFT` + `h`         | Display keybinds help                           |
-| Open Terminal                     | `SUPER` + `Return`              | Open terminal (Alacritty)                       |
-| Kill Active Window                | `SUPER` + `Q`                   | Close active window                             |
-| Exit Window Manager               | `SUPER` + `SHIFT` + `M`         | Exit window manager                             |
-| Open File Manager                 | `SUPER` + `E`                   | Open file manager                               |
-| Toggle Floating Window            | `SUPER` + `V`                   | Toggle floating state of active window          |
-| Fullscreen Toggle                 | `SUPER` + `f`                   | Toggle fullscreen of active window              |
-| Open Application Menu             | `SUPER` + `D`                   | Open application menu                           |
-|                                   | `SUPER` + `ALT` + `D`           | Open theme selector rofi menu                   |
-| Clipboard Manager                 | `SUPER` + `ALT` + `c`           | Manage clipboard contents (clear or view)       |
-| Clipboard Wipe                    | `SUPER` + `ALT` + `w`           | Clear clipboard contents                        |
-| Emoji Selector                    | `SUPER` + `SHIFT` + `D`         | Open emoji selector                             |
-| Shutdown/Restart Menu             | `SUPER` + `x`                   | Open power menu                                 |
-| Change Power Menu Theme           | `SUPER` + `ALT` + `x`           | Change power menu theme                         |
-| Open Code Editor                  | `SUPER` + `c`                   | Open code editor                                |
-| Open Web Browsers                 | `SUPER` + `b`                   | Open preferred web browsers                     |
-| Open Web Browsers                 | `SUPER` + `SHIFT` + `b`         | Open secondary web browser                      |
-| Switch Window                     | `SUPER` + `Tab`                 | Open rofi to switch between windows             |
-| Hide/Unhide Waybar                | `CONTROL` + `ESCAPE`            | Hide and unhide status bar (waybar)             |
-| Lock Screen                       | `SUPER` + `SHIFT` + `l`         | Lock the screen (Hyprlock)                      |
-| Toggle Dark/Light Theme           | `SUPER` + `ALT` + `l`           | Toggle between dark and light themes            |
-| Adjust Waybar Layout              | `SUPER` + `CTRL` + `w`          | Adjust waybar layout                            |
-| Edit Dotfiles                     | `SUPER` + `CTRL` + `e`          | Edit dotfiles                                   |
-| Open Shell Script                 | `SUPER` + `ALT` + `b`           | Open theme selector for shell script (bash/zsh) |
-| Open Apps (Custom)                | `SUPER` + `SHIFT` + `f`         | Open Facebook                                   |
-|                                   | `SUPER` + `SHIFT` + `y`         | Open YouTube                                    |
-|                                   | `SUPER` + `SHIFT` + `a`         | Open WhatsApp                                   |
-|                                   | `SUPER` + `CTRL` + `a`          | Open ChatGPT                                    |
-|                                   | `SUPER` + `SHIFT` + `g`         | Open GitHub                                     |
-|                                   | `SUPER` + `SHIFT` + `p`         | Open Photopea                                   |
-| Audio Control                     | `F9`                            | Toggle audio mute                               |
-|                                   | `F10`                           | Decrease volume                                 |
-|                                   | `F11`                           | Increase volume                                 |
-| Move Focus (Arrow Keys)           | `SUPER` + `l`                   | Move focus right                                |
-|                                   | `SUPER` + `h`                   | Move focus left                                 |
-|                                   | `SUPER` + `k`                   | Move focus up                                   |
-|                                   | `SUPER` + `j`                   | Move focus down                                 |
-| Move Window (Arrow Keys)          | `SUPER` + `CONTROL` + `h`       | Move window left                                |
-|                                   | `SUPER` + `CONTROL` + `l`       | Move window right                               |
-|                                   | `SUPER` + `CONTROL` + `k`       | Move window up                                  |
-|                                   | `SUPER` + `CONTROL` + `j`       | Move window down                                |
-| Switch Workspaces                 | `SUPER` + `[0-9]`               | Switch to workspace `[0-9]`                     |
-| Move Window to Workspace          | `SUPER` + `SHIFT` + `[0-9]`     | Move active window to workspace `[0-9]`         |
-| Move Window Silently to Workspace | `SUPER` + `ALT` + `[0-9]`       | Move window silently to workspace `[0-9]`       |
-| Scroll through Workspaces         | `SUPER` + `mouse_down`          | Scroll to next workspace                        |
-|                                   | `SUPER` + `mouse_up`            | Scroll to previous workspace                    |
-| Move/Resize Window                | `SUPER` + `LMB/RMB`             | Drag to move or resize window                   |
-
-### You can also check Keybinds after you installed the script. Just press `SUPER + Shift + H`. It will launch a pop up with all the keybindings.
+After installation, just press the `SUPER + Shift + h`. It will show you all the keybinds.
 
 ## Contribute.
 

@@ -68,20 +68,51 @@ fn_exit() {
     exit 1
 }
 
+#================================================
+# Changed it with gum choose
+#================================================
+# fn_ask_prompts() {
+#     echo "$1" &> /dev/null
+#         gum confirm "$2" \
+#             --affirmative "$3" \
+#             --selected.background "#00FFFF" \
+#             --selected.foreground "#000" \
+#             --negative "$4"
+#                     
+#     if [[ $? -eq 0 ]]; then
+#         sed -i "s/^$1=''/ $1='Y'/" "$cache_file"
+#     elif [[ $? -eq 1 ]]; then
+#         sed -i "s/^$1=''/ $1='N'/" "$cache_file"
+#     fi
+# }
+
+
+
 # only for asking the prompts...
 fn_ask_prompts() {
-    echo "$1" &> /dev/null
-        gum confirm "$2" \
-            --affirmative "$3" \
-            --selected.background "#00FFFF" \
-            --selected.foreground "#000" \
-            --negative "$4"
-                    
-    if [[ $? -eq 0 ]]; then
-        sed -i "s/^$1=''/ $1='Y'/" "$cache_file"
-    elif [[ $? -eq 1 ]]; then
-        sed -i "s/^$1=''/ $1='N'/" "$cache_file"
-    fi
+    echo "Choose features you want to use."
+
+    # Use gum to capture selected options
+    local selected
+    selected=$(gum choose --header "Select using the 'space' button:" --no-limit "${!options[@]}")
+    
+    # Reset all options to 'N' by default
+    for key in "${!options[@]}"; do
+        options[$key]="N"
+    done
+
+    # Set the selected options to 'Y'
+    for key in $selected; do
+        options[$key]="Y"
+    done
+
+    # Update the cache file with the new values
+    > "$cache_file"
+    for key in "${!options[@]}"; do
+        echo "$key='${options[$key]}'" >> "$cache_file"
+    done
+
+    cat "$cache_file"
 }
 
 # choose from options

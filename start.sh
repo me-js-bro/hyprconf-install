@@ -129,7 +129,7 @@ else
     # Initialize default options and their values
     declare -A options=(
         ["setup_for_bluetooth"]=""
-        # ["install_fish_shell"]=""
+        ["install_fish_shell"]=""
         ["install_zsh"]=""
         ["setup_bash"]=""
         ["install_vs_code"]=""
@@ -146,10 +146,8 @@ else
     }
 
     initialize_cache_file
-    fn_ask_prompts "setup_for_bluetooth" "install_zsh" "setup_bash" "install_vs_code" "install_openbangla_keyboard" "have_nvidia"
 
-    # ------------- will be uncommented after adding function for installing fish
-    # fn_ask_prompts "setup_for_bluetooth" "install_fish_shell" "install_zsh" "setup_bash" "install_vs_code" "install_openbangla_keyboard" "have_nvidia"
+    fn_ask_prompts "setup_for_bluetooth" "install_fish_shell" "install_zsh" "setup_bash" "install_vs_code" "install_openbangla_keyboard" "have_nvidia"
     source "$cache_file" &> /dev/null
 fi
 

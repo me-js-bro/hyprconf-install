@@ -21,12 +21,12 @@ display_text() {
         --margin "1" \
         --padding "1" \
 '
- ____  ______ __
-/_  / / __/ // /
- / /__\ \/ _  / 
-/___/___/_//_/  
-                
-                               
+    _______      __  
+   / ____(_)____/ /_ 
+  / /_  / / ___/ __ \
+ / __/ / (__  ) / / /
+/_/   /_/____/_/ /_/ 
+                              
 '
 }
 
@@ -55,7 +55,7 @@ installed_cache="$cache_dir/installed_packages"
 
 if [[ -f "$log" ]]; then
     errors=$(grep "ERROR" "$log")
-    last_installed=$(grep "fish" "$log" | awk {'print $2'})
+    last_installed=$(grep "thefuck" "$log" | awk {'print $2'})
     if [[ -z "$errors" && "$last_installed" == "DONE" ]]; then
         msg skp "Skipping this script. No need to run it again..."
         sleep 1
@@ -66,26 +66,68 @@ else
     touch "$log"
 fi
 
+# required packages
+common_packages=(
+    bat
+    curl
+    eza
+    fastfetch
+    figlet
+    fzf
+    git
+    rsync
+    zoxide
+    zsh
+)
+
+for_opensuse=(
+    python311
+    python311-pip
+    python311-pipx
+    xclip
+)
+
 
 # checking already installed packages 
-for skipable in "fish"; do
+for skipable in "${common_packages[@]}"; do
     skip_installed "$skipable"
 done
 
-to_install=($(printf "%s\n" "fish" | grep -vxFf "$installed_cache"))
+to_install=($(printf "%s\n" "${common_packages[@]}" | grep -vxFf "$installed_cache"))
 
 printf "\n\n"
 
 # Instlling main packages...
 for shell in "${to_install[@]}"; do
     install_package "$shell"
-
-    if command -v "$shell" &> /dev/null; then
-        echo "[ DONE ] - $shell was installed successfully!\n" 2>&1 | tee -a "$log" &>/dev/null
-    else
-        echo "[ ERROR ] - Sorry, could not install $shell!\n" 2>&1 | tee -a "$log" &>/dev/null
-    fi
 done
+
+if [[ "$distro" == "arch" || "$distro" == "fedora" ]]; then
+    install_package thefuck 2>&1 | tee -a "$log"
+elif [[ "$distro" == "opensuse" ]]; then
+    msg att "You are installing ${distro}. Some necessary packages will be installed now..." && sleep 1
+
+    for pkgs in "${for_opensuse[@]}"; do
+        install_package "$pkgs" 2>&1 | tee -a "$log"
+    done
+
+    # installing thefu*k
+    if command -v pipx &> /dev/null; then
+        pipx runpip thefuck install setuptools &> /dev/null
+        sleep 0.5
+        pipx install --python python3.11 thefuck &> /dev/null 2>&1 | tee -a "$log"
+
+        if command -v thefuck &> /dev/null; then
+            msg dn "thef*ck was installed successfully!" && sleep 1
+        fi
+    fi
+fi
+
+if command -v thefuck &> /dev/null; then
+    echo "[ DONE ] - thefuck was installed successfully!" 2>&1 | tee -a "$log"
+else
+    echo "[ ERROR ] - Could not install thefuck" 2>&1 | tee -a "$log"
+fi
 
 if [[ ! "$SHELL" == "$(which fish)" ]]; then
     msg act "Changing shell to fish.."

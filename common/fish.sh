@@ -73,11 +73,12 @@ common_packages=(
     eza
     fastfetch
     figlet
+    fish
     fzf
     git
     rsync
+    starship
     zoxide
-    zsh
 )
 
 for_opensuse=(

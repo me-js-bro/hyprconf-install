@@ -109,7 +109,7 @@ if [[ -f "$cache_file" ]]; then
     source "$cache_file"
 
     # Check if Nvidia prompt has no value set
-    if [[ -z "$Nvidia" ]]; then
+    if [[ -z "$have_nvidia" ]]; then
         msg err "User prompt was not given properly. Please run the script again..."
 
         fn_ask "Would you like to run the script agaain?" "Yes, sure." "No, close it."
@@ -148,7 +148,7 @@ else
     initialize_cache_file
 
     fn_ask_prompts "setup_for_bluetooth" "install_fish_shell" "install_zsh" "setup_bash" "install_vs_code" "install_openbangla_keyboard" "have_nvidia"
-    source "$cache_file" &> /dev/null
+    source "$cache_file"
 fi
 
 
@@ -157,7 +157,7 @@ fi
 # ====================================== #
 
 scripts_dir="$dir/${distro}-scripts"
-common_scripts="$dir"/common
+common_scripts="$dir/common"
 
 chmod +x "$scripts_dir"/* 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
 chmod +x "$common_scripts"/* 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")

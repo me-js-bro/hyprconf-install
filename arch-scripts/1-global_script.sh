@@ -64,6 +64,7 @@ install_package() {
 
 # package installation from aur helper function..
 install_from_aur() {
+
     msg act "Installing $1..."
     "$aur_helper" -S --noconfirm "$1" &> /dev/null
 

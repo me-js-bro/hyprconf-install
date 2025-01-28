@@ -35,8 +35,13 @@ mkdir -p "$log_dir"
 touch "$log"
 
 xdg=(
-xdg-desktop-portal-hyprland
-xdg-desktop-portal-gtk
+    xdg-desktop-portal-hyprland
+    xdg-desktop-portal-gtk
+)
+
+removable=(
+    xdg-desktop-portal-wlr
+    xdg-desktop-portal-lxqt
 )
 
 
@@ -54,27 +59,22 @@ for xdgs in "${to_install[@]}"; do
   install_package_no_recommands "$xdgs" 2>&1 | tee -a "$log"
 done
 
-msg att "Checking for other XDG-Desktop-Portal-Implementations..."
+# checking for other xdg desktop portals
+msg att "Checking for other XDG-Desktop-Portal-Implementations..." && sleep 1
 
-fn_ask "Would you like to remove other XDG-Desktop-Portal-Implementations?" "Yes!" "No!"
+for xdgs in "${removable[@]}"; do
+    if sudo zypper se -i "$xdgs" &> /dev/null; then
 
+        fn_ask "Would you like to remove $xdgs?" "Yes!" "No!"
 
-if [[ $? -eq 0 ]]; then
-    # Clean out other portals
-    msg act "Clearing any other xdg-desktop-portal implementations..."
-    #Check if packages are installed and uninstall if present
-    if sudo zypper se -i xdg-desktop-portal-wlr &> /dev/null; then
-      printf "Removing xdg-desktop-portal-wlr...\n"
-      sudo zypper rm -y xdg-desktop-portal-wlr 2>&1 | tee -a "$log"
+        if [[ $? -eq 0 ]]; then
+            msg act "Removing $xdgs..."
+            sudo zypper rm -y "$xdgs" 2>&1 | tee -a "$log"
+        else
+            msg skp "Won't remove $xdgs.."
+        fi
     fi
 
-    if sudo zypper se -i xdg-desktop-portal-lxqt &> /dev/null; then
-      printf "Removing xdg-desktop-portal-lxqt...\n"
-      sudo zypper rm -y xdg-desktop-portal-lxqt 2>&1 | tee -a "$log"
-    fi
-
-else
-    msg skp "No other XDG-implementations will be removed.\n" 2>&1 | tee -a "$log"
-fi
+done
 
 sleep 1 && clear

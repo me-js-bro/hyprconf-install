@@ -3,9 +3,6 @@
 #### Advanced Hyprland Installation Script by ####
 #### Js Bro ( https://github.com/me-js-bro ) ####
 
-# exit the script if there is any error
-# set -e
-
 # color defination
 red="\e[1;31m"
 green="\e[1;32m"
@@ -42,6 +39,11 @@ xdg=(
     xdg-desktop-portal-gtk
 )
 
+removable=(
+    xdg-desktop-portal-wlr
+    xdg-desktop-portal-lxqt
+)
+
 # checking already installed packages 
 for skipable in "${xdg[@]}"; do
     skip_installed "$skipable"
@@ -61,23 +63,21 @@ for xdg_pkgs in "${to_install[@]}"; do
     fi
 done
 
-msg att "Checking for other XDG-Desktop-Portal-Implementations..."
+# Clean out other portals
+msg att "Checking for other XDG-Desktop-Portal-Implementations..." && sleep 1
 
-fn_ask "Would you like to remove other XDG-Desktop-Portal-Implementations?" "Yes!" "No!"
+for xdgs in "${removable[@]}"; do
+    if sudo pacman -Q "$xdgs" &> /dev/null; then
 
-if [[ $? -eq 0 ]]; then
-    # Clean out other portals
-    msg att "Clearing other xdg-desktop-portal implementations..."
-    # Check if packages are installed and uninstall if present
-    if pacman -Qs xdg-desktop-portal-wlr &> /dev/null; then
-        msg act "Removing xdg-desktop-portal-wlr..."
-        sudo pacman -R --noconfirm xdg-desktop-portal-wlr 2>&1 | tee -a "$log"
+        fn_ask "Would you like to remove $xdgs?" "Yes!" "No!"
+
+        if [[ $? -eq 0 ]]; then
+            msg act "Removing $xdgs..."
+            sudo pacman -Rns --noconfirm "$xdgs" 2>&1 | tee -a "$log" &> /dev/null
+        else
+            msg skp "Won't remove $xdgs.."
+        fi
     fi
+done
 
-    if pacman -Qs xdg-desktop-portal-lxqt &> /dev/null; then
-        msg act "Removing xdg-desktop-portal-lxqt..."
-        sudo pacman -R --noconfirm xdg-desktop-portal-lxqt 2>&1 | tee -a "$log"
-    fi
-else
-    msg att "No other XDG-implementations will be removed." 2>&1 | tee -a "$log"
-fi
+sleep 1 && clear

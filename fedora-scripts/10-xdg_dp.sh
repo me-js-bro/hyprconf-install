@@ -35,8 +35,13 @@ mkdir -p "$log_dir"
 touch "$log"
 
 xdg=(
-xdg-desktop-portal-hyprland
-xdg-desktop-portal-gtk
+    xdg-desktop-portal-hyprland
+    xdg-desktop-portal-gtk
+)
+
+removable=(
+    xdg-desktop-portal-wlr
+    xdg-desktop-portal-lxqt
 )
 
 
@@ -59,23 +64,21 @@ for xdg_pkgs in "${to_install[@]}"; do
     fi
 done
 
-msg att "Checking for other XDG-Desktop-Portal-Implementations..."
+# checking for other xdg desktop portals
+msg att "Checking for other XDG-Desktop-Portal-Implementations..." && sleep 1
 
-fn_ask "Would you like to remove other XDG-Desktop-Portal-Implementations?" "Yes!" "No!"
+for xdgs in "${removable[@]}"; do
+  	if rpm -q "$xdgs" &> /dev/null; then
 
-if [[ $? -eq 0 ]]; then
-    
-  	if rpm -q xdg-desktop-portal-wlr &> /dev/null; then
-    	msg act "Removing xdg-desktop-portal-wlr..."
-    	sudo dnf remove -y xdg-desktop-portal-wlr 2>&1 | tee -a "$log" &> /dev/null
+        fn_ask "Would you like to remove $xdgs?" "Yes!" "No!"
+
+        if [[ $? -eq 0 ]]; then
+            msg act "Removing $xdgs..."
+            sudo dnf remove -y "$xdgs" 2>&1 | tee -a "$log" &> /dev/null
+        else
+            msg skp "Won't remove $xdgs.."
+        fi
   	fi
-
-  	if rpm -q xdg-desktop-portal-lxqt &> /dev/null; then
-    	msg act "Removing xdg-desktop-portal-lxqt..."
-    	sudo dnf remove -y xdg-desktop-portal-lxqt 2>&1 | tee -a "$log" &> /dev/null
-  	fi
-else
-    msg skp "No other XDG-implementations will be removed..." 2>&1 | tee -a "$log"
-fi
+done
 
 sleep 1 && clear

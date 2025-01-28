@@ -65,13 +65,13 @@ msg att "Checking for other XDG-Desktop-Portal-Implementations..." && sleep 1
 for xdgs in "${removable[@]}"; do
     if sudo zypper se -i "$xdgs" &> /dev/null; then
 
-        fn_ask "Would you like to remove ${cyan}${xdgs}${end}?" "Yes!" "No!"
+        fn_ask "Would you like to remove $xdgs?" "Yes!" "No!"
 
         if [[ $? -eq 0 ]]; then
-            msg act "Removing ${cyan}${xdgs}${end}..."
+            msg act "Removing $xdgs..."
             sudo zypper rm -y "$xdgs" 2>&1 | tee -a "$log"
         else
-            msg skp "Won't remove ${cyan}${xdgs}${end}.."
+            msg skp "Won't remove $xdgs.."
         fi
     fi
 

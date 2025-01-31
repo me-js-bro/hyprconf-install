@@ -1,6 +1,7 @@
 #!/bin/bash
 
-# gum install for fedora.
+#### Advanced Hyprland Installation Script by ####
+#### Shell Ninja ( https://github.com/shell-ninja ) ####
 
 echo '[charm]
 name=Charm

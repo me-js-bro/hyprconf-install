@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #### Advanced Hyprland Installation Script by ####
-#### Js Bro ( https://github.com/me-js-bro ) ####
+#### Shell Ninja ( https://github.com/shell-ninja ) ####
 
 # I copied this script from JaKooLit. See here https://github.com/JaKooLit
 

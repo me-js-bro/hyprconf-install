@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #### Advanced Hyprland Installation Script by ####
-#### Js Bro ( https://github.com/me-js-bro ) ####
+#### Shell Ninja ( https://github.com/shell-ninja ) ####
 
 # exit the script if there's any error
 #set -e

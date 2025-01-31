@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #### Advanced Hyprland Installation Script by ####
-#### Js Bro ( https://github.com/me-js-bro ) ####
+#### Shell Ninja ( https://github.com/shell-ninja ) ####
 
 # this script will be a curl of wget link. by running this script, it will clone the repository and execute the main script.
 

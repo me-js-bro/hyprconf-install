@@ -3,7 +3,7 @@
 # I copied this script from JaKooLit. See here https://github.com/JaKooLit
 
 #### Advanced Hyprland Installation Script by ####
-#### Js Bro ( https://github.com/me-js-bro ) ####
+#### Shell Ninja ( https://github.com/shell-ninja ) ####
 
 # color defination
 red="\e[1;31m"

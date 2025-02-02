@@ -49,7 +49,7 @@ touch "$log"
 ###------ Startup ------###
 
 # OpenBangla-Building url was forked from ( https://github.com/asifakonjee/openbangla-fcitx5 )
-bash -c "$(wget -q https://raw.githubusercontent.com/me-js-bro/Build-OpenBangla-Keyboard/main/build.sh -O -)"
+bash -c "$(wget -q https://raw.githubusercontent.com/shell-ninja/Build-OpenBangla-Keyboard/main/build.sh -O -)"
 
 if [[ -d "/usr/share/openbangla-keyboard" ]]; then
   msg dn "OpenBangla Keyboard was installed successfully!"

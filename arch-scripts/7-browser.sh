@@ -3,9 +3,6 @@
 #### Advanced Hyprland Installation Script by ####
 #### Shell Ninja ( https://github.com/shell-ninja ) ####
 
-# exit the script if there is any error
-# set -e
-
 # color defination
 red="\e[1;31m"
 green="\e[1;32m"
@@ -70,21 +67,9 @@ fi
 aur_helper=$(command -v yay || command -v paru)
 
 # Ask user for browser selection
-browsers=$(gum choose --no-limit \
-        --header "You can choose multiple browsers" \
-        --header.foreground "#fff" \
-        --cursor.foreground "#00FFFF" \
-        --item.foreground "#00FFFF" \
-        --selected.foreground "#00FF00" \
-        "Brave" "Chromium" "Firefox" "Vivaldi" "Zen Browser"
-)
+browsers=$(gum choose --header "Choose the browser you want to install (only one)" "Brave" "Chromium" "Firefox" "Vivaldi" "Zen Browser" "Skip")
 
-# Fix: Convert gum choice string into an array
-IFS=$'\n' read -r -d '' -a browser_array <<<"$browsers"
-
-# Loop through the selected browsers
-for browser in "${browser_array[@]}"; do
-    case $browser in
+case $browsers in
     "Brave")
         curl -fsS https://dl.brave.com/install.sh | sh
         sleep 1
@@ -167,10 +152,14 @@ for browser in "${browser_array[@]}"; do
         fi
 
         ;;
+    "Skip")
+            msg skp "No browser will be installed.."
+            sleep 1
+            exit 0
+        ;;
     *)
         msg err "Invalid choice: $browser..."
         ;;
-    esac
-done
+esac
 
 sleep 1 && clear

@@ -46,21 +46,19 @@ log="$log_dir/uninstall-$(date +%d-%m-%y).log"
 mkdir -p "$log_dir"
 touch "$log"
 
-removable=(
+removable_pkg=(
     wofi
 )
 
-for pkg in "${removable[@]}"; do
-    if rpm -q "$pkg" &> /dev/null; then
-        msg act "$pkg was found, removing it..."
-        sudo dnf remove -y "$pkg" 2>&1 | tee -a "$log"
+if rpm -q "$removable_pkg" &> /dev/null; then
+    msg act "$removable_pkg was found, removing it..."
+    sudo dnf remove -y "$removable_pkg" 2>&1 | tee -a "$log"
 
-        if ! rpm -q "$pkg" &> /dev/null; then
-            msg dn "$pkg was removed successfully!"
-        else
-            msg err "Could not remove $pkg"
-        fi
+    if rpm -q "$removable_pkg" &> /dev/null; then
+        msg err "Could not remove $removable_pkg"
+    else
+        msg dn "$removable_pkg was removed successfully!"
     fi
-done
+fi
 
 sleep 1 && clear

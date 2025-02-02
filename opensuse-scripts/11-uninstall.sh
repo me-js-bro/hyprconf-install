@@ -55,10 +55,10 @@ for pkg in "${removable[@]}"; do
         msg att "$pkg was found, removing it.."
         sudo zypper rm -y "$pkg" 2>&1 | tee -a "$log"
 
-        if ! sudo zypper se -i "$pkg" &> /dev/null; then
-            msg dn "$pkg was removed successfully!"
-        else
+        if sudo zypper se -i "$pkg" &> /dev/null; then
             msg err "Could not remove $pkg. Maybe there was an issue."
+        else
+            msg dn "$pkg was removed successfully!"
         fi
     fi
 done

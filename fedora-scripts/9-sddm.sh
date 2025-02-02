@@ -108,7 +108,7 @@ sudo systemctl enable sddm.service 2>&1 | tee -a "$log"
 sleep 1 && clear
 
 msg act "Setting the sddm theme for fedora..."
-git clone --depth=1 https://github.com/me-js-bro/sddm "$parent_dir/.cache/sddm" &> /dev/null
+git clone --depth=1 https://github.com/shell-ninja/sddm "$parent_dir/.cache/sddm" &> /dev/null
 
 if [[ -d "$parent_dir/.cache/sddm" ]]; then
   sudo cp -r "$parent_dir/.cache/sddm/fedora-sddm" "/usr/share/sddm/themes/"

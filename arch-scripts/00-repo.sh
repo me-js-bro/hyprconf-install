@@ -3,9 +3,6 @@
 #### Advanced Hyprland Installation Script by ####
 #### Shell Ninja ( https://github.com/shell-ninja ) ####
 
-# exit the script if there is any error
-# set -e
-
 # Color definition
 red="\e[1;31m"
 green="\e[1;32m"
@@ -15,14 +12,6 @@ magenta="\e[1;1;35m"
 cyan="\e[1;36m"
 orange="\e[38;5;214m"
 end="\e[1;0m"
-
-# Initial texts
-attention="[${orange} ATTENTION ${end}]"
-action="[${green} ACTION ${end}]"
-note="[${magenta} NOTE ${end}]"
-done="[${cyan} DONE ${end}]"
-ask="[${orange} QUESTION ${end}]"
-error="[${red} ERROR ${end}]"
 
 display_text() {
     cat <<"EOF"
@@ -39,8 +28,6 @@ clear && display_text
 printf " \n\n"
 
 ###------ Startup ------###
-
-# Finding the present directory and log file
 
 # install script dir
 dir="$(dirname "$(realpath "$0")")"
@@ -84,12 +71,12 @@ fi
 
 if [[ -z "$aur_helper" ]]; then
     msg ask "Which aur helper would you like to install?"
-    choice=$(gum choose --limit=1 "yay" "paru")
+    choice=$(gum choose --header "Choose aur helper:" "yay" "paru")
 
     if [[ "$choice" == "yay" ]]; then
         msg act "Installing yay..."
         sudo rm -rf /var/lib/pacman/db.lck &> /dev/null
-        echo "aur='yay'" >>"$cache_file"
+        echo "aur='yay'" >> "$cache_file"
         git clone https://aur.archlinux.org/yay.git "$parent_dir/.cache/yay" &> /dev/null
         cd "$parent_dir/.cache/yay" || exit 1
         makepkg -si --noconfirm
@@ -121,3 +108,5 @@ else
     echo "[ ERROR ] - Could not install aru helper. Maybe there was an issue.(╥﹏╥)" 2>&1 | tee -a "$log" &>/dev/null
     exit 1
 fi
+
+sleep 1 && clear

@@ -60,6 +60,13 @@ Please note that this script if fully ready now. But for `openSUSE`, there is a 
 </p>
 </details>
 
+<details close>
+<summary>Login Screen (sddm)</summary>
+<p align="center">
+   <img aligh="center" width="99%" src="https://github.com/shell-ninja/Screen-Shots/blob/main/hyprconf/sddm/sddm_theme.jpg?raw=true" />
+</p>
+</details>
+
 <br>
 
 ## Features

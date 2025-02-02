@@ -5,9 +5,6 @@
 
 # this script will be a curl of wget link. by running this script, it will clone the repository and execute the main script.
 
-# exit the script if there's any error
-#set -e
-
 # color defination
 red="\e[1;31m"
 green="\e[1;32m"
@@ -31,7 +28,7 @@ for pkg in "${packages[@]}"; do
 
     if command -v pacman &> /dev/null; then
         if sudo pacman -Q "$pkg" &> /dev/null; then
-            printf "${magenta}[ SKIP ]${end}Skipping $pkg, it was already installed..\n"
+            printf "${magenta}[ SKIP ]${end} Skipping $pkg, it was already installed..\n"
         else
             printf "${green}=>${end} Installing $pkg...\n"
             sudo pacman -S --noconfirm "$pkg" &> /dev/null
@@ -99,7 +96,7 @@ printf "${green}=>${end} Preparing the installation scripts...\n"
 git clone --depth=1 https://github.com/me-js-bro/hyprconf-install.git &> /dev/null
 
 if [[ -d "hyprconf-install" ]]; then
-    printf "${cyan}::${end} Starting the main script...\n" && sleep 1 && clear
+    printf "${cyan}::${end} Starting the main script..\n" && sleep 1 && clear
 
     cd hyprconf-install
     chmod +x start.sh

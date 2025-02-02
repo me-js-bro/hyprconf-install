@@ -45,21 +45,22 @@ log="$log_dir/uninstall-$(date +%d-%m-%y).log"
 mkdir -p "$log_dir"
 touch "$log"
 
-removable=(
+removable_pkg=(
     wofi
 )
 
-for pkg in "${removable[@]}"; do
-    if sudo pacman -Q "$pkg" &> /dev/null; then
-        mag att "$pkg was found. It will be removed."
-        sudo pacman -Rns --noconfirm "$pkg" &> /dev/null 2>&1 | tee -a "$log"
 
-        if ! sudo pacman -Q "$pkg" &> /dev/null; then
-            msg dn "$pkg was removed successfully!"
-        else
-            msg err "Could not remove $pkg..."
-        fi
+if sudo pacman -Q "$removable_pkg" &> /dev/null; then
+    mag att "$removable_pkg was found. It will be removed."
+    sudo pacman -Rns --noconfirm "$removable_pkg" &> /dev/null 2>&1 | tee -a "$log"
+    
+    sleep 1
+
+    if sudo pacman -Q "$removable_pkg" &> /dev/null; then
+        msg err "Could not remove $removable_pkg..."
+    else
+        msg dn "$removable_pkg was removed successfully!"
     fi
-done
+fi
 
 exit 0

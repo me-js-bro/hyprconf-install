@@ -1,6 +1,6 @@
 <h1 align="center">Minimal Hyprland Configuration</h1>
 <h3 align="center">By</h3>
-<h2 align="center">Shell Ninja ( Md. Mahin Islam Mahi )</h2>
+<h2 align="center">Shell Ninja</h2>
 <br>
 
 <h3>This Hyprland configuration is kind of minila looking, but also little bit gorgeous I guess. Why don't you check it out? </h3>

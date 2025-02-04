@@ -3,9 +3,6 @@
 #### Advanced Hyprland Installation Script by ####
 #### Shell Ninja ( https://github.com/shell-ninja ) ####
 
-# exit the script if there is any error
-# set -e
-
 # color defination
 red="\e[1;31m"
 green="\e[1;32m"

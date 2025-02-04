@@ -11,16 +11,6 @@ cyan="\e[1;36m"
 orange="\x1b[38;5;214m"
 end="\e[1;0m"
 
-# color defination (hex for gum)
-# "#FF0000"       # Bright red
-# "#00FF00"     # Bright green
-# "#FFFF00"    # Bright yellow
-# "#0000FF"      # Bright blue
-# "#FF00FF"   # Bright magenta
-# "#00FFFF"      # Bright cyan
-# "#ff8700"    # Approximation for color code 214 in ANSI (orange)
-
-
 # cache dir
 dir="$(dirname "$(realpath "$0")")"
 
@@ -68,25 +58,6 @@ fn_exit() {
     exit 1
 }
 
-#================================================
-# Changed it with gum choose
-#================================================
-# fn_ask_prompts() {
-#     echo "$1" &> /dev/null
-#         gum confirm "$2" \
-#             --affirmative "$3" \
-#             --selected.background "#00FFFF" \
-#             --selected.foreground "#000" \
-#             --negative "$4"
-#                     
-#     if [[ $? -eq 0 ]]; then
-#         sed -i "s/^$1=''/ $1='Y'/" "$cache_file"
-#     elif [[ $? -eq 1 ]]; then
-#         sed -i "s/^$1=''/ $1='N'/" "$cache_file"
-#     fi
-# }
-
-
 
 # only for asking the prompts...
 fn_ask_prompts() {
@@ -119,7 +90,6 @@ fn_ask_prompts() {
 fn_choose() {
     local choice=$(
         gum choose \
-            --no-limit \
             --cursor.foreground "#00FFFF" \
             --item.foreground "#fff" \
             --selected.foreground "#00FF00" \

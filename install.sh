@@ -3,9 +3,6 @@
 #### Advanced Hyprland Installation Script by ####
 #### Shell Ninja ( https://github.com/shell-ninja ) ####
 
-# exit the script if there's any error
-#set -e
-
 # color defination
 red="\e[1;31m"
 green="\e[1;32m"
@@ -30,9 +27,9 @@ packages=(
 
 for pkg in "${packages[@]}"; do
 
-    if command -v pacman &>/dev/null; then
-        if sudo pacman -Q "$pkg" &>/dev/null; then
-            printf "${magenta}[ Skip ]${end} Skipping $pkg, it's already installed...\n"
+    if command -v pacman &> /dev/null; then
+        if sudo pacman -Q "$pkg" &> /dev/null; then
+            printf "${magenta}[ Skip ] ${end} Skipping $pkg, it's already installed...\n"
         else
             printf "${green}=>${end} Installing $pkg...\n"
             if sudo pacman -S --noconfirm "$pkg" &> /dev/null; then

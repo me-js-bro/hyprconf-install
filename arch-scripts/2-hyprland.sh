@@ -64,16 +64,19 @@ fi
 
 aur_helper=$(command -v yay || command -v paru) # find the aur helper
 
-# Main Hyprland packages
-hypr_packages=(
-    cliphist
-    dunst
-    eog
+hyprland=(
     hyprland
     hyprlock
     hyprpaper
     hypridle
     hyprcursor
+)
+
+# Main Hyprland packages
+hypr_packages=(
+    cliphist
+    dunst
+    eog
     kitty
     nwg-look
     polkit-gnome
@@ -88,12 +91,11 @@ hypr_packages=(
     swww
     waybar
     wl-clipboard
-    xdg-desktop-portal-hyprland
 )
 
 
 # checking already installed packages 
-for skipable in "${hypr_packages[@]}"; do
+for skipable in "${hyprland[@]}" "${hypr_packages[@]}"; do
     skip_installed "$skipable"
 done
 

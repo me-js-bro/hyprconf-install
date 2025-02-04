@@ -59,13 +59,18 @@ else
     touch "$log"
 fi
 
-# Ask user for browser selection
-browsers=$(gum choose --header "Choose the browser you want to install (only one)" "Brave" "Chromium" "Firefox" "Zen Browser" "Skip")
+browser=$(cat "$parent_dir/.cache/browser")
 
 # Loop through the selected browsers
-case $browsers in
+case $browser in
     "Brave")
-        curl -fsS https://dl.brave.com/install.sh | sh
+        if command -v brave-browser &> /dev/null; then
+            msg skp "Brave browser is already installed. Skipping"
+            exit 0
+        else
+            curl -fsS https://dl.brave.com/install.sh | sh
+        fi
+
         sleep 1
 
         if [[ -n "$(command -v brave-browser)" ]]; then
@@ -84,7 +89,13 @@ case $browsers in
         fi
         ;;
     "Chromium")
-        install_package chromium
+        if command -v chromium &> /dev/null; then
+            msg skp "Chromium is already installed. Skipping"
+            exit 0
+        else
+            install_package chromium
+        fi
+
         sleep 1
 
         if [[ -n "$(command -v chromium)" ]]; then
@@ -103,7 +114,13 @@ case $browsers in
         fi
         ;;
     "Firefox")
-        install_package firefox
+        if command -v firefox &> /dev/null; then
+            msg skp "Chromium is already installed. Skipping"
+            exit 0
+        else
+            install_package firefox
+        fi
+
         sleep 1
 
         if [[ -n "$(command -v firefox)" ]]; then
@@ -115,12 +132,18 @@ case $browsers in
         fi
         ;;
     "Zen Browser")
-        msg act "Installing the zen-browser..." && sleep 0.5
-        msg att "Enabling the copr repo for it..."
-        sudo dnf copr enable sneexy/zen-browser -y
-        sudo wget "https://copr.fedorainfracloud.org/coprs/sneexy/zen-browser/repo/fedora-$(rpm -E %fedora)/sneexy-zen-browsder-fedora-$(rpm -E %fedora).repo" -O "/etc/yum.repos.d/_copr_sneexy-zen-browser.repo"
-        sleep 1
-        sudo dnf install zen-browser-avx2 -y
+        if command -v zen-browser &> /dev/null; then
+            msg skp "Zen browser is already installed. Skipping"
+            exit 0
+        else
+            msg act "Installing the zen-browser..." && sleep 0.5
+            msg att "Enabling the copr repo for it..."
+            sudo dnf copr enable sneexy/zen-browser -y
+            sudo wget "https://copr.fedorainfracloud.org/coprs/sneexy/zen-browser/repo/fedora-$(rpm -E %fedora)/sneexy-zen-browsder-fedora-$(rpm -E %fedora).repo" -O "/etc/yum.repos.d/_copr_sneexy-zen-browser.repo"
+            sleep 1
+            sudo dnf install zen-browser-avx2 -y
+        fi
+
         sleep 1
 
         if [[ -n "$(command -v zen-browser)" ]]; then

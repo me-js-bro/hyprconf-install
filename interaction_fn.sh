@@ -86,17 +86,6 @@ fn_ask_prompts() {
     cat "$cache_file"
 }
 
-# choose from options
-fn_choose() {
-    local choice=$(
-        gum choose \
-            --cursor.foreground "#00FFFF" \
-            --item.foreground "#fff" \
-            --selected.foreground "#00FF00" \
-            "$@"
-    )
-}
-
 msg() {
     local actn="$1"
     local msg="$2"

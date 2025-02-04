@@ -54,9 +54,7 @@ touch "$log"
 
 hypr_pkgs=(
     hyprland
-    hyprlock
     hyprpaper
-    hypridle
     hyprcursor
     hyprland-protocols-devel
     wayland-protocols-devel
@@ -64,6 +62,14 @@ hypr_pkgs=(
     hyprwayland-scanner
 )
 
+hypr_others=(
+  python311-aiofiles
+  python312-pip
+  python312-pipx
+  python-base
+  hyprlock
+  hypridle
+)
 
 # checking already installed packages 
 for skipable in "${hypr_pkgs[@]}"; do
@@ -84,5 +90,29 @@ for packages in "${to_install[@]}"; do
         echo "[ ERROR ] - Could not install $packages..." 2>&1 | tee -a "$log" &> /dev/null
     fi
 done
+
+for others in "${hypr_others[@]}"; do
+  install_package_opi "$others"
+
+    if sudo zypper se -i "$others" &> /dev/null ; then
+        echo "[ DONE ] - $others was installed successfully!" 2>&1 | tee -a "$log" &> /dev/null
+    else
+        echo "[ ERROR ] - Could not install $others..." 2>&1 | tee -a "$log" &> /dev/null
+    fi
+done
+
+# Check if the file exists and delete it
+pypr="/usr/local/bin/pypr"
+if [ -f "$pypr" ]; then
+    sudo rm "$pypr"
+fi
+
+# Hyprland Plugins
+# pyprland https://github.com/hyprland-community/pyprland installing using python
+msg act "Installing pyprland..."
+
+curl https://raw.githubusercontent.com/hyprland-community/pyprland/main/scripts/get-pypr | sh  2>&1 | tee -a "$LOG"
+
+sudo pip install pyprland --break-system-packages 2>&1 | tee -a "$LOG" 
 
 sleep 1 && clear

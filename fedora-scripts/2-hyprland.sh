@@ -69,6 +69,7 @@ hypr=(
     hypridle
     hyprcursor
     hyprsunset
+    pyprland
 )
 
 # checking already installed packages 

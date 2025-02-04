@@ -70,6 +70,7 @@ hyprland=(
     hyprpaper
     hypridle
     hyprcursor
+    pyprland
 )
 
 # Main Hyprland packages

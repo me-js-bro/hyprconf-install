@@ -11,7 +11,7 @@ Please note that this script if fully ready now. But for `openSUSE`, there is a 
 
 ## [ NOTE ]
 
-This is a rolling release config. I fix issues and add features very often. Just to update in with the latest commits, you have to use a `SUPER Shift U`. It will update to the latest [hyprconf](https://github.com/shell-ninja/hyprconf).
+The dotfile used in this script is a rolling release config. I fix issues and add features very often. Just to update in the latest commits, you have to use `SUPER Shift U` keybind. It will update to the latest [hyprconf](https://github.com/shell-ninja/hyprconf) configuration and restore the cache.
 
 ## Screenshots
 

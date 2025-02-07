@@ -101,6 +101,7 @@ aur_packages=(
     hyprsunset
     hyprland-qtutils
     tty-clock
+    pyprland
 )
 
 # thunar file manager

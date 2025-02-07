@@ -64,7 +64,13 @@ fn_exit() {
 fn_ask_prompts() {
     # Use gum to capture selected options
     local selected
-    selected=$(gum choose --header "Select using the 'space' button:" --no-limit "${!options[@]}")
+    selected=$(gum choose \
+        --header "Select using the 'space' bar" \
+        --no-limit \
+        --cursor.foreground "#00FFFF" \
+        --item.foreground "#fff" \
+        --selected.foreground "#00FF00" \
+        "${!options[@]}")
     
     # Reset all options to 'N' by default
     for key in "${!options[@]}"; do
@@ -89,7 +95,13 @@ fn_ask_prompts() {
 fn_shell() {
     # Use gum to capture selected options
     local selected
-    selected=$(gum choose --header "Choose only one" --limit=1 "${!shell_options[@]}")
+    selected=$(gum choose \
+        --header "Choose only one. Press 'ENTER'" \
+        --limit=1 \
+        --cursor.foreground "#00FFFF" \
+        --item.foreground "#fff" \
+        --selected.foreground "#00FF00" \
+        "${!shell_options[@]}")
     
     # Reset all options to 'N' by default
     for key in "${!shell_options[@]}"; do

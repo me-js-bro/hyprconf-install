@@ -123,7 +123,7 @@ if [[ -f "$cache_file" ]]; then
             fn_exit "Exiting the script here. Goodbye."
         fi
     else
-        msg att "Cache file is there. Skipping prompts..."
+        msg skp "Cache file is there. Skipping prompts..." && sleep 1
     fi
 else
     touch "$cache_file"
@@ -147,6 +147,9 @@ else
 
     msg att "Choose prompts. Press 'ESC' to skip"
     fn_ask_prompts 
+
+    echo
+    echo
 
     touch "$shell_cache"
     # Initialize default options and their values

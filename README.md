@@ -140,7 +140,7 @@ bash <(curl -s https://raw.githubusercontent.com/shell-ninja/hyprconf-install/ma
 
 While installation, it will ask you some prompts. You can choose according to your need. You can choose multiple options using the space bar
 
-<img src="https://github.com/shell-ninja/Screen-Shots/tree/main/hyprconf/install/1.png?raw=true" /> <br>
+<img src="https://github.com/shell-ninja/Screen-Shots/blob/main/hyprconf/install/1.png?raw=true" /> <br>
 </details>
 
 <details close>
@@ -148,7 +148,7 @@ While installation, it will ask you some prompts. You can choose according to yo
 
 You can choose which shell you want to install (only one). Install customized [zsh](https://github.com/shell-ninja/Zsh) or `fish`. If you choose `setup_bash`, it will Set up my configured [bash](https://github.com/shell-ninja/Bash).
 
-<img src="https://github.com/shell-ninja/Screen-Shots/tree/main/hyprconf/install/2.png?raw=true" /> <br>
+<img src="https://github.com/shell-ninja/Screen-Shots/blob/main/hyprconf/install/2.png?raw=true" /> <br>
 </details>
 
 <details close>
@@ -156,7 +156,11 @@ You can choose which shell you want to install (only one). Install customized [z
 
 You have the freedom to choose a web browser. I you don't want to install any, you can simply skip it.
 
-<img src="https://github.com/shell-ninja/Screen-Shots/tree/main/hyprconf/install/3.png?raw=true" /> <br>
+<p align="center">
+    <img width="49%" src="https://github.com/shell-ninja/Screen-Shots/blob/main/hyprconf/install/3.png?raw=true" />
+    <img width="49%" src="https://github.com/shell-ninja/Screen-Shots/blob/main/hyprconf/install/4.png?raw=true" />
+</p>
+<br>
 </details>
 
 <br>

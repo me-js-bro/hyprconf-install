@@ -138,7 +138,7 @@ bash <(curl -s https://raw.githubusercontent.com/shell-ninja/hyprconf-install/ma
 <details close>
 <summary>Installation Prompts</summary>
 
-While installation, it will ask you some prompts. You can choose according to your need. You can choose multiple options using the space bar
+When you run the script, it will ask you some prompts. You can choose according to your need. You can choose multiple options using the space bar.
 
 <img src="https://github.com/shell-ninja/Screen-Shots/blob/main/hyprconf/install/1.png?raw=true" /> <br>
 </details>
@@ -156,10 +156,8 @@ You can choose which shell you want to install (only one). Install customized [z
 
 You have the freedom to choose a web browser. I you don't want to install any, you can simply skip it.
 
-<p align="center">
-    <img width="49%" src="https://github.com/shell-ninja/Screen-Shots/blob/main/hyprconf/install/3.png?raw=true" />
-    <img width="49%" src="https://github.com/shell-ninja/Screen-Shots/blob/main/hyprconf/install/4.png?raw=true" />
-</p>
+<img width="49%" src="https://github.com/shell-ninja/Screen-Shots/blob/main/hyprconf/install/3.png?raw=true" />
+<img width="49%" src="https://github.com/shell-ninja/Screen-Shots/blob/main/hyprconf/install/4.png?raw=true" />
 <br>
 </details>
 

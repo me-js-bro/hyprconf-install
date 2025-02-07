@@ -156,8 +156,7 @@ You can choose which shell you want to install (only one). Install customized [z
 
 You have the freedom to choose a web browser. I you don't want to install any, you can simply skip it.
 
-<img width="49%" src="https://github.com/shell-ninja/Screen-Shots/blob/main/hyprconf/install/3.png?raw=true" />
-<img width="49%" src="https://github.com/shell-ninja/Screen-Shots/blob/main/hyprconf/install/4.png?raw=true" />
+<img src="https://github.com/shell-ninja/Screen-Shots/blob/main/hyprconf/install/4.png?raw=true" />
 <br>
 </details>
 

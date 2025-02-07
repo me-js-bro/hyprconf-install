@@ -1,4 +1,4 @@
-<h1 align="center">Minimal Hyprland Configuration</h1>
+<h1 align="center">Minimal Hyprland Install Script</h1>
 <h3 align="center">By</h3>
 <h2 align="center">Shell Ninja</h2>
 <br>

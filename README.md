@@ -132,7 +132,32 @@ bash <(curl -s https://raw.githubusercontent.com/shell-ninja/hyprconf-install/ma
   chmod +x install.sh
   ./install.sh
   ```
-  Hurrah! Now select Hyprland from your login manager, login to your Hyprland and enjoy it.
+
+### Prompts
+
+<details close>
+<summary>Installation Prompts</summary>
+
+While installation, it will ask you some prompts. You can choose according to your need. You can choose multiple options using the space bar
+
+<img src="https://github.com/shell-ninja/Screen-Shots/tree/main/hyprconf/install/1.png?raw=true" /> <br>
+</details>
+
+<details close>
+<summary>Install Shell</summary>
+
+You can choose which shell you want to install (only one). Install customized [zsh](https://github.com/shell-ninja/Zsh) or `fish`. If you choose `setup_bash`, it will Set up my configured [bash](https://github.com/shell-ninja/Bash).
+
+<img src="https://github.com/shell-ninja/Screen-Shots/tree/main/hyprconf/install/2.png?raw=true" /> <br>
+</details>
+
+<details close>
+<summary>Install Browser</summary>
+
+You have the freedom to choose a web browser. I you don't want to install any, you can simply skip it.
+
+<img src="https://github.com/shell-ninja/Screen-Shots/tree/main/hyprconf/install/3.png?raw=true" /> <br>
+</details>
 
 <br>
 

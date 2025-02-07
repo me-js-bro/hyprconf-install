@@ -34,6 +34,7 @@ touch "$log"
 # ---------------- creating a cache directory..
 cache_dir="$dir/.cache"
 cache_file="$cache_dir/user-cache"
+shell_cache="$cache_dir/shell"
 distro_cache="$cache_dir/distro"
 
 # --------------- sourcing the interaction prompts
@@ -129,9 +130,6 @@ else
     # Initialize default options and their values
     declare -A options=(
         ["setup_for_bluetooth"]=""
-        ["install_fish_shell"]=""
-        ["install_zsh"]=""
-        ["setup_bash"]=""
         ["install_vs_code"]=""
         ["install_openbangla_keyboard"]=""
         ["have_nvidia"]=""
@@ -147,9 +145,33 @@ else
 
     initialize_cache_file
 
-    fn_ask_prompts "setup_for_bluetooth" "install_fish_shell" "install_zsh" "setup_bash" "install_vs_code" "install_openbangla_keyboard" "have_nvidia"
-    source "$cache_file"
+    msg att "Choose prompts. Press 'ESC' to skip"
+    fn_ask_prompts 
+
+    touch "$shell_cache"
+    # Initialize default options and their values
+    declare -A shell_options=(
+        ["install_fish"]=""
+        ["install_zsh"]=""
+        ["setup_bash"]=""
+    )
+
+    # Write initial options to the cache file
+    initialize_shell_cache() {
+        > "$shell_cache"
+        for key in "${!shell_options[@]}"; do
+            echo "$key=''" >> "$shell_cache"
+        done
+    }
+
+    initialize_shell_cache
+
+    msg att "Choose prompts. Press 'ESC' to skip"
+    fn_shell
 fi
+
+source "$cache_file"
+source "$shell_cache"
 
 
 # ====================================== #
@@ -285,7 +307,7 @@ if [[ "$setup_bash" =~ ^[Yy]$ ]]; then
 fi
 
 
-if [[ "$install_fish_shell" =~ ^[Yy]$ ]]; then
+if [[ "$install_fish" =~ ^[Yy]$ ]]; then
     "$common_scripts/fish.sh" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
 fi
 

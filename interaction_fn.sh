@@ -17,6 +17,7 @@ dir="$(dirname "$(realpath "$0")")"
 # creating a cache directory..
 cache_dir="$dir/.cache"
 cache_file="$cache_dir/user-cache"
+shell_cache="$cache_dir/shell"
 
 [[ ! -d "$cache_dir" ]] && mkdir -p "$cache_dir"
 
@@ -61,8 +62,6 @@ fn_exit() {
 
 # only for asking the prompts...
 fn_ask_prompts() {
-    echo "Choose features you want to use."
-
     # Use gum to capture selected options
     local selected
     selected=$(gum choose --header "Select using the 'space' button:" --no-limit "${!options[@]}")
@@ -83,7 +82,32 @@ fn_ask_prompts() {
         echo "$key='${options[$key]}'" >> "$cache_file"
     done
 
-    cat "$cache_file"
+    # cat "$cache_file"
+}
+
+# only for asking shell prompts...
+fn_shell() {
+    # Use gum to capture selected options
+    local selected
+    selected=$(gum choose --header "Choose only one" --limit=1 "${!shell_options[@]}")
+    
+    # Reset all options to 'N' by default
+    for key in "${!shell_options[@]}"; do
+        shell_options[$key]="N"
+    done
+
+    # Set the selected options to 'Y'
+    for key in $selected; do
+        shell_options[$key]="Y"
+    done
+
+    # Update the cache file with the new values
+    > "$shell_cache"
+    for key in "${!shell_options[@]}"; do
+        echo "$key='${shell_options[$key]}'" >> "$shell_cache"
+    done
+
+    # cat "$cache_file"
 }
 
 msg() {

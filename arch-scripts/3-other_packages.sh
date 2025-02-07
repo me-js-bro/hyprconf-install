@@ -3,9 +3,6 @@
 #### Advanced Hyprland Installation Script by ####
 #### Shell Ninja ( https://github.com/shell-ninja ) ####
 
-# exit the script if there is any error
-# set -e
-
 # color defination
 red="\e[1;31m"
 green="\e[1;32m"
@@ -73,7 +70,6 @@ other_packages=(
     fastfetch
     ffmpeg
     gnome-disk-utility
-    ibus
     imagemagick
     jq
     kvantum
@@ -90,7 +86,6 @@ other_packages=(
     pamixer
     pavucontrol
     pciutils
-    python-pillow
     python-pywal
     ripgrep
     unzip
@@ -106,6 +101,7 @@ aur_packages=(
     hyprsunset
     hyprland-qtutils
     tty-clock
+    pyprland
 )
 
 # thunar file manager

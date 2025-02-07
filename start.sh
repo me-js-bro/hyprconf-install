@@ -34,6 +34,7 @@ touch "$log"
 # ---------------- creating a cache directory..
 cache_dir="$dir/.cache"
 cache_file="$cache_dir/user-cache"
+shell_cache="$cache_dir/shell"
 distro_cache="$cache_dir/distro"
 
 # --------------- sourcing the interaction prompts
@@ -122,18 +123,16 @@ if [[ -f "$cache_file" ]]; then
             fn_exit "Exiting the script here. Goodbye."
         fi
     else
-        msg att "Cache file is there. Skipping prompts..."
+        msg skp "Cache file is there. Skipping prompts..." && sleep 1
     fi
 else
     touch "$cache_file"
     # Initialize default options and their values
     declare -A options=(
         ["setup_for_bluetooth"]=""
-        ["install_fish_shell"]=""
-        ["install_zsh"]=""
-        ["setup_bash"]=""
         ["install_vs_code"]=""
         ["install_openbangla_keyboard"]=""
+        ["install_browser"]=""
         ["have_nvidia"]=""
     )
 
@@ -147,9 +146,71 @@ else
 
     initialize_cache_file
 
-    fn_ask_prompts "setup_for_bluetooth" "install_fish_shell" "install_zsh" "setup_bash" "install_vs_code" "install_openbangla_keyboard" "have_nvidia"
-    source "$cache_file"
+    msg att "Choose prompts. Press 'ESC' to skip"
+    fn_ask_prompts 
+
+    echo
+    echo
+
+    touch "$shell_cache"
+    # Initialize default options and their values
+    declare -A shell_options=(
+        ["install_fish"]=""
+        ["install_zsh"]=""
+        ["setup_bash"]=""
+    )
+
+    # Write initial options to the cache file
+    initialize_shell_cache() {
+        > "$shell_cache"
+        for key in "${!shell_options[@]}"; do
+            echo "$key=''" >> "$shell_cache"
+        done
+    }
+
+    initialize_shell_cache
+
+    msg att "Choose prompts. Press 'ESC' to skip"
+    fn_shell
 fi
+
+# only for installing browser
+if [[ "$install_browser" =~ ^[Yy]$ ]]; then
+    touch "$cache_dir/browser"
+    if [[ "$distro" == "arch" ]]; then
+        msg ask "Choose a browser: "
+        choice=$(gum choose \
+            --cursor.foreground "#00FFFF" \
+            --item.foreground "#fff" \
+            --selected.foreground "#00FF00" \
+            "Brave" "Chromium" "Firefox" "Vivaldi" "Zen Browser" "Skip"
+        )
+        echo "$choice" > "$cache_dir/browser"
+
+    elif [[ "$distro" == "fedora" ]]; then
+        msg ask "Choose a browser: "
+        choice=$(gum choose \
+            --cursor.foreground "#00FFFF" \
+            --item.foreground "#fff" \
+            --selected.foreground "#00FF00" \
+            "Brave" "Chromium" "Firefox" "Zen Browser" "Skip"
+        )
+        echo "$choice" > "$cache_dir/browser"
+
+    elif [[ "$distro" == "opensuse" ]]; then
+        msg ask "Choose a browser: "
+        choice=$(gum choose \
+            --cursor.foreground "#00FFFF" \
+            --item.foreground "#fff" \
+            --selected.foreground "#00FF00" \
+            "Brave" "Chromium" "Firefox" "Vivaldi" "Zen Browser" "Skip"
+        )
+        echo "$choice" > "$cache_dir/browser"
+    fi
+fi
+
+source "$cache_file"
+source "$shell_cache"
 
 
 # ====================================== #
@@ -171,13 +232,30 @@ clear
 
 # -------------- AUR helper and other repositories.
 if [[ "$distro" == "arch" ]]; then
+
     aur=$(command -v yay || command -v paru)
     if [[ -n "$aur" ]]; then
-        msg dn "Aur helper $aur was located... Moving on" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
+        msg dn "AUR helper $aur was located... Moving on" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
         sleep 1
     else
+        touch "$cache_dir/aur"
+        msg ask "Which AUR helper would you like to install?"
+        choice=$(gum choose \
+            --cursor.foreground "#00FFFF" \
+            --item.foreground "#fff" \
+            --selected.foreground "#00FF00" \
+            "paru" "yay"
+        )
+
+        if [[ "$choice" == "paru" ]]; then
+            echo "paru" > "$cache_dir/aur"
+        elif [[ "$choice" == "yay" ]]; then
+            echo "yay" > "$cache_dir/aur"
+        fi
+
         "$scripts_dir/00-repo.sh" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
     fi
+
 elif [[ "$distro" == "fedora" || "$distro" == "opensuse" ]]; then
     "$scripts_dir/00-repo.sh" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
 fi
@@ -192,7 +270,13 @@ fi
 
 "$scripts_dir/3-other_packages.sh" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
 "$scripts_dir/6-fonts.sh" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
-"$scripts_dir/7-browser.sh" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
+
+if [[ "$install_browser" =~ ^[Yy]$ ]]; then
+    "$scripts_dir/7-browser.sh" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
+else
+    msg skp "Skipping installing browser.."
+fi
+
 "$scripts_dir/9-sddm.sh" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
 "$scripts_dir/10-xdg_dp.sh" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
 
@@ -228,7 +312,7 @@ if [[ "$setup_bash" =~ ^[Yy]$ ]]; then
 fi
 
 
-if [[ "$install_fish_shell" =~ ^[Yy]$ ]]; then
+if [[ "$install_fish" =~ ^[Yy]$ ]]; then
     "$common_scripts/fish.sh" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
 fi
 

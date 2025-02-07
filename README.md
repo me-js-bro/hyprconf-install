@@ -1,4 +1,4 @@
-<h1 align="center">Minimal Hyprland Configuration</h1>
+<h1 align="center">Minimal Hyprland Install Script</h1>
 <h3 align="center">By</h3>
 <h2 align="center">Shell Ninja</h2>
 <br>
@@ -8,6 +8,10 @@
 ## [ WARNING ]
 
 Please note that this script if fully ready now. But for `openSUSE`, there is a little issue in installing `Hypridle` && `xdg-desktop-portal-hyprland` because a little dependency is missing in the repo of this OS. After it's being added, then the script for `openSUSE` will be totally ready.
+
+## [ NOTE ]
+
+The dotfile used in this script is a rolling release config. I fix issues and add features very often. Just to update in the latest commits, you have to use `SUPER Shift U` keybind. It will update to the latest [hyprconf](https://github.com/shell-ninja/hyprconf) configuration and restore the cache.
 
 ## Screenshots
 
@@ -128,7 +132,34 @@ bash <(curl -s https://raw.githubusercontent.com/shell-ninja/hyprconf-install/ma
   chmod +x install.sh
   ./install.sh
   ```
-  Hurrah! Now select Hyprland from your login manager, login to your Hyprland and enjoy it.
+
+### Prompts
+
+<details close>
+<summary>Installation Prompts</summary>
+
+When you run the script, it will ask you some prompts. You can choose according to your need. You can choose multiple options using the space bar.
+
+<img src="https://github.com/shell-ninja/Screen-Shots/blob/main/hyprconf/install/1.png?raw=true" /> <br>
+</details>
+
+<details close>
+<summary>Install Shell</summary>
+
+You can choose which shell you want to install (only one). Install customized [zsh](https://github.com/shell-ninja/Zsh) or `fish`. If you choose `setup_bash`, it will Set up my configured [bash](https://github.com/shell-ninja/Bash).
+
+<img src="https://github.com/shell-ninja/Screen-Shots/blob/main/hyprconf/install/2.png?raw=true" /> <br>
+</details>
+
+<details close>
+<summary>Install Browser</summary>
+
+You have the freedom to choose a web browser. I you don't want to install any, you can simply skip it.
+
+<img width="49%" src="https://github.com/shell-ninja/Screen-Shots/blob/main/hyprconf/install/3.png?raw=true" />
+<img width="49%" src="https://github.com/shell-ninja/Screen-Shots/blob/main/hyprconf/install/4.png?raw=true" />
+<br>
+</details>
 
 <br>
 

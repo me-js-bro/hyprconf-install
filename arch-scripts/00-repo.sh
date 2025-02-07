@@ -35,7 +35,6 @@ source "$dir/1-global_script.sh"
 
 # log directory
 parent_dir="$(dirname "$dir")"
-cache_file="$parent_dir/.cache/user-cache"
 
 source "$parent_dir/interaction_fn.sh"
 
@@ -58,54 +57,40 @@ fi
 # Check for existing AUR helpers
 aur_helper=$(command -v yay || command -v paru)
 
-if [[ -f "$cache_file" ]]; then
-    source "$cache_file"
-fi
-
 # install git before installing the aur helper.
-if ! pacman -Qs git &>/dev/null; then
-    msg act "Installing git and base devel"
-    sudo pacman -S --noconfirm base-devel git &> /dev/null 2>&1 | tee -a "$log" &>/dev/null
-    msg dn "Git & base-devel was installed successfully!"
+if ! pacman -Qs git &> /dev/null; then
+    sudo pacman -S --noconfirm base-devel git 2>&1 | tee -a "$log" &>/dev/null
 fi
 
-if [[ -z "$aur_helper" ]]; then
-    msg ask "Which aur helper would you like to install?"
-    choice=$(gum choose --header "Choose aur helper:" "yay" "paru")
+user_choice=$(cat "$parent_dir/.cache/aur")
 
-    if [[ "$choice" == "yay" ]]; then
-        msg act "Installing yay..."
-        sudo rm -rf /var/lib/pacman/db.lck &> /dev/null
-        echo "aur='yay'" >> "$cache_file"
-        git clone https://aur.archlinux.org/yay.git "$parent_dir/.cache/yay" &> /dev/null
-        cd "$parent_dir/.cache/yay" || exit 1
-        makepkg -si --noconfirm
-        sleep 1
-        cd "$parent_dir" || exit 1
-        sudo rm -rf "$parent_dir/.cache/yay"
-    elif [[ "$choice" == "paru" ]]; then
-        msg act "Installing paru..."
-        sudo rm -rf /var/lib/pacman/db.lck &> /dev/null
-        echo "aur='paru'" >> "$cache_file"
-        git clone https://aur.archlinux.org/paru.git "$parent_dir/.cache/paru" &> /dev/null
-        cd "$parent_dir/.cache/paru" || exit 1
-        makepkg -si --noconfirm
-        sleep 1
-        cd "$parent_dir" || exit 1
-        sudo rm -rf "$parent_dir/.cache/paru"
-    fi
-
-elif [[ -n "$aur_helper" ]]; then
-    msg dn "$aur_helper was already installed..."
-    exit 0
+if [[ "$user_choice" == "yay" ]]; then
+    msg act "Installing yay..."
+    sudo rm -rf /var/lib/pacman/db.lck &> /dev/null
+    git clone https://aur.archlinux.org/yay.git "$parent_dir/.cache/yay" &> /dev/null
+    cd "$parent_dir/.cache/yay" || exit 1
+    makepkg -si --noconfirm
+    sleep 1
+    cd "$parent_dir" || exit 1
+    sudo rm -rf "$parent_dir/.cache/yay"
+elif [[ "$user_choice" == "paru" ]]; then
+    msg act "Installing paru..."
+    sudo rm -rf /var/lib/pacman/db.lck &> /dev/null
+    git clone https://aur.archlinux.org/paru.git "$parent_dir/.cache/paru" &> /dev/null
+    cd "$parent_dir/.cache/paru" || exit 1
+    makepkg -si --noconfirm
+    sleep 1
+    cd "$parent_dir" || exit 1
+    sudo rm -rf "$parent_dir/.cache/paru"
 fi
 
-if [[ -n "$(command -v yay)" || -n "$(command -v paru)" ]]; then
+if [[ -n "$aur_helper" ]]; then
     msg dn "Aur helper was installed successfully!"
     echo "[ DONE ] - Aur helper was installed successfully!" 2>&1 | tee -a "$log" &>/dev/null
+    exit 0
 else
-    fn_error "Could not install aru helper. Maybe there was an issue. (╥﹏╥)"
-    echo "[ ERROR ] - Could not install aru helper. Maybe there was an issue.(╥﹏╥)" 2>&1 | tee -a "$log" &>/dev/null
+    msg err "Could not install aru helper. Maybe there was an issue."
+    echo "[ ERROR ] - Could not install aru helper. Maybe there was an issue." 2>&1 | tee -a "$log" &>/dev/null
     exit 1
 fi
 

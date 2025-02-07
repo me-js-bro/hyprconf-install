@@ -67,11 +67,16 @@ fi
 aur_helper=$(command -v yay || command -v paru)
 
 # Ask user for browser selection
-browsers=$(gum choose --header "Choose the browser you want to install (only one)" "Brave" "Chromium" "Firefox" "Vivaldi" "Zen Browser" "Skip")
+browser=$(cat "$parent_dir/.cache/browser")
 
-case $browsers in
+case $browser in
     "Brave")
-        curl -fsS https://dl.brave.com/install.sh | sh
+        if command -v "brave" &> /dev/null; then
+            msg skp "Brave browser is already installed. Skipping"
+            exit 0
+        else
+            curl -fsS https://dl.brave.com/install.sh | sh
+        fi
         sleep 1
 
         if [[ -n "$(command -v brave)" ]]; then
@@ -90,7 +95,13 @@ case $browsers in
         fi
         ;;
     "Chromium")
-        install_package chromium
+        if command -v chromium &> /dev/null; then
+            msg skp "Chromium is already installed. Skipping"
+            exit 0
+        else
+            install_package chromium
+        fi
+
         sleep 1
 
         if [[ -n "$(command -v chromium)" ]]; then
@@ -104,24 +115,33 @@ case $browsers in
             printf "[ 3 ] - Choose 'Wayland' from default and restart the browser.\n"
             sleep 5
         else 
-            msg err "Could not installed Chromium\n"
             echo "[ ERROR ] - Could not install Chromium" 2>&1 | tee -a "$log" &> /dev/null
         fi
         ;;
     "Firefox")
-        install_package firefox
+        if command -v firefox &> /dev/null; then
+            msg skp "Firefox is already installed. Skipping"
+            exit 0
+        else
+            install_package firefox
+        fi
+
         sleep 1
 
         if [[ -n "$(command -v firefox)" ]]; then
-            msg dn "Firefox was installed successfully!\n"
             echo "[ DONE ] - Firefox was installed successfully!" 2>&1 | tee -a "$log" &> /dev/null
         else 
-            msg err "Could not installed firefox\n"
             echo "[ ERROR ] - Could not install firefox" 2>&1 | tee -a "$log" &> /dev/null
         fi
         ;;
     "Vivaldi")
-        install_package vivaldi
+        if command -v vivaldi &> /dev/null; then
+            msg skp "Vivaldi is already installed. Skipping"
+            exit 0
+        else
+            install_package vivaldi
+        fi
+
         sleep 1
 
         if [[ -n "$(command -v vivaldi)" ]]; then
@@ -135,19 +155,22 @@ case $browsers in
             printf "[ 3 ] - Choose 'Wayland' from default and restart the browser.\n"
             sleep 5
         else 
-            msg err "Could not installed Vivaldi..."
             echo "[ ERROR ] - Could not install Vivaldi" 2>&1 | tee -a "$log" &> /dev/null
         fi
         ;;
     "Zen Browser")
-        install_from_aur zen-browser-avx2-bin
+        if command -v zen-browser &> /dev/null; then
+            msg skp "Zen Browser is already installe. Skipping"
+            exit 0
+        else
+            install_from_aur zen-browser
+        fi
+
         sleep 1
 
         if [[ -n "$(command -v zen-browser)" ]]; then
-            msg dn "Zen Browser was installed successfully!"
             echo "[ DONE ] - Zen Browser was installed successfully!" 2>&1 | tee -a "$log" &> /dev/null
         else 
-            msg err "Could not installed zen"
             echo "[ ERROR ] - Could not install zen" 2>&1 | tee -a "$log" &> /dev/null
         fi
 

@@ -3,9 +3,6 @@
 #### Advanced Hyprland Installation Script by ####
 #### Shell Ninja ( https://github.com/shell-ninja ) ####
 
-# exit the script if there is any error
-# set -e
-
 # color defination
 red="\e[1;31m"
 green="\e[1;32m"
@@ -67,16 +64,19 @@ fi
 
 aur_helper=$(command -v yay || command -v paru) # find the aur helper
 
-# Main Hyprland packages
-hypr_packages=(
-    cliphist
-    dunst
-    eog
+hyprland=(
     hyprland
     hyprlock
     hyprpaper
     hypridle
     hyprcursor
+)
+
+# Main Hyprland packages
+hypr_packages=(
+    cliphist
+    dunst
+    eog
     kitty
     nwg-look
     polkit-gnome
@@ -91,12 +91,11 @@ hypr_packages=(
     swww
     waybar
     wl-clipboard
-    xdg-desktop-portal-hyprland
 )
 
 
 # checking already installed packages 
-for skipable in "${hypr_packages[@]}"; do
+for skipable in "${hyprland[@]}" "${hypr_packages[@]}"; do
     skip_installed "$skipable"
 done
 

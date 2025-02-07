@@ -11,22 +11,13 @@ cyan="\e[1;36m"
 orange="\x1b[38;5;214m"
 end="\e[1;0m"
 
-# color defination (hex for gum)
-# "#FF0000"       # Bright red
-# "#00FF00"     # Bright green
-# "#FFFF00"    # Bright yellow
-# "#0000FF"      # Bright blue
-# "#FF00FF"   # Bright magenta
-# "#00FFFF"      # Bright cyan
-# "#ff8700"    # Approximation for color code 214 in ANSI (orange)
-
-
 # cache dir
 dir="$(dirname "$(realpath "$0")")"
 
 # creating a cache directory..
 cache_dir="$dir/.cache"
 cache_file="$cache_dir/user-cache"
+shell_cache="$cache_dir/shell"
 
 [[ ! -d "$cache_dir" ]] && mkdir -p "$cache_dir"
 
@@ -68,33 +59,18 @@ fn_exit() {
     exit 1
 }
 
-#================================================
-# Changed it with gum choose
-#================================================
-# fn_ask_prompts() {
-#     echo "$1" &> /dev/null
-#         gum confirm "$2" \
-#             --affirmative "$3" \
-#             --selected.background "#00FFFF" \
-#             --selected.foreground "#000" \
-#             --negative "$4"
-#                     
-#     if [[ $? -eq 0 ]]; then
-#         sed -i "s/^$1=''/ $1='Y'/" "$cache_file"
-#     elif [[ $? -eq 1 ]]; then
-#         sed -i "s/^$1=''/ $1='N'/" "$cache_file"
-#     fi
-# }
-
-
 
 # only for asking the prompts...
 fn_ask_prompts() {
-    echo "Choose features you want to use."
-
     # Use gum to capture selected options
     local selected
-    selected=$(gum choose --header "Select using the 'space' button:" --no-limit "${!options[@]}")
+    selected=$(gum choose \
+        --header "Select using the 'space' bar" \
+        --no-limit \
+        --cursor.foreground "#00FFFF" \
+        --item.foreground "#fff" \
+        --selected.foreground "#00FF00" \
+        "${!options[@]}")
     
     # Reset all options to 'N' by default
     for key in "${!options[@]}"; do
@@ -112,19 +88,38 @@ fn_ask_prompts() {
         echo "$key='${options[$key]}'" >> "$cache_file"
     done
 
-    cat "$cache_file"
+    # cat "$cache_file"
 }
 
-# choose from options
-fn_choose() {
-    local choice=$(
-        gum choose \
-            --no-limit \
-            --cursor.foreground "#00FFFF" \
-            --item.foreground "#fff" \
-            --selected.foreground "#00FF00" \
-            "$@"
-    )
+# only for asking shell prompts...
+fn_shell() {
+    # Use gum to capture selected options
+    local selected
+    selected=$(gum choose \
+        --header "Choose only one. Press 'ENTER'" \
+        --limit=1 \
+        --cursor.foreground "#00FFFF" \
+        --item.foreground "#fff" \
+        --selected.foreground "#00FF00" \
+        "${!shell_options[@]}")
+    
+    # Reset all options to 'N' by default
+    for key in "${!shell_options[@]}"; do
+        shell_options[$key]="N"
+    done
+
+    # Set the selected options to 'Y'
+    for key in $selected; do
+        shell_options[$key]="Y"
+    done
+
+    # Update the cache file with the new values
+    > "$shell_cache"
+    for key in "${!shell_options[@]}"; do
+        echo "$key='${shell_options[$key]}'" >> "$shell_cache"
+    done
+
+    # cat "$cache_file"
 }
 
 msg() {

@@ -64,7 +64,6 @@ fi
 # List of COPR repositories to be added and enabled
 copr_repos=(
   solopasha/hyprland
-  erikreider/SwayNotificationCenter
   tofik/nwg-shell
   metainfa/yazi
 )

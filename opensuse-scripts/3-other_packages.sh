@@ -78,8 +78,6 @@ hypr_package=(
   pciutils
   pipewire-alsa
   python312-requests
-  python312-pip
-  python312-pipx
   qt5ct
   qt6ct
   qt6-svg-devel

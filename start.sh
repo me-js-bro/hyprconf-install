@@ -35,7 +35,7 @@ touch "$log"
 cache_dir="$dir/.cache"
 cache_file="$cache_dir/user-cache"
 shell_cache="$cache_dir/shell"
-distro_cache="$cache_dir/distro"
+pkgman_cache="$cache_dir/pkgman"
 
 # --------------- sourcing the interaction prompts
 if [[  "$dir/interaction_fn.sh" ]]; then
@@ -57,46 +57,36 @@ EOF
 }
 
 
-# ========================================= #
-# =========  checking the distro  ========= #
-# ========================================= #
+# ================================================== #
+# =========  checking the package manager  ========= #
+# ================================================== #
 
-check_distro() {
-    if [ -f /etc/os-release ]; then
-        . /etc/os-release
-        case "$ID" in
-            arch)
-                msg act "Starting the script for ${cyan}$ID${end} Linux\n\n"
-                distro="arch"
-                echo "distro=$distro" >> "$distro_cache" 2>&1 | tee -a "$log"
-                ;;
-            fedora)
-                msg act "Starting the script for ${blue}$ID${end}\n\n"
-                distro="fedora"
-                echo "distro=$distro" >> "$distro_cache" 2>&1 | tee -a "$log"
-                ;;
-            opensuse*)
-                msg act "Starting the script for ${green}$ID${end}\n\n"
-                distro="opensuse"
-                echo "distro=$distro" >> "$distro_cache" 2>&1 | tee -a "$log"
-                ;;
-            *)
-                fn_exit "Sorry, the script won't work in your distro for now..."
-                ;;
-        esac
+check_pkgman() {
+    if command -v pacman &> /dev/null; then
+        pkgman="pacman"
+        echo "pkgman=$pkgman" >> "$pkgman_cache" 2>&1 | tee -a "$log"
+
+    elif command -v dnf &> /dev/null; then
+        pkgman="dnf"
+        echo "pkgman=$pkgman" >> "$pkgman_cache" 2>&1 | tee -a "$log"
+            
+    elif command -v zypper &> /dev/null; then
+        pkgman="zypper"
+        echo "pkgman=$pkgman" >> "$pkgman_cache" 2>&1 | tee -a "$log"
+
     else
-        msg err "Sorry, the script won't work in $ID."
-        exit 1
+        fn_exit "Sorry, the script won't work with your package manager for now..."
     fi
 }
 
-check_distro
+check_pkgman
 clear && fn_welcome && sleep 1
 
 # starting the main script prompt...
+. /etc/os-release
 gum spin --spinner line \
-         --spinner.foreground "#dddddd" \
-         --title "Starting the main script for ${distro} linux..." \
+         --spinner.foreground "#00FFFF" \
+         --title "Starting the main scripts for "$NAME"..." \
          --title.foreground "#dddddd" -- \
          sleep 3
 clear
@@ -177,7 +167,7 @@ fi
 # only for installing browser
 if [[ "$install_browser" =~ ^[Yy]$ ]]; then
     touch "$cache_dir/browser"
-    if [[ "$distro" == "arch" ]]; then
+    if [[ "$pkgman" == "pacman" ]]; then
         msg ask "Choose a browser: "
         choice=$(gum choose \
             --cursor.foreground "#00FFFF" \
@@ -187,7 +177,7 @@ if [[ "$install_browser" =~ ^[Yy]$ ]]; then
         )
         echo "$choice" > "$cache_dir/browser"
 
-    elif [[ "$distro" == "fedora" ]]; then
+    elif [[ "$pkgman" == "dnf" ]]; then
         msg ask "Choose a browser: "
         choice=$(gum choose \
             --cursor.foreground "#00FFFF" \
@@ -197,7 +187,7 @@ if [[ "$install_browser" =~ ^[Yy]$ ]]; then
         )
         echo "$choice" > "$cache_dir/browser"
 
-    elif [[ "$distro" == "opensuse" ]]; then
+    elif [[ "$pkgman" == "zypper" ]]; then
         msg ask "Choose a browser: "
         choice=$(gum choose \
             --cursor.foreground "#00FFFF" \
@@ -217,7 +207,7 @@ source "$shell_cache"
 # =========  script execution  ========= #
 # ====================================== #
 
-scripts_dir="$dir/${distro}-scripts"
+scripts_dir="$dir/${pkgman}-scripts"
 common_scripts="$dir/common"
 
 chmod +x "$scripts_dir"/* 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
@@ -231,7 +221,7 @@ clear
 # ================================= #
 
 # -------------- AUR helper and other repositories.
-if [[ "$distro" == "arch" ]]; then
+if [[ "$pkgman" == "pacman" ]]; then
 
     aur=$(command -v yay || command -v paru)
     if [[ -n "$aur" ]]; then
@@ -256,7 +246,7 @@ if [[ "$distro" == "arch" ]]; then
         "$scripts_dir/00-repo.sh" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
     fi
 
-elif [[ "$distro" == "fedora" || "$distro" == "opensuse" ]]; then
+else
     "$scripts_dir/00-repo.sh" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
 fi
 
@@ -264,7 +254,7 @@ fi
 # ---------------- Installing hyprland and other packages
 "$scripts_dir/2-hyprland.sh" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
 
-if [[ "$distro" == "opensuse" ]]; then # only for opensuse ( hyprsunset )
+if [[ "$pkgman" == "zypper" ]]; then # only for opensuse ( hyprsunset )
     "$scripts_dir/2.1-hyprsunset.sh"
 fi
 
@@ -347,6 +337,18 @@ sleep 1 && clear
 
 
 # =================================== #
+# =========  final checkup  ========= #
+# =================================== #
+
+gum spin --spinner dot \
+         --title "Starting final checkup.." \
+         sleep 3
+clear
+
+"$scripts_dir/12-final.sh" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
+
+
+# =================================== #
 # =========  system reboot  ========= #
 # =================================== #
 
@@ -362,7 +364,8 @@ if [[ $? -eq 0 ]]; then
     done
         systemctl reboot --now
 else
-    msg nt "Ok, but make sure to reboot the system...\n   See you later.(◠‿◠)" && sleep 1
+    msg nt "Ok, but make sure to reboot the system." && sleep 1
+    msg dn "Happy coding..."
     exit 0
 fi
 

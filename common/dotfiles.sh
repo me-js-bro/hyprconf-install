@@ -39,11 +39,6 @@ parent_dir="$(dirname "$dir")"
 source "$parent_dir/interaction_fn.sh"
 
 cache_dir="$parent_dir/.cache"
-distro_cache="$cache_dir/distro"
-source "$distro_cache"
-
-# install script dir
-source "$parent_dir/${distro}-scripts/1-global_script.sh"
 
 # log directory
 log_dir="$parent_dir/Logs"

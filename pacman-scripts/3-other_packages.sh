@@ -63,33 +63,51 @@ else
     touch "$log"
 fi
 
+
 # any other packages will be installed from here
 other_packages=(
     btop
+    cliphist
     curl
+    dunst
+    eog
     fastfetch
     ffmpeg
     gnome-disk-utility
     imagemagick
     jq
+    kitty
     kvantum
     kvantum-qt5
     lxappearance
+    mate-polkit
     network-manager-applet
     networkmanager
     nodejs
     npm
     ntfs-3g
     nvtop
+    nwg-look
     os-prober
     pacman-contrib
     pamixer
     pavucontrol
     pciutils
     python-pywal
+    qt5ct
+    qt5-svg
+    qt6ct
+    qt6-svg
+    qt5-graphicaleffects
+    qt5-quickcontrols2
     ripgrep
+    rofi-wayland
+    swappy
+    swww
     unzip
+    waybar
     wget
+    wl-clipboard
     xorg-xrandr
     yazi
     zip
@@ -140,7 +158,7 @@ sleep 1 && clear
 
 # Installing from the AUR Helper
 for aur_pkgs in "${installble_aur_pkg[@]}"; do
-    install_from_aur "$aur_pkgs"
+    install_package "$aur_pkgs"
     if sudo "$aur_helper" -Q "$aur_pkgs" &>/dev/null; then
         echo "[ DONE ] - $aur_pkgs was installed successfully!\n" 2>&1 | tee -a "$log" &>/dev/null
     else

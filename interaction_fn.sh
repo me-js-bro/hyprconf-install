@@ -134,7 +134,7 @@ msg() {
             printf "${orange}??${end} $msg\n"
             ;;
         dn)
-            printf "${cyan}::${end} $msg\n"
+            printf "${cyan}::${end} $msg\n\n"
             ;;
         att)
             printf "${yellow}!!${end} $msg\n"

@@ -46,8 +46,7 @@ log_dir="$parent_dir/Logs"
 log="$log_dir/final_checkup-$(date +%d-%m-%y).log"
 
 # skip installed cache
-cache_dir="$parent_dir/.cache"
-installed_cache="$cache_dir/installed_packages"
+installed_cache="$parent_dir/.cache/installed_packages"
 
 if [[ ! -f "$log" ]]; then
     mkdir -p "$log_dir"
@@ -57,43 +56,40 @@ fi
 aur_helper=$(command -v yay || command -v paru) # find the aur helper
 
 checkup=(
+    btop
+    cava
+    cliphist
+    curl
+    dunst
+    eog
+    fastfetch
+    ffmpeg
+    ffmpegthumbnailer
+    file-roller
+    grimblast-git
+    gnome-disk-utility
+    gvfs
+    gvfs-mtp
     hyprland
     hyprlock
     hyprpaper
     hypridle
     hyprcursor
-    cliphist
-    dunst
-    eog
-    kitty
-    nwg-look
-    polkit-gnome
-    qt5ct
-    qt5-svg
-    qt6ct
-    qt6-svg
-    qt5-graphicaleffects
-    qt5-quickcontrols2
-    rofi-wayland
-    swappy
-    swww
-    waybar
-    wl-clipboard
-    btop
-    curl
-    fastfetch
-    ffmpeg
-    gnome-disk-utility
+    hyprsunset
+    hyprland-qtutils
     imagemagick
     jq
+    kitty
     kvantum
     kvantum-qt5
     lxappearance
+    mate-polkit
     network-manager-applet
     networkmanager
     nodejs
     npm
     ntfs-3g
+    nwg-look
     nvtop
     os-prober
     pacman-contrib
@@ -101,26 +97,33 @@ checkup=(
     pavucontrol
     pciutils
     python-pywal
-    ripgrep
-    unzip
-    wget
-    xorg-xrandr
-    yazi
-    zip
-    cava
-    grimblast-git
-    hyprsunset
-    hyprland-qtutils
-    tty-clock
     pyprland
-    ffmpegthumbnailer
-    file-roller
-    gvfs
-    gvfs-mtp
+    qt5ct
+    qt5-svg
+    qt6ct
+    qt6-svg
+    qt6-5compat
+    qt6-declarative
+    qt6-svg
+    qt5-graphicaleffects
+    qt5-quickcontrols2
+    ripgrep
+    rofi-wayland
+    swappy
+    swww
+    sddm
     thunar
     thunar-volman
     tumbler
     thunar-archive-plugin
+    tty-clock
+    unzip
+    waybar
+    wget
+    wl-clipboard
+    xorg-xrandr
+    yazi
+    zip
 )
 
 

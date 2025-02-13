@@ -64,7 +64,7 @@ fi
 
 aur_helper=$(command -v yay || command -v paru) # find the aur helper
 
-hyprland=(
+_hypr=(
     hyprland
     hyprlock
     hyprpaper
@@ -72,30 +72,8 @@ hyprland=(
     hyprcursor
 )
 
-# Main Hyprland packages
-hypr_packages=(
-    cliphist
-    dunst
-    eog
-    kitty
-    nwg-look
-    polkit-gnome
-    qt5ct
-    qt5-svg
-    qt6ct
-    qt6-svg
-    qt5-graphicaleffects
-    qt5-quickcontrols2
-    rofi-wayland
-    swappy
-    swww
-    waybar
-    wl-clipboard
-)
-
-
 # checking already installed packages 
-for skipable in "${hyprland[@]}" "${hypr_packages[@]}"; do
+for skipable in "${_hypr[@]}"; do
     skip_installed "$skipable"
 done
 

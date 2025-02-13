@@ -63,6 +63,8 @@ for xdg_pkgs in "${to_install[@]}"; do
     fi
 done
 
+echo
+
 # Clean out other portals
 msg att "Checking for other XDG-Desktop-Portal-Implementations..." && sleep 1
 

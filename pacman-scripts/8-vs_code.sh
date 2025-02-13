@@ -81,7 +81,7 @@ printf "\n\n"
 # installing vs code
 if [[ ${#to_install[@]} -gt 0 ]]; then
     for code in "${to_install[@]}"; do
-        install_from_aur "$code"
+        install_package "$code"
         if sudo "$aur_helper" -Q "$code" &>/dev/null; then
             echo "[ DONE ] - $code was installed successfully!\n" 2>&1 | tee -a "$log" &>/dev/null
         else

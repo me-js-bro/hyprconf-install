@@ -62,7 +62,7 @@ else
     touch "$log"
 fi
 
-hypr=(
+_hypr=(
     hyprland
     hyprlock
     hyprpaper
@@ -77,7 +77,7 @@ for skipable in "${hypr[@]}"; do
     skip_installed "$skipable"
 done
 
-to_install=($(printf "%s\n" "${hypr[@]}" | grep -vxFf "$installed_cache"))
+to_install=($(printf "%s\n" "${_hypr[@]}" | grep -vxFf "$installed_cache"))
 
 printf "\n\n"
 

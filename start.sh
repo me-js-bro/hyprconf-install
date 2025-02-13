@@ -164,40 +164,6 @@ else
     fn_shell
 fi
 
-# only for installing browser
-if [[ "$install_browser" =~ ^[Yy]$ ]]; then
-    touch "$cache_dir/browser"
-    if [[ "$pkgman" == "pacman" ]]; then
-        msg ask "Choose a browser: "
-        choice=$(gum choose \
-            --cursor.foreground "#00FFFF" \
-            --item.foreground "#fff" \
-            --selected.foreground "#00FF00" \
-            "Brave" "Chromium" "Firefox" "Vivaldi" "Zen Browser" "Skip"
-        )
-        echo "$choice" > "$cache_dir/browser"
-
-    elif [[ "$pkgman" == "dnf" ]]; then
-        msg ask "Choose a browser: "
-        choice=$(gum choose \
-            --cursor.foreground "#00FFFF" \
-            --item.foreground "#fff" \
-            --selected.foreground "#00FF00" \
-            "Brave" "Chromium" "Firefox" "Zen Browser" "Skip"
-        )
-        echo "$choice" > "$cache_dir/browser"
-
-    elif [[ "$pkgman" == "zypper" ]]; then
-        msg ask "Choose a browser: "
-        choice=$(gum choose \
-            --cursor.foreground "#00FFFF" \
-            --item.foreground "#fff" \
-            --selected.foreground "#00FF00" \
-            "Brave" "Chromium" "Firefox" "Vivaldi" "Zen Browser" "Skip"
-        )
-        echo "$choice" > "$cache_dir/browser"
-    fi
-fi
 
 source "$cache_file"
 source "$shell_cache"
@@ -260,6 +226,41 @@ fi
 
 "$scripts_dir/3-other_packages.sh" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
 "$scripts_dir/6-fonts.sh" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
+
+# only for installing browser
+if [[ "$install_browser" =~ ^[Yy]$ ]]; then
+    touch "$cache_dir/browser"
+    if [[ "$pkgman" == "pacman" ]]; then
+        msg ask "Choose a browser: "
+        choice=$(gum choose \
+            --cursor.foreground "#00FFFF" \
+            --item.foreground "#fff" \
+            --selected.foreground "#00FF00" \
+            "Brave" "Chromium" "Firefox" "Vivaldi" "Zen Browser" "Skip"
+        )
+        echo "$choice" > "$cache_dir/browser"
+
+    elif [[ "$pkgman" == "dnf" ]]; then
+        msg ask "Choose a browser: "
+        choice=$(gum choose \
+            --cursor.foreground "#00FFFF" \
+            --item.foreground "#fff" \
+            --selected.foreground "#00FF00" \
+            "Brave" "Chromium" "Firefox" "Zen Browser" "Skip"
+        )
+        echo "$choice" > "$cache_dir/browser"
+
+    elif [[ "$pkgman" == "zypper" ]]; then
+        msg ask "Choose a browser: "
+        choice=$(gum choose \
+            --cursor.foreground "#00FFFF" \
+            --item.foreground "#fff" \
+            --selected.foreground "#00FF00" \
+            "Brave" "Chromium" "Firefox" "Vivaldi" "Zen Browser" "Skip"
+        )
+        echo "$choice" > "$cache_dir/browser"
+    fi
+fi
 
 if [[ "$install_browser" =~ ^[Yy]$ ]]; then
     "$scripts_dir/7-browser.sh" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")

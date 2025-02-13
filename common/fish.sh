@@ -51,7 +51,7 @@ log_dir="$parent_dir/Logs"
 log="$log_dir/fish-$(date +%d-%m-%y).log"
 
 # skip installed cache
-installed_cache="$cache_dir/installed_packages"
+installed_cache="$parent_dir/.cache/installed_packages"
 
 if [[ -f "$log" ]]; then
     errors=$(grep "ERROR" "$log")

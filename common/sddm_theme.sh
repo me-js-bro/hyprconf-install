@@ -60,7 +60,7 @@ fi
 # Set up SDDM
 msg act "Setting up the Login Screen..."
 sddm_conf_dir=/etc/sddm.conf.d
-[ ! -d "$sddm_conf_dir" ] && { printf "$sddm_conf_dir not found, creating...\n"; sudo mkdir -p "$sddm_conf_dir"; }
+[ -z "$sddm_conf_dir" ] &&  sudo mkdir -p "$sddm_conf_dir"
 
 
 sudo tar -xf "$theme" -C "$theme_dir"

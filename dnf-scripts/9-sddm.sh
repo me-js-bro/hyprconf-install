@@ -75,6 +75,13 @@ sddm=(
     qt6-qtsvg
 )
 
+logins=(
+    lightdm 
+    gdm 
+    lxdm 
+    lxdm-gtk3
+)
+
 # checking already installed packages 
 for skipable in "${sddm[@]}"; do
     skip_installed "$skipable"
@@ -94,7 +101,7 @@ for sddm_pkgs in "${to_install[@]}"; do
 done
 
 # Check if other login managers are installed and disabling their service before enabling sddm
-for login_manager in lightdm gdm lxdm lxdm-gtk3; do
+for login_manager in "${logins[@]}"; do
   if rpm -q "$login_manager" &> /dev/null; then
     msg act "Disabling $login_manager..."
     sudo systemctl disable "$login_manager" 2>&1 | tee -a "$log"

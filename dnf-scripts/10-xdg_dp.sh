@@ -57,7 +57,7 @@ printf "\n\n"
 # Instlling xdg packages...
 for xdg_pkgs in "${to_install[@]}"; do
     install_package "$xdg_pkgs"
-    if rpm -q "$xdg_pkgs" &>/dev/null; then
+    if rpm -q "$xdg_pkgs" &> /dev/null; then
         echo "[ DONE ] - $xdg_pkgs was installed successfully!\n" 2>&1 | tee -a "$log" &>/dev/null
     else
         echo "[ ERROR ] - Sorry, could not install $xdg_pkgs!\n" 2>&1 | tee -a "$log" &>/dev/null

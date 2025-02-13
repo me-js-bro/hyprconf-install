@@ -77,7 +77,7 @@ for skipable in "${_hypr[@]}"; do
     skip_installed "$skipable"
 done
 
-to_install=($(printf "%s\n" "${hypr_packages[@]}" | grep -vxFf "$installed_cache"))
+to_install=($(printf "%s\n" "${_hypr[@]}" | grep -vxFf "$installed_cache"))
 
 printf "\n\n"
 

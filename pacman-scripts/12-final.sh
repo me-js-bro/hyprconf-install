@@ -132,27 +132,27 @@ for skipable in "${checkup[@]}"; do
     skip_installed "$skipable" &> /dev/null
 done
 
-to_install=($(printf "%s\n" "${hypr_packages[@]}" | grep -vxFf "$installed_cache"))
+to_install=($(printf "%s\n" "${checkup[@]}" | grep -vxFf "$installed_cache"))
 
 printf "\n\n"
 
 # Instlling main packages...
-for hypr_pkgs in "${to_install[@]}"; do
-    msg act "Somehow $hypr_pkgs could not be installed before. Installing it now..."
-    aur_helper -Syy "$hypr_pkgs" --noconfirm &> /dev/null
+for final_check in "${to_install[@]}"; do
+    msg act "Somehow $final_check could not be installed before. Installing it now..."
+    aur_helper -Syy "$final_check" --noconfirm &> /dev/null
 
-    if sudo pacman -Q "$hypr_pkgs" &> /dev/null; then
+    if sudo pacman -Q "$final_check" &> /dev/null; then
 
-        msg dn "Finally $hypr_pkgs was installed successfully!"
+        msg dn "Finally $final_check was installed successfully!"
         echo
 
-        echo "[ DONE ] - $hypr_pkgs was installed successfully!\n" 2>&1 | tee -a "$log" &>/dev/null
+        echo "[ DONE ] - $final_check was installed successfully!\n" 2>&1 | tee -a "$log" &>/dev/null
     else
 
-        msg err "Sorry, this time also could not install $hypr_pkgs.."
+        msg err "Sorry, this time also could not install $final_check.."
         echo
 
-        echo "[ ERROR ] - Sorry, could not install $hypr_pkgs!\n" 2>&1 | tee -a "$log" &>/dev/null
+        echo "[ ERROR ] - Sorry, could not install $final_check!\n" 2>&1 | tee -a "$log" &>/dev/null
     fi
 done
 

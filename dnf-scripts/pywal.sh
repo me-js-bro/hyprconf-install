@@ -29,9 +29,10 @@ touch "$log"
 
 
 msg act "Installing pywal.."
-sudo pip3 install pywal 2>&1 | tee -a "$log" &> /dev/null
+sudo pip install pywal 2>&1 | tee -a "$log" &> /dev/null
 
 sleep 1
+
 if [ -n "$(command -v wal)" ]; then
     msg dn "pywal was installed successfully!"
 else

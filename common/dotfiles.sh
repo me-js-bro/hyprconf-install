@@ -38,8 +38,6 @@ dir="$(dirname "$(realpath "$0")")"
 parent_dir="$(dirname "$dir")"
 source "$parent_dir/interaction_fn.sh"
 
-cache_dir="$parent_dir/.cache"
-
 # log directory
 log_dir="$parent_dir/Logs"
 log="$log_dir/dotfiles-$(date +%d-%m-%y).log"
@@ -50,7 +48,6 @@ touch "$log"
 
 msg act "Clonning the dotfiles repository and setting it to your system..."
 # Create the cache directory if it doesn't exist
-mkdir -p "$cache_dir"
 
 # Clone the repository and log the output
 if [[ ! -d "$parent_dir/.cache/hyprconf" ]]; then
@@ -74,5 +71,50 @@ else
   msg err "Could not setup dotfiles.." 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
   exit 1
 fi
+
+sleep 1 && clear
+
+msg att "By default, the keyboard layout will be 'us'"
+fn_ask "Is it ok for you?" "Yes! Set" "No! Change"
+
+if [ $? -eq 1 ]; then
+    layout=$(localectl \
+        list-x11-keymap-layouts \
+        | gum filter \
+        --height 15 \
+        --prompt="<> " \
+        --cursor-text.foreground "#00FFFF" \
+        --indicator.foreground "#00FFFF" \
+        --placeholder "Search keyboard layout..."
+    )
+else
+    layout="us"
+fi
+
+fn_ask "Would you like to set a keyboard variant?" "Sure!" "Skip."
+if [ $? -eq 0 ]; then
+    variant=$(localectl \
+        list-x11-keymap-variants \
+        | gum filter \
+        --height 15 \
+        --prompt="<> " \
+        --cursor-text.foreground "#00FFFF" \
+        --indicator.foreground "#00FFFF" \
+        --placeholder "Find your variant..."
+    )
+else
+    variant=""
+fi
+
+msg att "Selected Layout: $layout\n   Selected Variant: ${variant:-None}"
+
+# Apply changes to Hyprland config
+config="$HOME/.config/hypr/configs/settings.conf"
+sed -i "s/kb_layout = .*/kb_layout = $layout/g" "$config"
+sed -i "s/kb_variant = .*/kb_variant = $variant/g" "$config"
+
+echo
+
+msg dn "Setting up the keyboard layout was successful.."
 
 sleep 1 && clear

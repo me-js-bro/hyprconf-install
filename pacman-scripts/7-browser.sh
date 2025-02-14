@@ -163,7 +163,7 @@ case $browser in
             msg skp "Zen Browser is already installe. Skipping"
             exit 0
         else
-            install_from_aur zen-browser
+            install_package zen-browser
         fi
 
         sleep 1

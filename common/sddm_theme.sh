@@ -60,7 +60,7 @@ fi
 # Set up SDDM
 msg act "Setting up the Login Screen..."
 sddm_conf_dir=/etc/sddm.conf.d
-[ ! -d "$sddm_conf_dir" ] && { printf "$sddm_conf_dir not found, creating...\n"; sudo mkdir -p "$sddm_conf_dir"; }
+[ ! -d "$sddm_conf_dir" ] &&  sudo mkdir -p "$sddm_conf_dir"
 
 
 sudo tar -xf "$theme" -C "$theme_dir"
@@ -69,3 +69,5 @@ echo -e "[Theme]\nCurrent=minimal_sddm" | sudo tee "$sddm_conf_dir/theme.conf.us
 if [ -d "$theme_dir/minimal_sddm" ]; then
     msg dn "Sddm theme was installed successfully!"
 fi
+
+sleep 1 && clear

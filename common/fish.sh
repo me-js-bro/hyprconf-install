@@ -41,17 +41,17 @@ parent_dir="$(dirname "$dir")"
 source "$parent_dir/interaction_fn.sh"
 
 cache_dir="$parent_dir/.cache"
-distro_cache="$cache_dir/distro"
-source "$distro_cache"
+pkgman_cache="$cache_dir/pkgman"
+source "$pkgman_cache"
 
 # install script dir
-source "$parent_dir/${distro}-scripts/1-global_script.sh"
+source "$parent_dir/${pkgman}-scripts/1-global_script.sh"
 
 log_dir="$parent_dir/Logs"
 log="$log_dir/fish-$(date +%d-%m-%y).log"
 
 # skip installed cache
-installed_cache="$cache_dir/installed_packages"
+installed_cache="$parent_dir/.cache/installed_packages"
 
 if [[ -f "$log" ]]; then
     errors=$(grep "ERROR" "$log")
@@ -103,10 +103,10 @@ for shell in "${to_install[@]}"; do
     install_package "$shell"
 done
 
-if [[ "$distro" == "arch" || "$distro" == "fedora" ]]; then
+if [[ "$pkgman" == "pacman" || "$pkgman" == "dnf" ]]; then
     install_package thefuck 2>&1 | tee -a "$log"
-elif [[ "$distro" == "opensuse" ]]; then
-    msg att "You are installing ${distro}. Some necessary packages will be installed now..." && sleep 1
+elif [[ "$pkgman" == "zypper" ]]; then
+    msg att "Some necessary packages will be installed using ${pkgman}..." && sleep 1
 
     for pkgs in "${for_opensuse[@]}"; do
         install_package "$pkgs" 2>&1 | tee -a "$log"

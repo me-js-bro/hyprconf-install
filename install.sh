@@ -18,7 +18,7 @@ start="$dir/start.sh"
 
 clear && sleep 1
 
-printf "${cyan}**${end} Pre install script...\n  Need to install some packages first, installing those...\n" && sleep 2
+printf "${cyan}**${end} Pre install script...\n   Need to install some packages first, installing those...\n" && sleep 2
 
 packages=(
     git

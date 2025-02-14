@@ -62,31 +62,25 @@ if ! pacman -Qs git &> /dev/null; then
     sudo pacman -S --noconfirm base-devel git 2>&1 | tee -a "$log" &>/dev/null
 fi
 
-user_choice=$(cat "$parent_dir/.cache/aur")
+_aur=$(cat "$parent_dir/.cache/aur")
 
-if [[ "$user_choice" == "yay" ]]; then
-    msg act "Installing yay..."
-    sudo rm -rf /var/lib/pacman/db.lck &> /dev/null
-    git clone https://aur.archlinux.org/yay.git "$parent_dir/.cache/yay" &> /dev/null
-    cd "$parent_dir/.cache/yay" || exit 1
-    makepkg -si --noconfirm
-    sleep 1
-    cd "$parent_dir" || exit 1
-    sudo rm -rf "$parent_dir/.cache/yay"
-elif [[ "$user_choice" == "paru" ]]; then
-    msg act "Installing paru..."
-    sudo rm -rf /var/lib/pacman/db.lck &> /dev/null
-    git clone https://aur.archlinux.org/paru.git "$parent_dir/.cache/paru" &> /dev/null
-    cd "$parent_dir/.cache/paru" || exit 1
-    makepkg -si --noconfirm
-    sleep 1
-    cd "$parent_dir" || exit 1
-    sudo rm -rf "$parent_dir/.cache/paru"
-fi
+msg act "Installing $_aur"
 
-if [[ -n "$aur_helper" ]]; then
-    msg dn "Aur helper was installed successfully!"
-    echo "[ DONE ] - Aur helper was installed successfully!" 2>&1 | tee -a "$log" &>/dev/null
+sudo rm -rf /var/lib/pacman/db.lck &> /dev/null
+git clone https://aur.archlinux.org/${_aur}.git "$parent_dir/.cache/${_aur}" &> /dev/null
+cd "$parent_dir/.cache/${_aur}" || exit 1
+makepkg -si --noconfirm
+sleep 1
+cd "$parent_dir" || exit 1
+sudo rm -rf "$parent_dir/.cache/${_aur}"
+
+
+if [[ -n "$(command -v $_aur)" ]]; then
+    msg dn "$_aur was installed successfully!"
+    echo "[ DONE ] - $_aur helper was installed successfully!" 2>&1 | tee -a "$log" &>/dev/null
+
+    msg act "Performing a full system update.."
+    "$_aur" -Syyu --noconfirm 2>&1 | tee -a "$log"
     exit 0
 else
     msg err "Could not install aru helper. Maybe there was an issue."

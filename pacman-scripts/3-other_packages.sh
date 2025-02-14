@@ -63,33 +63,51 @@ else
     touch "$log"
 fi
 
+
 # any other packages will be installed from here
 other_packages=(
     btop
+    cliphist
     curl
+    dunst
+    eog
     fastfetch
     ffmpeg
     gnome-disk-utility
     imagemagick
     jq
+    kitty
     kvantum
     kvantum-qt5
     lxappearance
+    mate-polkit
     network-manager-applet
     networkmanager
     nodejs
     npm
     ntfs-3g
     nvtop
+    nwg-look
     os-prober
     pacman-contrib
     pamixer
     pavucontrol
     pciutils
     python-pywal
+    qt5ct
+    qt5-svg
+    qt6ct
+    qt6-svg
+    qt5-graphicaleffects
+    qt5-quickcontrols2
     ripgrep
+    rofi-wayland
+    swappy
+    swww
     unzip
+    waybar
     wget
+    wl-clipboard
     xorg-xrandr
     yazi
     zip
@@ -127,36 +145,12 @@ installble_thunar_pkg=($(printf "%s\n" "${thunar[@]}" | grep -vxFf "$installed_c
 
 printf "\n\n"
 
-for other_pkgs in "${installble_pkg[@]}"; do
-    install_package "$other_pkgs"
-    if sudo pacman -Q "$other_pkgs" &>/dev/null; then
-        echo "[ DONE ] - $other_pkgs was installed successfully!\n" 2>&1 | tee -a "$log" &>/dev/null
+for _pkgs in "${installble_pkg[@]}" "${installble_aur_pkg[@]}" "${installble_thunar_pkg[@]}"; do
+    install_package "$_pkgs"
+    if sudo pacman -Q "$_pkgs" &>/dev/null; then
+        echo "[ DONE ] - $_pkgs was installed successfully!\n" 2>&1 | tee -a "$log" &>/dev/null
     else
-        echo "[ ERROR ] - Sorry, could not install $other_pkgs!\n" 2>&1 | tee -a "$log" &>/dev/null
-    fi
-done
-
-sleep 1 && clear
-
-# Installing from the AUR Helper
-for aur_pkgs in "${installble_aur_pkg[@]}"; do
-    install_from_aur "$aur_pkgs"
-    if sudo "$aur_helper" -Q "$aur_pkgs" &>/dev/null; then
-        echo "[ DONE ] - $aur_pkgs was installed successfully!\n" 2>&1 | tee -a "$log" &>/dev/null
-    else
-        echo "[ ERROR ] - Sorry, could not install $aur_pkgs!\n" 2>&1 | tee -a "$log" &>/dev/null
-    fi
-done
-
-sleep 1 && clear
-
-# installing thunar file manager
-for file_man in "${installble_thunar_pkg[@]}"; do
-    install_package "$file_man"
-    if sudo pacman -Q "$file_man" &>/dev/null; then
-        echo "[ DONE ] - $file_man was installed successfully!\n" 2>&1 | tee -a "$log" &>/dev/null
-    else
-        echo "[ ERROR ] - Sorry, could not install $file_man!\n" 2>&1 | tee -a "$log" &>/dev/null
+        echo "[ ERROR ] - Sorry, could not install $_pkgs!\n" 2>&1 | tee -a "$log" &>/dev/null
     fi
 done
 

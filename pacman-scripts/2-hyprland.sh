@@ -17,15 +17,15 @@ display_text() {
     gum style \
         --border rounded \
         --align center \
-        --width 40 \
+        --width 60 \
         --margin "1" \
         --padding "1" \
         '
- _   __        _____        __   
-| | / /__     / ___/__  ___/ /__ 
-| |/ (_-<_   / /__/ _ \/ _  / -_)
-|___/___(_)  \___/\___/\_,_/\__/ 
-                                 
+   __ __              __             __
+  / // /_ _____  ____/ /__ ____  ___/ /
+ / _  / // / _ \/ __/ / _ `/ _ \/ _  / 
+/_//_/\_, / .__/_/ /_/\_,_/_//_/\_,_/  
+     /___/_/                           
 '
 }
 
@@ -38,12 +38,12 @@ printf " \n \n"
 dir="$(dirname "$(realpath "$0")")"
 source "$dir/1-global_script.sh"
 
-# log directory
 parent_dir="$(dirname "$dir")"
 source "$parent_dir/interaction_fn.sh"
 
+# log directory
 log_dir="$parent_dir/Logs"
-log="$log_dir/vs_code-$(date +%d-%m-%y).log"
+log="$log_dir/hyprland-$(date +%d-%m-%y).log"
 
 # skip installed cache
 cache_dir="$parent_dir/.cache"
@@ -51,13 +51,12 @@ installed_cache="$cache_dir/installed_packages"
 
 if [[ -f "$log" ]]; then
     errors=$(grep "ERROR" "$log")
-    last_installed=$(grep "visual-studio-code-bin" "$log" | awk {'print $2'})
+    last_installed=$(grep "xdg-desktop-portal-hyprland" "$log" | awk {'print $2'})
     if [[ -z "$errors" && "$last_installed" == "DONE" ]]; then
         msg skp "Skipping this script. No need to run it again..."
         sleep 1
         exit 0
     fi
-
 else
     mkdir -p "$log_dir"
     touch "$log"
@@ -65,33 +64,32 @@ fi
 
 aur_helper=$(command -v yay || command -v paru) # find the aur helper
 
-vs_code=(
-    visual-studio-code-bin
+_hypr=(
+    hyprland
+    hyprlock
+    hyprpaper
+    hypridle
+    hyprcursor
 )
 
 # checking already installed packages 
-for skipable in "${vs_code[@]}"; do
+for skipable in "${_hypr[@]}"; do
     skip_installed "$skipable"
 done
 
-to_install=($(printf "%s\n" "${vs_code[@]}" | grep -vxFf "$installed_cache"))
+to_install=($(printf "%s\n" "${_hypr[@]}" | grep -vxFf "$installed_cache"))
 
 printf "\n\n"
 
-# installing vs code
-if [[ ${#to_install[@]} -gt 0 ]]; then
-    for code in "${to_install[@]}"; do
-        install_from_aur "$code"
-        if sudo "$aur_helper" -Q "$code" &>/dev/null; then
-            echo "[ DONE ] - $code was installed successfully!\n" 2>&1 | tee -a "$log" &>/dev/null
-        else
-            echo "[ ERROR ] - Sorry, could not install $code!\n" 2>&1 | tee -a "$log" &>/dev/null
-        fi
-    done
-fi
+# Instlling main packages...
+for hypr_pkgs in "${to_install[@]}"; do
+    install_package "$hypr_pkgs"
 
-# updating vs code themes
-common_scripts="$parent_dir/common"
-"$common_scripts/vs_code_theme.sh"
+    if sudo pacman -Q "$hypr_pkgs" &>/dev/null; then
+        echo "[ DONE ] - $hypr_pkgs was installed successfully!\n" 2>&1 | tee -a "$log" &>/dev/null
+    else
+        echo "[ ERROR ] - Sorry, could not install $hypr_pkgs!\n" 2>&1 | tee -a "$log" &>/dev/null
+    fi
+done
 
 sleep 1 && clear

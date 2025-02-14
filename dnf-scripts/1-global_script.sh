@@ -40,7 +40,7 @@ skip_installed() {
 install_package() {
 
     msg act "Installing $1..."
-    sudo dnf install -y "$1" &> /dev/null
+    sudo dnf install -y "$1"
     
     if rpm -q "$1" &> /dev/null ; then
         msg dn "$1 was installed successfully!"

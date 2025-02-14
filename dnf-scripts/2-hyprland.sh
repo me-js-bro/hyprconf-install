@@ -62,7 +62,7 @@ else
     touch "$log"
 fi
 
-hypr=(
+_hypr=(
     hyprland
     hyprlock
     hyprpaper
@@ -73,11 +73,11 @@ hypr=(
 )
 
 # checking already installed packages 
-for skipable in "${hypr[@]}"; do
+for skipable in "${_hypr[@]}"; do
     skip_installed "$skipable"
 done
 
-to_install=($(printf "%s\n" "${hypr[@]}" | grep -vxFf "$installed_cache"))
+to_install=($(printf "%s\n" "${_hypr[@]}" | grep -vxFf "$installed_cache"))
 
 printf "\n\n"
 
@@ -85,7 +85,7 @@ printf "\n\n"
 for hypr_pkgs in "${to_install[@]}"; do
     install_package "$hypr_pkgs"
 
-    if sudo dnf list installed "$hypr_pkgs" &> /dev/null; then
+    if rpm -q "$hypr_pkgs" &> /dev/null; then
         echo "[ DONE ] - '$hypr_pkgs' was installed successfully!" 2>&1 | tee -a "$log" &> /dev/null
     else
         echo "[ ERROR ] - Sorry, could not install '$hypr_pkgs'" 2>&1 | tee -a "$log" &> /dev/null

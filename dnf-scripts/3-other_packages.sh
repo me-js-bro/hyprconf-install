@@ -183,7 +183,7 @@ fi
 
 sleep 1 && clear
 
-if [ -z "$(command -v wal)" ]; then
+if ! command -v wal &> /dev/null; then
     # installing pywal
     "$dir/pywal.sh" 2>&1 | tee -a >(sed 's/\x1B\[[0-9;]*[JKmsu]//g' >> "$log")
 fi

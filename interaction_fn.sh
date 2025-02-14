@@ -29,14 +29,16 @@ fn_welcome() {
         --border-foreground "#00FFFF" \
         --border rounded \
         --align center \
-        --width 60 \
+        --width 90 \
         --margin "1 2" \
         --padding "1 2" \
     'Welcome to the' 'Hyprland installation script by,' '
-     __      ___         
- __ / /__   / _ )_______ 
-/ // (_-<  / _  / __/ _ \
-\___/___/ /____/_/  \___/
+   _____  __           __ __   _   __ _           _       
+  / ___/ / /_   ___   / // /  / | / /(_)____     (_)____ _
+  \__ \ / __ \ / _ \ / // /  /  |/ // // __ \   / // __ `/
+ ___/ // / / //  __// // /  / /|  // // / / /  / // /_/ / 
+/____//_/ /_/ \___//_//_/  /_/ |_//_//_/ /_/__/ / \__,_/  
+                                           /___/          
 '
 }
 
@@ -134,7 +136,7 @@ msg() {
             printf "${orange}??${end} $msg\n"
             ;;
         dn)
-            printf "${cyan}::${end} $msg\n"
+            printf "${cyan}::${end} $msg\n\n"
             ;;
         att)
             printf "${yellow}!!${end} $msg\n"

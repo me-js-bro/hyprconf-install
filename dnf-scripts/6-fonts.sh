@@ -64,11 +64,11 @@ fi
 
 # installable fonts will be here
 fonts=(
-fontawesome-fonts-all
-google-noto-sans-cjk-fonts
-google-noto-color-emoji-fonts
-google-noto-emoji-fonts
-jetbrains-mono-fonts
+    fontawesome-fonts-all
+    google-noto-sans-cjk-fonts
+    google-noto-color-emoji-fonts
+    google-noto-emoji-fonts
+    jetbrains-mono-fonts
 )
 
 # checking already installed packages 

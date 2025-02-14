@@ -32,16 +32,14 @@ source "$parent_dir/interaction_fn.sh"
 
 ###------ Startup ------###
 
-package_manager=$(command -v pacman || command -v yay || command -v paru)
 aur_helper=$(command -v yay || command -v paru) # find the aur helper
-
 
 # skip already insalled packages
 skip_installed() {
 
-    [[ ! -f "$installed_cache" ]] && touch "$installed_cache"
+    [[ -z "$installed_cache" ]] && touch "$installed_cache"
 
-    if sudo "$package_manager" -Q "$1" &> /dev/null; then
+    if "$aur_helper" -Q "$1" &> /dev/null; then
         msg skp "$1 is already installed. Skipping..." && sleep 0.1
         if ! grep -qx "$1" "$installed_cache"; then
             echo "$1" >> "$installed_cache"
@@ -49,26 +47,14 @@ skip_installed() {
     fi
 }
 
-# package installation from main repo function..
+
+# package installation function..
 install_package() {
-
-    msg act "Installing $1..."
-    sudo pacman -S --noconfirm "$1" &> /dev/null
-
-    if sudo "$package_manager" -Q "$1" &>/dev/null; then
-        msg dn "$1 was installed successfully!"
-    else
-        msg err "$1 failed to install. Maybe therer is an issue..."
-    fi
-}
-
-# package installation from aur helper function..
-install_from_aur() {
 
     msg act "Installing $1..."
     "$aur_helper" -S --noconfirm "$1" &> /dev/null
 
-    if sudo "$package_manager" -Q "$1" &> /dev/null; then
+    if "$aur_helper" -Q "$1" &> /dev/null; then
         msg dn "$1 was installed successfully!"
     else
         msg err "$1 failed to install. Maybe therer is an issue..."

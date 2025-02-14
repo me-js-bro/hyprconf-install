@@ -23,13 +23,13 @@ source "$dir/1-global_script.sh"
 parent_dir="$(dirname "$dir")"
 source "$parent_dir/interaction_fn.sh"
 
-# skip installed cache
-cache_dir="$parent_dir/.cache"
-installed_cache="$cache_dir/installed_packages"
-
 # log dir
 log_dir="$parent_dir/Logs"
 log="$log_dir/xdg_dp-$(date +%d-%m-%y).log"
+
+# skip installed cache
+cache_dir="$parent_dir/.cache"
+installed_cache="$cache_dir/installed_packages"
 
 mkdir -p "$log_dir"
 touch "$log"
@@ -44,7 +44,6 @@ removable=(
     xdg-desktop-portal-lxqt
 )
 
-
 # checking already installed packages 
 for skipable in "${xdg[@]}"; do
     skip_installed "$skipable"
@@ -57,28 +56,30 @@ printf "\n\n"
 # Instlling xdg packages...
 for xdg_pkgs in "${to_install[@]}"; do
     install_package "$xdg_pkgs"
-    if rpm -q "$xdg_pkgs" &>/dev/null; then
+    if sudo pacman -Q "$xdg_pkgs" &>/dev/null; then
         echo "[ DONE ] - $xdg_pkgs was installed successfully!\n" 2>&1 | tee -a "$log" &>/dev/null
     else
         echo "[ ERROR ] - Sorry, could not install $xdg_pkgs!\n" 2>&1 | tee -a "$log" &>/dev/null
     fi
 done
 
-# checking for other xdg desktop portals
+echo
+
+# Clean out other portals
 msg att "Checking for other XDG-Desktop-Portal-Implementations..." && sleep 1
 
 for xdgs in "${removable[@]}"; do
-  	if rpm -q "$xdgs" &> /dev/null; then
+    if sudo pacman -Q "$xdgs" &> /dev/null; then
 
         fn_ask "Would you like to remove $xdgs?" "Yes!" "No!"
 
         if [[ $? -eq 0 ]]; then
             msg act "Removing $xdgs..."
-            sudo dnf remove -y "$xdgs" 2>&1 | tee -a "$log" &> /dev/null
+            sudo pacman -Rns --noconfirm "$xdgs" 2>&1 | tee -a "$log" &> /dev/null
         else
             msg skp "Won't remove $xdgs.."
         fi
-  	fi
+    fi
 done
 
 sleep 1 && clear

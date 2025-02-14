@@ -29,7 +29,7 @@ fn_welcome() {
         --border-foreground "#00FFFF" \
         --border rounded \
         --align center \
-        --width 60 \
+        --width 90 \
         --margin "1 2" \
         --padding "1 2" \
     'Welcome to the' 'Hyprland installation script by,' '

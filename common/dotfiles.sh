@@ -75,7 +75,12 @@ fi
 sleep 1 && clear
 
 msg att "By default, the keyboard layout will be 'us'"
-fn_ask "Is it ok for you?" "Yes! Set" "No! Change"
+gum confirm "Is it ok for you?" \
+    --prompt.foreground "#ff8700" \
+    --affirmative "Yes! Set" \
+    --selected.background "#00FFFF" \
+    --selected.foreground "#000" \
+    --negative "No! Change"
 
 if [ $? -eq 1 ]; then
     layout=$(localectl \
@@ -91,7 +96,13 @@ else
     layout="us"
 fi
 
-fn_ask "Would you like to set a keyboard variant?" "Sure!" "Skip."
+gum confirm "Would you like to set a keyboard variant?" \
+    --prompt.foreground "#ff8700" \
+    --affirmative "Sure!" \
+    --selected.background "#00FFFF" \
+    --selected.foreground "#000" \
+    --negative "Skip"
+
 if [ $? -eq 0 ]; then
     variant=$(localectl \
         list-x11-keymap-variants \
